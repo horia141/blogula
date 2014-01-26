@@ -29,19 +29,23 @@
 
       <div class="small-12 large-12 columns">
 	#for $paragraph in $post.paragraphs
-	<p>$paragraph</p>
+	<p class="text-justify">$paragraph</p>
 	#end for
       </div>
 
       <div class="small-6 small-6 columns">
 	#if $post.prev_post
 	<a href="$post.prev_post.url">$post.prev_post.title</a>
+	#else
+	<a href="/">Home</a>
 	#end if
       </div>
 
       <div class="small-6 small-6 columns">
 	#if $post.next_post
 	<a href="$post.next_post.url">$post.next_post.title</a>
+	#else
+	<a href="/">Home</a>
 	#end if
       </div>
     </div>
