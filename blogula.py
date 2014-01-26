@@ -39,6 +39,7 @@ class Config(object):
         self._template_homepage_path = None
         self._template_postpage_path = None
         self._template_foundation_dir = None
+        self._template_img_dir = None
         self._output_base_dir = None
         self._output_homepage_path = None
         self._output_posts_dir = None
@@ -62,6 +63,10 @@ class Config(object):
     @property
     def template_foundation_dir(self):
         return self._template_foundation_dir
+
+    @property
+    def template_img_dir(self):
+        return self._template_img_dir
 
     @property
     def output_base_dir(self):
@@ -98,6 +103,7 @@ class Config(object):
         config._template_homepage_path = Extract(templates_raw, 'HomePagePath', str)
         config._template_postpage_path = Extract(templates_raw, 'PostPagePath', str)
         config._template_foundation_dir = Extract(templates_raw, 'FoundationDir', str)
+        config._template_img_dir = Extract(templates_raw, 'ImgDir', str)
 
         output_raw = Extract(config_raw, 'Output', dict)
 
@@ -111,6 +117,7 @@ class Info(object):
     def __init__(self):
         self._title = None
         self._author = None
+        self._avatar_path = None
         self._description = None
 
     @property
@@ -120,6 +127,10 @@ class Info(object):
     @property
     def author(self):
         return self._author
+
+    @property
+    def avatar_path(self):
+        return self._avatar_path
 
     @property
     def description(self):
@@ -136,12 +147,13 @@ class Info(object):
         except yaml.YAMLError as e:
             raise Error(str(e))
 
-        if  not isinstance(info_raw, dict):
+        if not isinstance(info_raw, dict):
             raise Error('Invalid info file structure')
 
         info = Info()
         info._title = Extract(info_raw, 'Title', str)
         info._author = Extract(info_raw, 'Author', str)
+        info._avatar_path = Extract(info_raw, 'AvatarPath', str)
         info._description = Extract(info_raw, 'Description', str)
 
         return info
@@ -317,11 +329,19 @@ class SiteBuilder(object):
             self._config.output_posts_dir,
             '_'.join(post.title.lower().split(' '))) + '.html'
 
+    def UrlForImage_(self, image_path):
+        return os.path.join('/', 'img', image_path)
+
     def PathForPost_(self, post):
         return os.path.join(
             self._config.output_base_dir,
             self._config.output_posts_dir,
             '_'.join(post.title.lower().split(' '))) + '.html'
+
+    def PathForImage_(self, image_path):
+        return os.path.join(
+            self._config.output_base_dir,
+            'img', image_path)
 
     def Generate(self):
         # test for output dir
@@ -336,10 +356,11 @@ class SiteBuilder(object):
 
         homepage_template_text = QuickRead(self._config.template_homepage_path)
         homepage_template = template.Template(homepage_template_text)
-        homepage_template.blog = {}
-        homepage_template.blog['title'] = self._info.title
-        homepage_template.blog['author'] = self._info.author
-        homepage_template.blog['description'] = self._info.description
+        homepage_template.info = {}
+        homepage_template.info['title'] = self._info.title
+        homepage_template.info['author'] = self._info.author
+        homepage_template.info['avatar_url'] = self.UrlForImage_(self._info.avatar_path)
+        homepage_template.info['description'] = self._info.description
         homepage_template.posts = []
 
         for post in self._post_db.post_map.itervalues():
@@ -347,6 +368,7 @@ class SiteBuilder(object):
             homepage_template.posts[-1]['title'] = post.title
             homepage_template.posts[-1]['description'] = post.paragraphs[0]
             homepage_template.posts[-1]['url'] = self.UrlForPost_(post)
+            homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
         try:
             homepage_path = os.path.join(
@@ -373,10 +395,11 @@ class SiteBuilder(object):
         postpage_template_text = QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
 
-        postpage_template.blog = {}
-        postpage_template.blog['title'] = self._info.title
-        postpage_template.blog['author'] = self._info.author
-        postpage_template.blog['description'] = self._info.description
+        postpage_template.info = {}
+        postpage_template.info['title'] = self._info.title
+        postpage_template.info['author'] = self._info.author
+        postpage_template.info['avatar_url'] = self.UrlForImage_(self._info.avatar_path)
+        postpage_template.info['description'] = self._info.description
 
         for post in self._post_db.post_map.itervalues():
             postpage_template.post = {}
@@ -418,6 +441,20 @@ class SiteBuilder(object):
             shutil.copytree(
                 self._config.template_foundation_dir, 
                 os.path.join(self._config.output_base_dir, 'foundation'))
+        except OSError as e:
+            # Try to fix something here
+            pass
+
+        try:
+            os.mkdir(os.path.join(self._config.output_base_dir, 'img'))
+        except OSError as e:
+            # Try to fix something here
+            pass
+
+        try:
+            shutil.copyfile(
+                os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path),
+                self.PathForImage_(self._info.avatar_path))
         except OSError as e:
             # Try to fix something here
             pass

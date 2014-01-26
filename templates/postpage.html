@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
-<html>
+<html class="no-js" lang="en">
   <head>
-    <title>$post.title - $blog.title</title>
+    <title>$post.title - $info.title</title>
 
-    <meta name="author" content="$blog.author">
+    <meta name="author" content="$info.author">
     <meta name="description" content="$post.description">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,34 +19,34 @@
 
   <body>
     <div class="row">
-      <div class="small-12 large-12 columns">
-	<h1><a href="/">$blog.title</a></h1>
-      </div>
-
-      <div class="small-12 large-12 columns">
+      <div class="small-8 large-8 columns">
 	<h2>$post.title</h2>
-      </div>
 
-      <div class="small-12 large-12 columns">
 	#for $paragraph in $post.paragraphs
 	<p class="text-justify">$paragraph</p>
 	#end for
+
+	<div class="small-4 small-4 columns text-left">
+	  #if $post.prev_post
+	  <a href="$post.prev_post.url">$post.prev_post.title</a>
+	  #else
+	  <a href="/">Home</a>
+	  #end if
+	</div>
+
+	<div class="small-4 small-4 columns text-right">
+	  #if $post.next_post
+	  <a href="$post.next_post.url">$post.next_post.title</a>
+	  #else
+	  <a href="/">Home</a>
+	  #end if
+	</div>
       </div>
 
-      <div class="small-6 small-6 columns text-left">
-	#if $post.prev_post
-	<a href="$post.prev_post.url">$post.prev_post.title</a>
-	#else
-	<a href="/">Home</a>
-	#end if
-      </div>
-
-      <div class="small-6 small-6 columns text-right">
-	#if $post.next_post
-	<a href="$post.next_post.url">$post.next_post.title</a>
-	#else
-	<a href="/">Home</a>
-	#end if
+      <div class="small-4 large-4 columns">
+	<h1><a href="/">$info.title</a></h1>
+	<img src="$info.avatar_url" alt="Avatar image"></img>
+	<p class="text-justify">$info.description</p>
       </div>
     </div>
 

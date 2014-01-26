@@ -4,6 +4,7 @@ Templates:
   HomePagePath: templates/homepage.html
   PostPagePath: templates/postpage.html
   FoundationDir: templates/foundation
+  ImgDir: templates/img
 Output:
   BaseDir: out
   HomePagePath: index.html
