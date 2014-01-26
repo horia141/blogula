@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>$blog.title</title>
+
+    <meta name="author" content="$blog.author">
+    <meta name="description" content="$blog.description">
+    <meta charset="utf-8">
+  </head>
+
+  <body>
+    <h1><a href="/">$blog.title</a></h1>
+
+    #for $post in $posts
+    <h2><a href="$post.url">$post.title</a></h2>
+    <p>$post.description</p>
+    #end for
+  </body>
+</html>
