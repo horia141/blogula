@@ -5,6 +5,7 @@ import collections
 import datetime
 import os
 import re
+import shutil
 
 import yaml
 import Cheetah.Template as template
@@ -37,6 +38,7 @@ class Config(object):
         self._blog_posts_dir = None
         self._template_homepage_path = None
         self._template_postpage_path = None
+        self._template_foundation_dir = None
         self._output_base_dir = None
         self._output_homepage_path = None
         self._output_posts_dir = None
@@ -56,6 +58,10 @@ class Config(object):
     @property
     def template_postpage_path(self):
         return self._template_postpage_path
+
+    @property
+    def template_foundation_dir(self):
+        return self._template_foundation_dir
 
     @property
     def output_base_dir(self):
@@ -91,6 +97,7 @@ class Config(object):
 
         config._template_homepage_path = Extract(templates_raw, 'HomePagePath', str)
         config._template_postpage_path = Extract(templates_raw, 'PostPagePath', str)
+        config._template_foundation_dir = Extract(templates_raw, 'FoundationDir', str)
 
         output_raw = Extract(config_raw, 'Output', dict)
 
@@ -404,6 +411,16 @@ class SiteBuilder(object):
         # generate projects page (from projects description)
 
         # generate about page?
+
+        # copy extra scripts
+
+        try:
+            shutil.copytree(
+                self._config.template_foundation_dir, 
+                os.path.join(self._config.output_base_dir, 'foundation'))
+        except OSError as e:
+            # Try to fix something here
+            pass
 
     @property
     def config(self):

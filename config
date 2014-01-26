@@ -1,0 +1,10 @@
+BlogInfoPath: blog/Info
+BlogPostsDir: blog
+Templates:
+  HomePagePath: templates/homepage.html
+  PostPagePath: templates/postpage.html
+  FoundationDir: templates/foundation
+Output:
+  BaseDir: out
+  HomePagePath: index.html
+  PostsDir: blog

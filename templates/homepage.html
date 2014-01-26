@@ -1,20 +1,42 @@
 <!DOCTYPE html>
 
-<html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en">
   <head>
     <title>$blog.title</title>
 
     <meta name="author" content="$blog.author">
     <meta name="description" content="$blog.description">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
+
+    <link rel="stylesheet" href="/foundation/css/normalize.css">
+    <link rel="stylesheet" href="/foundation/css/foundation.css">
+
+    <script src="/foundation/js/vendor/modernizr.js"></script>
   </head>
 
   <body>
-    <h1><a href="/">$blog.title</a></h1>
+    <div class="row">
+      <div class="small-12 large-12 columns">
+	<h1><a href="/">$blog.title</a></h1>
+      </div>
 
-    #for $post in $posts
-    <h2><a href="$post.url">$post.title</a></h2>
-    <p>$post.description</p>
-    #end for
+      <div class="small-12 large-12 columns">
+	#for $post in $posts
+	<h2><a href="$post.url">$post.title</a></h2>
+	<p>$post.description</p>
+	#end for
+      </div>
+    </div>
+
+    <script src="/foundation/js/vendor/jquery.js"></script>
+    <script src="/foundation/js/foundation.min.js"></script>
+    <script>
+      #raw
+      $(document).foundation();
+      #end raw
+    </script>
   </body>
 </html>
