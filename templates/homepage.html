@@ -23,6 +23,12 @@
 	#for $post in $posts
 	<h2><a href="$post.url">$post.title</a></h2>
 	<p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
+        <p class="text-justify">Tags: 
+          #for i in range(len($post.tags)-1)
+          $post.tags[i],
+          #end for
+          $post.tags[len($post.tags)-1]
+        </p>
 	#end for
       </div>
 

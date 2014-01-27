@@ -26,6 +26,13 @@
 	<p class="text-justify">$paragraph</p>
 	#end for
 
+        <p class="text-justify">Tags: 
+          #for i in range(len($post.tags)-1)
+           $post.tags[i],
+          #end for
+          $post.tags[len($post.tags)-1]
+        </p>
+
 	<div class="small-4 small-4 columns text-left">
 	  #if $post.prev_post
 	  <a href="$post.prev_post.url">$post.prev_post.title</a>

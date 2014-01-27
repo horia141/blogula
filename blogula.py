@@ -163,6 +163,7 @@ class Post(object):
         self._title = None
         self._date = None
         self._delta = None
+        self._tags = None
         self._paragraphs = None
         self._path = None
         self._next_post = None
@@ -189,6 +190,10 @@ class Post(object):
     @property
     def delta(self):
         return self._delta
+
+    @property
+    def tags(self):
+        return self._tags
 
     @property
     def paragraphs(self):
@@ -238,10 +243,19 @@ class Post(object):
         if not isinstance(post_raw, list):
             raise Error('Invalid blog post structure')
 
-        if len(post_raw) < 1:
+        if len(post_raw) < 2:
             raise Error('Invalid blog post structure')
 
-        for p in post_raw:
+        if not isinstance(post_raw[0], dict):
+            raise Error('Invalid blog post structure')
+
+        if len(post_raw[0]) != 1:
+            raise Error('Invalid blog post structure')
+
+        if 'Tags' not in post_raw[0]:
+            raise Error('Invalid blog post structure')
+
+        for p in post_raw[1:]:
             if not isinstance(p, str):
                 raise Error('Invalid paragraph')
 
@@ -261,7 +275,8 @@ class Post(object):
         except ValueError:
             raise Error('Could not parse date')
 
-        post._paragraphs = post_raw
+	post._tags = [' '.join(t.split()) for t in post_raw[0]['Tags'].split(',')]
+        post._paragraphs = post_raw[1:]
         post._path = post_path
         post._next_post = None
         post._prev_post = None
@@ -367,6 +382,7 @@ class SiteBuilder(object):
             homepage_template.posts.append({})
             homepage_template.posts[-1]['title'] = post.title
             homepage_template.posts[-1]['description'] = post.paragraphs[0]
+            homepage_template.posts[-1]['tags'] = post.tags
             homepage_template.posts[-1]['url'] = self.UrlForPost_(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
@@ -406,6 +422,7 @@ class SiteBuilder(object):
             postpage_template.post['title'] = post.title
             postpage_template.post['description'] = post.paragraphs[0]
             postpage_template.post['paragraphs'] = post.paragraphs
+            postpage_template.post['tags'] = post.tags
 
             if post.prev_post is not None:
                 postpage_template.post['prev_post'] = {}
