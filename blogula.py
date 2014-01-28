@@ -32,6 +32,12 @@ def Extract(yaml_dict, field_name, type_constraint):
 
     return yaml_dict[field_name]
 
+def UniformName(string):
+    return ' '.join(string.split())
+
+def UniformPath(path):
+    return '_'.join(path.lower().split(' '))
+
 class Config(object):
     def __init__(self):
         self._blog_info_path = None
@@ -151,8 +157,8 @@ class Info(object):
             raise Error('Invalid info file structure')
 
         info = Info()
-        info._title = Extract(info_raw, 'Title', str)
-        info._author = Extract(info_raw, 'Author', str)
+        info._title = UniformName(Extract(info_raw, 'Title', str))
+        info._author = UniformName(Extract(info_raw, 'Author', str))
         info._avatar_path = Extract(info_raw, 'AvatarPath', str)
         info._description = Extract(info_raw, 'Description', str)
 
@@ -260,7 +266,7 @@ class Post(object):
                 raise Error('Invalid paragraph')
 
         post = Post()
-        post._title = ' '.join(match_obj.group(5).split())
+        post._title = UniformName(match_obj.group(5))
 
         if match_obj.group(4) is not None:
             post._delta = int(match_obj.group(4)[1:], 10)
@@ -275,7 +281,7 @@ class Post(object):
         except ValueError:
             raise Error('Could not parse date')
 
-	post._tags = [' '.join(t.split()) for t in post_raw[0]['Tags'].split(',')]
+	post._tags = [UniformName(t) for t in post_raw[0]['Tags'].split(',')]
         post._paragraphs = post_raw[1:]
         post._path = post_path
         post._next_post = None
@@ -342,7 +348,7 @@ class SiteBuilder(object):
         return os.path.join(
             '/',
             self._config.output_posts_dir,
-            '_'.join(post.title.lower().split(' '))) + '.html'
+            UniformPath(post.title)) + '.html'
 
     def UrlForImage_(self, image_path):
         return os.path.join('/', 'img', image_path)
@@ -351,7 +357,7 @@ class SiteBuilder(object):
         return os.path.join(
             self._config.output_base_dir,
             self._config.output_posts_dir,
-            '_'.join(post.title.lower().split(' '))) + '.html'
+            UniformPath(post.title)) + '.html'
 
     def PathForImage_(self, image_path):
         return os.path.join(
