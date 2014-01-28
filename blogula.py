@@ -38,6 +38,9 @@ def UniformName(string):
 def UniformPath(path):
     return '_'.join(path.lower().split(' '))
 
+def UniformTags(tags):
+    return [UniformName(t) for t in tags.split(',')]
+
 class Config(object):
     def __init__(self):
         self._blog_info_path = None
@@ -281,7 +284,7 @@ class Post(object):
         except ValueError:
             raise Error('Could not parse date')
 
-	post._tags = [UniformName(t) for t in post_raw[0]['Tags'].split(',')]
+	post._tags = UniformTags(post_raw[0]['Tags'])
         post._paragraphs = post_raw[1:]
         post._path = post_path
         post._next_post = None
