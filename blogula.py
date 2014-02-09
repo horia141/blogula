@@ -126,6 +126,7 @@ class Info(object):
     def __init__(self):
         self._title = None
         self._author = None
+        self._email = None
         self._avatar_path = None
         self._description = None
 
@@ -136,6 +137,10 @@ class Info(object):
     @property
     def author(self):
         return self._author
+
+    @property
+    def email(self):
+        return self._email
 
     @property
     def avatar_path(self):
@@ -162,6 +167,7 @@ class Info(object):
         info = Info()
         info._title = UniformName(Extract(info_raw, 'Title', str))
         info._author = UniformName(Extract(info_raw, 'Author', str))
+        info._email = Extract(info_raw, 'Email', str).strip()
         info._avatar_path = Extract(info_raw, 'AvatarPath', str)
         info._description = Extract(info_raw, 'Description', str)
 
