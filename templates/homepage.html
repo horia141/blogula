@@ -23,20 +23,19 @@
 	#for $post in $posts
 	<h2><a href="$post.url">$post.title</a></h2>
 	<p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
-        <p class="text-justify">Tags: 
+	
+        <div>Tags: 
           #for i in range(len($post.tags)-1)
           $post.tags[i],
           #end for
           $post.tags[len($post.tags)-1]
-        </p>
+        </div>
 	#end for
       </div>
 
       <div class="small-4 large-4 columns">
 	<h1><a href="/">$info.title</a></h1>
-	<p>
-	  <img src="$info.avatar_url" alt="Avatar image"></img>
-	</p>
+	<p><img src="$info.avatar_url" alt="Avatar image"></img></p>
 	<p class="text-justify">$info.description</p>
       </div>
     </div>

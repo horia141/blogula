@@ -20,40 +20,66 @@
   <body>
     <div class="row">
       <div class="small-8 large-8 columns">
-	<h2>$post.title</h2>
+        <h2>$post.title</h2>
 
-	#for $paragraph in $post.paragraphs
-	<p class="text-justify">$paragraph</p>
-	#end for
+        #for $paragraph in $post.paragraphs
+        <p class="text-justify">$paragraph</p>
+        #end for
 
-        <p class="text-justify">Tags: 
+        <p>Tags:
           #for i in range(len($post.tags)-1)
            $post.tags[i],
           #end for
           $post.tags[len($post.tags)-1]
         </p>
 
-	<div class="small-4 small-4 columns text-left">
-	  #if $post.prev_post
-	  <a href="$post.prev_post.url">$post.prev_post.title</a>
-	  #else
-	  <a href="/">Home</a>
-	  #end if
-	</div>
+        <div class="row">
+          <span class="small-12 large-12 columns">Global Navigation</span>
 
-	<div class="small-4 small-4 columns text-right">
-	  #if $post.next_post
-	  <a href="$post.next_post.url">$post.next_post.title</a>
-	  #else
-	  <a href="/">Home</a>
-	  #end if
-	</div>
+          <div class="small-6 small-6 columns text-left">
+            #if $post.prev_post
+            <a href="$post.prev_post.url">$post.prev_post.title</a>
+            #else
+            <a href="/">Home</a>
+            #end if
+          </div>
+
+          <div class="small-6 small-6 columns text-right">
+            #if $post.next_post
+            <a href="$post.next_post.url">$post.next_post.title</a>
+            #else
+            <a href="/">Home</a>
+            #end if
+          </div>
+        </div>
+
+        #for s in $post.series
+        <div class="row">
+          <span class="small-12 large-12 columns">In the "$s.title" series</span>
+
+          <div class="small-6 small-6 columns text-left">
+            #if $s.prev_post
+            <a href="$s.prev_post.url">$s.prev_post.title</a>
+            #else
+            <a href="/">Home</a>
+            #end if
+          </div>
+
+          <div class="small-6 small-6 columns text-right">
+            #if $s.next_post
+            <a href="$s.next_post.url">$s.next_post.title</a>
+            #else
+            <a href="/">Home</a>
+            #end if
+          </div>
+        </div>
+        #end for
       </div>
 
       <div class="small-4 large-4 columns">
-	<h1><a href="/">$info.title</a></h1>
-	<img src="$info.avatar_url" alt="Avatar image"></img>
-	<p class="text-justify">$info.description</p>
+        <h1><a href="/">$info.title</a></h1>
+        <img src="$info.avatar_url" alt="Avatar image"></img>
+        <p class="text-justify">$info.description</p>
       </div>
     </div>
 

@@ -129,6 +129,7 @@ class Info(object):
         self._email = None
         self._avatar_path = None
         self._description = None
+        self._series = None
 
     @property
     def title(self):
@@ -149,6 +150,10 @@ class Info(object):
     @property
     def description(self):
         return self._description
+
+    @property
+    def series(self):
+        return self._series
 
     @staticmethod
     def Load(info_path):
@@ -171,28 +176,45 @@ class Info(object):
         info._avatar_path = Extract(info_raw, 'AvatarPath', str)
         info._description = Extract(info_raw, 'Description', str)
 
+        series_raw = Extract(info_raw, 'Series', list)
+
+        if not all(isinstance(s, str) for s in series_raw):
+            raise Error('Invalid Series entry')
+
+        info._series = frozenset(UniformName(s) for s in series_raw)
+
         return info
 
 class Post(object):
-    def __init__(self):
+    def __init__(self, info):
+        assert isinstance(info, Info)
+
+        self._info = info
         self._title = None
         self._date = None
         self._delta = None
+        self._series = None
         self._tags = None
         self._paragraphs = None
         self._path = None
         self._next_post = None
         self._prev_post = None
+        self._next_post_by_series = None
+        self._prev_post_by_series = None
 
     def __cmp__(self, other):
         assert isinstance(other, Post)
 
         if self._date < other._date:
             return -1
-        elif self._delta < other._delta:
-            return -1
+        elif self._date == other._date:
+            return cmp(self._delta, other._delta)
         else:
-            return 0
+            return 1
+
+    @property
+    def info(self):
+        return self._info
 
     @property
     def title(self):
@@ -205,6 +227,10 @@ class Post(object):
     @property
     def delta(self):
         return self._delta
+
+    @property
+    def series(self):
+        return self._series
 
     @property
     def tags(self):
@@ -226,6 +252,14 @@ class Post(object):
     def prev_post(self):
         return self._prev_post
 
+    @property
+    def next_post_by_series(self):
+        return self._next_post_by_series
+
+    @property
+    def prev_post_by_series(self):
+        return self._prev_post_by_series
+
     PATH_RE = re.compile(r'^(\d\d\d\d).(\d\d).(\d\d)(-\d+)?\s*-\s*(.+)$')
 
     @staticmethod
@@ -238,7 +272,8 @@ class Post(object):
         return match_obj is not None
 
     @staticmethod
-    def Load(post_path, post_path_full):
+    def Load(info, post_path, post_path_full):
+        assert isinstance(info, Info)
         assert isinstance(post_path, str)
         assert isinstance(post_path_full, str)
 
@@ -270,11 +305,27 @@ class Post(object):
         if 'Tags' not in post_raw[0]:
             raise Error('Invalid blog post structure')
 
-        for p in post_raw[1:]:
+        tags_raw = post_raw[0]['Tags']
+        post_raw = post_raw[1:]
+
+        if isinstance(post_raw[0], dict) and \
+                len(post_raw[0]) == 1 and \
+                'Series' in post_raw[0]:
+            series = UniformTags(post_raw[0]['Series'])
+
+            for s in series:
+                if s not in info.series:
+                    raise Error('Invalid series "%s"' % s)
+
+            post_raw = post_raw[1:]
+        else:
+            series = []
+
+        for p in post_raw:
             if not isinstance(p, str):
                 raise Error('Invalid paragraph')
 
-        post = Post()
+        post = Post(info)
         post._title = UniformName(match_obj.group(5))
 
         if match_obj.group(4) is not None:
@@ -290,28 +341,46 @@ class Post(object):
         except ValueError:
             raise Error('Could not parse date')
 
-	post._tags = UniformTags(post_raw[0]['Tags'])
-        post._paragraphs = post_raw[1:]
+        post._series = series
+	post._tags = UniformTags(tags_raw)
+        post._paragraphs = post_raw
         post._path = post_path
         post._next_post = None
         post._prev_post = None
+        post._next_post_by_series = dict((s, None) for s in series)
+        post._prev_post_by_series = dict((s, None) for s in series)
 
         return post
 
 class PostDB(object):
-    def __init__(self):
+    def __init__(self, info):
+        assert isinstance(info, Info)
+
+        self._info = info
         self._post_map = {}
+        self._post_maps_by_series = {}
+
+    @property
+    def info(self):
+        return self._info
 
     @property
     def post_map(self):
         return self._post_map
 
+    @property
+    def post_maps_by_series(self):
+        return self._post_maps_by_series
+
     @staticmethod
-    def Load(blog_posts_dir):
+    def Load(info, blog_posts_dir):
+        assert isinstance(info, Info)
         assert isinstance(blog_posts_dir, str)
 
         post_map = collections.OrderedDict()
+        post_maps_by_series = dict((s, collections.OrderedDict()) for s in info.series)
         post_list = []
+        post_lists_by_series = dict((s, []) for s in info.series)
 
         try:
             for dirpath, subdirs, post_paths_last in os.walk(blog_posts_dir):
@@ -322,8 +391,11 @@ class PostDB(object):
                     if not Post.ValidPath(post_path):
                         continue
 
-                    post = Post.Load(post_path, post_path_full)
+                    post = Post.Load(info, post_path, post_path_full)
                     post_list.append(post)
+
+                    for s in post.series:
+                        post_lists_by_series[s].append(post)
         except IOError as e:
             raise Error(e)
 
@@ -336,10 +408,20 @@ class PostDB(object):
         for ii in range(1, len(post_list)):
             post_list[ii]._prev_post = post_list[ii-1]
             post_list[ii-1]._next_post = post_list[ii]
-            
 
-        post_db = PostDB()
+        for (series, post_list_by_series) in post_lists_by_series.iteritems():
+            post_list_by_series.sort()
+
+            for post in post_list_by_series:
+                post_maps_by_series[series][post.path] = post
+
+            for ii in range(1, len(post_list_by_series)):
+                post_list_by_series[ii]._prev_post_by_series[series] = post_list_by_series[ii-1]
+                post_list_by_series[ii-1]._next_post_by_series[series] = post_list_by_series[ii]
+
+        post_db = PostDB(info)
         post_db._post_map = post_map
+        post_db._post_maps_by_series = post_maps_by_series
 
         return post_db
 
@@ -401,6 +483,8 @@ class SiteBuilder(object):
             homepage_template.posts[-1]['url'] = self.UrlForPost_(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
+        homepage_template.posts.reverse()
+
         try:
             homepage_path = os.path.join(
                 self._config.output_base_dir,
@@ -452,6 +536,26 @@ class SiteBuilder(object):
                 postpage_template.post['next_post']['title'] = post.next_post.title
             else:
                 postpage_template.post['next_post'] = None
+
+            postpage_template.post['series'] = []
+
+            for s in post.series:
+                postpage_template.post['series'].append({})
+                postpage_template.post['series'][-1]['title'] = s
+
+                if post.prev_post_by_series[s] is not None:
+                    postpage_template.post['series'][-1]['prev_post'] = {}
+                    postpage_template.post['series'][-1]['prev_post']['url'] = self.UrlForPost_(post.prev_post_by_series[s])
+                    postpage_template.post['series'][-1]['prev_post']['title'] = post.prev_post_by_series[s].title
+                else:
+                    postpage_template.post['series'][-1]['prev_post'] = None
+
+                if post.next_post_by_series[s] is not None:
+                    postpage_template.post['series'][-1]['next_post'] = {}
+                    postpage_template.post['series'][-1]['next_post']['url'] = self.UrlForPost_(post.next_post_by_series[s])
+                    postpage_template.post['series'][-1]['next_post']['title'] = post.next_post_by_series[s].title
+                else:
+                    postpage_template.post['series'][-1]['next_post'] = None
 
             try:
                 postpage_file = open(self.PathForPost_(post), 'w')
@@ -506,7 +610,7 @@ class SiteBuilder(object):
 def main():
     config = Config.Load('config')
     info = Info.Load(config.blog_info_path)
-    post_db = PostDB.Load(config.blog_posts_dir)
+    post_db = PostDB.Load(info, config.blog_posts_dir)
 
     site_generator = SiteBuilder(config, info, post_db)
     site_generator.Generate()

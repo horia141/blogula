@@ -1,0 +1,4 @@
+- Add Robots.txt generation
+- Add Humans.txt generation
+- Add a page for each tag, with all the posts for that tag, and make each tag in an article link to that page. Also add a top-level page with tags.
+- Add a page for each series, with all the posts for that series, and make the reference to it in the article link to that page. Also add a top-level page with series.
