@@ -10,8 +10,8 @@ import shutil
 import yaml
 import Cheetah.Template as template
 
-class Error(Exception):
-    pass
+import errors
+import output
 
 def QuickRead(path):
     try:
@@ -21,14 +21,14 @@ def QuickRead(path):
 
         return t
     except IOError as e:
-        raise Error(str(e))
+        raise errors.Error(str(e))
 
 def Extract(yaml_dict, field_name, type_constraint):
     if field_name not in yaml_dict:
-        raise Error('Entry %s is missing' % field_name)
+        raise errors.Error('Entry %s is missing' % field_name)
 
     if not isinstance(yaml_dict[field_name], type_constraint):
-        raise Error('Invalid %s entry' % field_name)
+        raise errors.Error('Invalid %s entry' % field_name)
 
     return yaml_dict[field_name]
 
@@ -98,10 +98,10 @@ class Config(object):
         try:
             config_raw = yaml.safe_load(config_text)
         except yaml.YAMLError as e:
-            raise Error(str(e))
+            raise errors.Error(str(e))
 
         if not isinstance(config_raw, dict):
-            raise Error('Invalid config file structure')
+            raise errors.Error('Invalid config file structure')
 
         config = Config()
         config._blog_info_path = Extract(config_raw, 'BlogInfoPath', str)
@@ -164,10 +164,10 @@ class Info(object):
         try:
             info_raw = yaml.safe_load(info_text)
         except yaml.YAMLError as e:
-            raise Error(str(e))
+            raise errors.Error(str(e))
 
         if not isinstance(info_raw, dict):
-            raise Error('Invalid info file structure')
+            raise errors.Error('Invalid info file structure')
 
         info = Info()
         info._title = UniformName(Extract(info_raw, 'Title', str))
@@ -179,7 +179,7 @@ class Info(object):
         series_raw = Extract(info_raw, 'Series', list)
 
         if not all(isinstance(s, str) for s in series_raw):
-            raise Error('Invalid Series entry')
+            raise errors.Error('Invalid Series entry')
 
         info._series = frozenset(UniformName(s) for s in series_raw)
 
@@ -281,29 +281,29 @@ class Post(object):
         match_obj = Post.PATH_RE.match(post_path_base)
 
         if match_obj is None:
-            raise Error('Invalid blog post path')
+            raise errors.Error('Invalid blog post path')
 
         post_text = QuickRead(post_path_full)
 
         try:
             post_raw = yaml.safe_load(post_text)
         except yaml.YAMLError as e:
-            raise Error(str(e))
+            raise errors.Error(str(e))
 
         if not isinstance(post_raw, list):
-            raise Error('Invalid blog post structure')
+            raise errors.Error('Invalid blog post structure')
 
         if len(post_raw) < 2:
-            raise Error('Invalid blog post structure')
+            raise errors.Error('Invalid blog post structure')
 
         if not isinstance(post_raw[0], dict):
-            raise Error('Invalid blog post structure')
+            raise errors.Error('Invalid blog post structure')
 
         if len(post_raw[0]) != 1:
-            raise Error('Invalid blog post structure')
+            raise errors.Error('Invalid blog post structure')
 
         if 'Tags' not in post_raw[0]:
-            raise Error('Invalid blog post structure')
+            raise errors.Error('Invalid blog post structure')
 
         tags_raw = post_raw[0]['Tags']
         post_raw = post_raw[1:]
@@ -315,7 +315,7 @@ class Post(object):
 
             for s in series:
                 if s not in info.series:
-                    raise Error('Invalid series "%s"' % s)
+                    raise errors.Error('Invalid series "%s"' % s)
 
             post_raw = post_raw[1:]
         else:
@@ -323,7 +323,7 @@ class Post(object):
 
         for p in post_raw:
             if not isinstance(p, str):
-                raise Error('Invalid paragraph')
+                raise errors.Error('Invalid paragraph')
 
         post = Post(info)
         post._title = UniformName(match_obj.group(5))
@@ -339,7 +339,7 @@ class Post(object):
             day = int(match_obj.group(3), 10)
             post._date = datetime.date(year, month, day)
         except ValueError:
-            raise Error('Could not parse date')
+            raise errors.Error('Could not parse date')
 
         post._series = series
 	post._tags = UniformTags(tags_raw)
@@ -397,7 +397,7 @@ class PostDB(object):
                     for s in post.series:
                         post_lists_by_series[s].append(post)
         except IOError as e:
-            raise Error(e)
+            raise errors.Error(e)
 
         post_list.sort()
 
@@ -456,22 +456,15 @@ class SiteBuilder(object):
             'img', image_path)
 
     def Generate(self):
-        # test for output dir
-
-        try:
-            os.mkdir(self._config.output_base_dir)
-        except OSError as e:
-            # Decide what to do
-            pass
+        out_dir = output.Dir()
 
         # generate home page
-
         homepage_template_text = QuickRead(self._config.template_homepage_path)
         homepage_template = template.Template(homepage_template_text)
         homepage_template.info = {}
         homepage_template.info['title'] = self._info.title
         homepage_template.info['author'] = self._info.author
-        homepage_template.info['avatar_url'] = self.UrlForImage_(self._info.avatar_path)
+        homepage_template.info['avatar_url'] = '/img/avatar.jpg'
         homepage_template.info['description'] = self._info.description
         homepage_template.posts = []
 
@@ -484,28 +477,13 @@ class SiteBuilder(object):
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
         homepage_template.posts.reverse()
+        homepage_text = str(homepage_template)
+        homepage_unit = output.File('text/html', homepage_text)
 
-        try:
-            homepage_path = os.path.join(
-                self._config.output_base_dir,
-                self._config.output_homepage_path)
-
-            homepage_file = open(homepage_path, 'w')
-            homepage_file.write(str(homepage_template))
-            homepage_file.close()
-        except IOError as e:
-            # Try to cleanup.
-            raise Error(str(e))
+        out_dir.Add(self._config.output_homepage_path, homepage_unit)
 
         # generate one page for each article
-
-        try:
-            os.mkdir(os.path.join(
-                self._config.output_base_dir,
-                self._config.output_posts_dir))
-        except OSError as e:
-            # Cleanup or maybe continue?
-            pass
+        posts_dir = output.Dir()
 
         postpage_template_text = QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
@@ -557,13 +535,12 @@ class SiteBuilder(object):
                 else:
                     postpage_template.post['series'][-1]['next_post'] = None
 
-            try:
-                postpage_file = open(self.PathForPost_(post), 'w')
-                postpage_file.write(str(postpage_template))
-                postpage_file.close()
-            except IOError as e:
-                # Try to cleanup
-                raise Error(str(e))
+            postpage_text = str(postpage_template)
+            postpage_unit = output.File('text/html', postpage_text)
+
+            posts_dir.Add(UniformPath(post.title) + '.html', postpage_unit)
+
+        out_dir.Add(self._config.output_posts_dir, posts_dir)
 
         # generate rss feed
 
@@ -573,27 +550,19 @@ class SiteBuilder(object):
 
         # copy extra scripts
 
-        try:
-            shutil.copytree(
-                self._config.template_foundation_dir, 
-                os.path.join(self._config.output_base_dir, 'foundation'))
-        except OSError as e:
-            # Try to fix something here
-            pass
+        foundation_unit = output.Copy(self._config.template_foundation_dir)
+        out_dir.Add('foundation', foundation_unit)
 
-        try:
-            os.mkdir(os.path.join(self._config.output_base_dir, 'img'))
-        except OSError as e:
-            # Try to fix something here
-            pass
+        # Copy avatar image
 
-        try:
-            shutil.copyfile(
-                os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path),
-                self.PathForImage_(self._info.avatar_path))
-        except OSError as e:
-            # Try to fix something here
-            pass
+        image_dir = output.Dir()
+
+        avatar_unit = output.Copy(os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path))
+        image_dir.Add('avatar.jpg', avatar_unit)
+
+        out_dir.Add('img', image_dir)
+
+        return out_dir
 
     @property
     def config(self):
@@ -607,13 +576,16 @@ class SiteBuilder(object):
     def post_db(self):
         return self._post_db
 
+
 def main():
     config = Config.Load('config')
     info = Info.Load(config.blog_info_path)
     post_db = PostDB.Load(info, config.blog_posts_dir)
 
     site_generator = SiteBuilder(config, info, post_db)
-    site_generator.Generate()
+    out_dir = site_generator.Generate()
+
+    output.WriteLocalOutput(config.output_base_dir, out_dir)
 
 if __name__ == '__main__':
     main()
