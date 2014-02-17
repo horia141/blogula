@@ -103,30 +103,13 @@ class SiteBuilder(object):
         self._info = info
         self._post_db = post_db
 
-    def UrlForPost_(self, post):
+    def _UrlForPost(self, post):
         return os.path.join(
             '/',
             self._config.output_posts_dir,
             names.UniformPath(post.title)) + '.html'
 
-    def UrlForImage_(self, image_path):
-        return os.path.join('/', 'img', image_path)
-
-    def PathForPost_(self, post):
-        return os.path.join(
-            self._config.output_base_dir,
-            self._config.output_posts_dir,
-            names.UniformPath(post.title)) + '.html'
-
-    def PathForImage_(self, image_path):
-        return os.path.join(
-            self._config.output_base_dir,
-            'img', image_path)
-
-    def Generate(self):
-        out_dir = output.Dir()
-
-        # generate home page
+    def GenerateHomepage_(self):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
         homepage_template = template.Template(homepage_template_text)
         homepage_template.info = {}
@@ -141,71 +124,78 @@ class SiteBuilder(object):
             homepage_template.posts[-1]['title'] = post.title
             homepage_template.posts[-1]['description'] = post.paragraphs[0]
             homepage_template.posts[-1]['tags'] = post.tags
-            homepage_template.posts[-1]['url'] = self.UrlForPost_(post)
+            homepage_template.posts[-1]['url'] = self._UrlForPost(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
         homepage_template.posts.reverse()
         homepage_text = str(homepage_template)
-        homepage_unit = output.File('text/html', homepage_text)
+        return output.File('text/html', homepage_text)
 
-        out_dir.Add(self._config.output_homepage_path, homepage_unit)
-
-        # generate one page for each article
-        posts_dir = output.Dir()
-
+    def GeneratePostpage_(self, post):
         postpage_template_text = utils.QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
 
         postpage_template.info = {}
         postpage_template.info['title'] = self._info.title
         postpage_template.info['author'] = self._info.author
-        postpage_template.info['avatar_url'] = self.UrlForImage_(self._info.avatar_path)
+        postpage_template.info['avatar_url'] = '/img/avatar.jpg'
         postpage_template.info['description'] = self._info.description
 
+        postpage_template.post = {}
+        postpage_template.post['title'] = post.title
+        postpage_template.post['description'] = post.paragraphs[0]
+        postpage_template.post['paragraphs'] = post.paragraphs
+        postpage_template.post['tags'] = post.tags
+
+        if post.prev_post is not None:
+            postpage_template.post['prev_post'] = {}
+            postpage_template.post['prev_post']['url'] = self._UrlForPost(post.prev_post)
+            postpage_template.post['prev_post']['title'] = post.prev_post.title
+        else:
+            postpage_template.post['prev_post'] = None
+
+        if post.next_post is not None:
+            postpage_template.post['next_post'] = {}
+            postpage_template.post['next_post']['url'] = self._UrlForPost(post.next_post)
+            postpage_template.post['next_post']['title'] = post.next_post.title
+        else:
+            postpage_template.post['next_post'] = None
+
+        postpage_template.post['series'] = []
+
+        for s in post.series:
+            postpage_template.post['series'].append({})
+            postpage_template.post['series'][-1]['title'] = s
+
+            if post.prev_post_by_series[s] is not None:
+                postpage_template.post['series'][-1]['prev_post'] = {}
+                postpage_template.post['series'][-1]['prev_post']['url'] = self._UrlForPost(post.prev_post_by_series[s])
+                postpage_template.post['series'][-1]['prev_post']['title'] = post.prev_post_by_series[s].title
+            else:
+                postpage_template.post['series'][-1]['prev_post'] = None
+
+            if post.next_post_by_series[s] is not None:
+                postpage_template.post['series'][-1]['next_post'] = {}
+                postpage_template.post['series'][-1]['next_post']['url'] = self._UrlForPost(post.next_post_by_series[s])
+                postpage_template.post['series'][-1]['next_post']['title'] = post.next_post_by_series[s].title
+            else:
+                postpage_template.post['series'][-1]['next_post'] = None
+
+        postpage_text = str(postpage_template)
+        return output.File('text/html', postpage_text)
+
+    def Generate(self):
+        out_dir = output.Dir()
+
+        # generate home page
+        homepage_unit = self.GenerateHomepage_()
+        out_dir.Add(self._config.output_homepage_path, homepage_unit)
+
+        # generate one page for each article
+        posts_dir = output.Dir()
+
         for post in self._post_db.post_map.itervalues():
-            postpage_template.post = {}
-            postpage_template.post['title'] = post.title
-            postpage_template.post['description'] = post.paragraphs[0]
-            postpage_template.post['paragraphs'] = post.paragraphs
-            postpage_template.post['tags'] = post.tags
-
-            if post.prev_post is not None:
-                postpage_template.post['prev_post'] = {}
-                postpage_template.post['prev_post']['url'] = self.UrlForPost_(post.prev_post)
-                postpage_template.post['prev_post']['title'] = post.prev_post.title
-            else:
-                postpage_template.post['prev_post'] = None
-
-            if post.next_post is not None:
-                postpage_template.post['next_post'] = {}
-                postpage_template.post['next_post']['url'] = self.UrlForPost_(post.next_post)
-                postpage_template.post['next_post']['title'] = post.next_post.title
-            else:
-                postpage_template.post['next_post'] = None
-
-            postpage_template.post['series'] = []
-
-            for s in post.series:
-                postpage_template.post['series'].append({})
-                postpage_template.post['series'][-1]['title'] = s
-
-                if post.prev_post_by_series[s] is not None:
-                    postpage_template.post['series'][-1]['prev_post'] = {}
-                    postpage_template.post['series'][-1]['prev_post']['url'] = self.UrlForPost_(post.prev_post_by_series[s])
-                    postpage_template.post['series'][-1]['prev_post']['title'] = post.prev_post_by_series[s].title
-                else:
-                    postpage_template.post['series'][-1]['prev_post'] = None
-
-                if post.next_post_by_series[s] is not None:
-                    postpage_template.post['series'][-1]['next_post'] = {}
-                    postpage_template.post['series'][-1]['next_post']['url'] = self.UrlForPost_(post.next_post_by_series[s])
-                    postpage_template.post['series'][-1]['next_post']['title'] = post.next_post_by_series[s].title
-                else:
-                    postpage_template.post['series'][-1]['next_post'] = None
-
-            postpage_text = str(postpage_template)
-            postpage_unit = output.File('text/html', postpage_text)
-
+            postpage_unit = self.GeneratePostpage_(post)
             posts_dir.Add(names.UniformPath(post.title) + '.html', postpage_unit)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
@@ -225,7 +215,8 @@ class SiteBuilder(object):
 
         image_dir = output.Dir()
 
-        avatar_unit = output.Copy(os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path))
+        avatar_unit = output.Copy(
+            os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path))
         image_dir.Add('avatar.jpg', avatar_unit)
 
         out_dir.Add('img', image_dir)
