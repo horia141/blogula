@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 import os
 import shutil
 
@@ -18,6 +19,7 @@ class Config(object):
         self._blog_posts_dir = None
         self._template_homepage_path = None
         self._template_postpage_path = None
+        self._template_feedpage_path = None
         self._template_foundation_dir = None
         self._template_img_dir = None
         self._output_base_dir = None
@@ -39,6 +41,10 @@ class Config(object):
     @property
     def template_postpage_path(self):
         return self._template_postpage_path
+
+    @property
+    def template_feedpage_path(self):
+        return self._template_feedpage_path
 
     @property
     def template_foundation_dir(self):
@@ -82,6 +88,7 @@ class Config(object):
 
         config._template_homepage_path = utils.Extract(templates_raw, 'HomePagePath', str)
         config._template_postpage_path = utils.Extract(templates_raw, 'PostPagePath', str)
+        config._template_feedpage_path = utils.Extract(templates_raw, 'FeedPagePath', str)
         config._template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
         config._template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
 
@@ -109,7 +116,7 @@ class SiteBuilder(object):
             self._config.output_posts_dir,
             names.UniformPath(post.title)) + '.html'
 
-    def GenerateHomepage_(self):
+    def _GenerateHomepage(self):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
         homepage_template = template.Template(homepage_template_text)
         homepage_template.info = {}
@@ -131,7 +138,7 @@ class SiteBuilder(object):
         homepage_text = str(homepage_template)
         return output.File('text/html', homepage_text)
 
-    def GeneratePostpage_(self, post):
+    def _GeneratePostpage(self, post):
         postpage_template_text = utils.QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
 
@@ -184,23 +191,50 @@ class SiteBuilder(object):
         postpage_text = str(postpage_template)
         return output.File('text/html', postpage_text)
 
+    def _GenerateFeed(self):
+        feedpage_template_text = utils.QuickRead(self._config.template_feedpage_path)
+        feedpage_template = template.Template(feedpage_template_text)
+        feedpage_template.info = {}
+        feedpage_template.info['title'] = self._info.title
+        feedpage_template.info['description'] = self._info.description
+        feedpage_template.info['url'] = self._info.url
+        feedpage_template.info['copyright_year'] = datetime.datetime.now().year
+        feedpage_template.info['author'] = self._info.author
+        feedpage_template.info['email'] = self._info.email
+        feedpage_template.info['build_date_str'] = datetime.datetime.now().strftime('%A, %d %B %Y %S:%M:%H %Z')
+        feedpage_template.posts = []
+
+        for post in self._post_db.post_map.values()[-self._info.nr_of_posts_in_feed:]:
+            feedpage_template.posts.append({})
+            feedpage_template.posts[-1]['title'] = post.title
+            feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
+            feedpage_template.posts[-1]['description'] = post.paragraphs[0]
+            feedpage_template.posts[-1]['tags'] = post.tags
+            feedpage_template.posts[-1]['pub_date_str'] = post.date.strftime('%A, %d %B %Y 00:00:00 %Z')
+
+        feedpage_template.posts.reverse()
+        feedpage_text = str(feedpage_template)
+        return output.File('application/xml', feedpage_text)
+
     def Generate(self):
         out_dir = output.Dir()
 
         # generate home page
-        homepage_unit = self.GenerateHomepage_()
+        homepage_unit = self._GenerateHomepage()
         out_dir.Add(self._config.output_homepage_path, homepage_unit)
 
         # generate one page for each article
         posts_dir = output.Dir()
 
         for post in self._post_db.post_map.itervalues():
-            postpage_unit = self.GeneratePostpage_(post)
+            postpage_unit = self._GeneratePostpage(post)
             posts_dir.Add(names.UniformPath(post.title) + '.html', postpage_unit)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
 
         # generate rss feed
+        feed_unit = self._GenerateFeed()
+        out_dir.Add('feed.xml', feed_unit)
 
         # generate projects page (from projects description)
 

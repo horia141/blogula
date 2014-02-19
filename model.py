@@ -12,15 +12,21 @@ import utils
 class Info(object):
     def __init__(self):
         self._title = None
+        self._url = None
         self._author = None
         self._email = None
         self._avatar_path = None
         self._description = None
         self._series = None
+        self._nr_of_posts_in_feed = -1
 
     @property
     def title(self):
         return self._title
+
+    @property
+    def url(self):
+        return self._url
 
     @property
     def author(self):
@@ -42,6 +48,10 @@ class Info(object):
     def series(self):
         return self._series
 
+    @property
+    def nr_of_posts_in_feed(self):
+        return self._nr_of_posts_in_feed
+
     @staticmethod
     def Load(info_path):
         assert isinstance(info_path, str)
@@ -58,6 +68,7 @@ class Info(object):
 
         info = Info()
         info._title = names.UniformName(utils.Extract(info_raw, 'Title', str))
+        info._url = utils.Extract(info_raw, 'URL', str)
         info._author = names.UniformName(utils.Extract(info_raw, 'Author', str))
         info._email = utils.Extract(info_raw, 'Email', str).strip()
         info._avatar_path = utils.Extract(info_raw, 'AvatarPath', str)
@@ -69,6 +80,8 @@ class Info(object):
             raise errors.Error('Invalid Series entry')
 
         info._series = frozenset(names.UniformName(s) for s in series_raw)
+
+        info._nr_of_posts_in_feed = utils.Extract(info_raw, 'NrOfPostsInFeed', int)
 
         return info
 
