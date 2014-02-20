@@ -20,12 +20,14 @@
     <link>http://$info.url$post.url</link>
     <description>$post.description</description>
     <author>$info.email</author>
+    #if len($post.tags) >= 1
     <category domain="http://$info.url/tags">
       #for i in range(len($post.tags)-1)
       $post.tags[i],
       #end for
       $post.tags[len($post.tags)-1]
     </category>
+    #end if
     <guid isPermaLink="true">http://$info.url$post.url</guid>
     <pubDate>$post.pub_date_str</pubDate>
   </item>

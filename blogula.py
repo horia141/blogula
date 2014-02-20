@@ -9,22 +9,36 @@ import Cheetah.Template as template
 
 import errors
 import model
+import model_parser
 import names
 import output
 import utils
 
 class Config(object):
-    def __init__(self):
-        self._blog_info_path = None
-        self._blog_posts_dir = None
-        self._template_homepage_path = None
-        self._template_postpage_path = None
-        self._template_feedpage_path = None
-        self._template_foundation_dir = None
-        self._template_img_dir = None
-        self._output_base_dir = None
-        self._output_homepage_path = None
-        self._output_posts_dir = None
+    def __init__(self, blog_info_path, blog_posts_dir, template_homepage_path, template_postpage_path,
+                 template_feedpage_path, template_foundation_dir, template_img_dir, output_base_dir,
+                 output_homepage_path, output_posts_dir):
+        assert isinstance(blog_info_path, str)
+        assert isinstance(blog_posts_dir, str)
+        assert isinstance(template_homepage_path, str)
+        assert isinstance(template_postpage_path, str)
+        assert isinstance(template_feedpage_path, str)
+        assert isinstance(template_foundation_dir, str)
+        assert isinstance(template_img_dir, str)
+        assert isinstance(output_base_dir, str)
+        assert isinstance(output_homepage_path, str)
+        assert isinstance(output_posts_dir, str)
+
+        self._blog_info_path = blog_info_path
+        self._blog_posts_dir = blog_posts_dir
+        self._template_homepage_path = template_homepage_path
+        self._template_postpage_path = template_postpage_path
+        self._template_feedpage_path = template_feedpage_path
+        self._template_foundation_dir = template_foundation_dir
+        self._template_img_dir = template_img_dir
+        self._output_base_dir = output_base_dir
+        self._output_homepage_path = output_homepage_path
+        self._output_posts_dir = output_posts_dir
 
     @property
     def blog_info_path(self):
@@ -66,39 +80,39 @@ class Config(object):
     def output_posts_dir(self):
         return self._output_posts_dir
 
-    @staticmethod
-    def Load(config_path):
-        assert isinstance(config_path, str)
+def _ParseConfig(config_path):
+    config_text = utils.QuickRead(config_path)
 
-        config_text = utils.QuickRead(config_path)
+    try:
+        config_raw = yaml.safe_load(config_text)
+    except yaml.YAMLError as e:
+        raise errors.Error(str(e))
 
-        try:
-            config_raw = yaml.safe_load(config_text)
-        except yaml.YAMLError as e:
-            raise errors.Error(str(e))
+    if not isinstance(config_raw, dict):
+        raise errors.Error('Invalid config file structure')
 
-        if not isinstance(config_raw, dict):
-            raise errors.Error('Invalid config file structure')
+    blog_info_path = utils.Extract(config_raw, 'BlogInfoPath', str)
+    blog_posts_dir = utils.Extract(config_raw, 'BlogPostsDir', str)
 
-        config = Config()
-        config._blog_info_path = utils.Extract(config_raw, 'BlogInfoPath', str)
-        config._blog_posts_dir = utils.Extract(config_raw, 'BlogPostsDir', str)
+    templates_raw = utils.Extract(config_raw, 'Templates', dict)
 
-        templates_raw = utils.Extract(config_raw, 'Templates', dict)
+    template_homepage_path = utils.Extract(templates_raw, 'HomePagePath', str)
+    template_postpage_path = utils.Extract(templates_raw, 'PostPagePath', str)
+    template_feedpage_path = utils.Extract(templates_raw, 'FeedPagePath', str)
+    template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
+    template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
 
-        config._template_homepage_path = utils.Extract(templates_raw, 'HomePagePath', str)
-        config._template_postpage_path = utils.Extract(templates_raw, 'PostPagePath', str)
-        config._template_feedpage_path = utils.Extract(templates_raw, 'FeedPagePath', str)
-        config._template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
-        config._template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
+    output_raw = utils.Extract(config_raw, 'Output', dict)
 
-        output_raw = utils.Extract(config_raw, 'Output', dict)
+    output_base_dir = utils.Extract(output_raw, 'BaseDir', str)
+    output_homepage_path = utils.Extract(output_raw, 'HomePagePath', str)
+    output_posts_dir = utils.Extract(output_raw, 'PostsDir', str)
 
-        config._output_base_dir = utils.Extract(output_raw, 'BaseDir', str)
-        config._output_homepage_path = utils.Extract(output_raw, 'HomePagePath', str)
-        config._output_posts_dir = utils.Extract(output_raw, 'PostsDir', str)
-
-        return config
+    return Config(blog_info_path=blog_info_path, blog_posts_dir=blog_posts_dir, 
+                  template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
+                  template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
+                  template_img_dir=template_img_dir, output_base_dir=output_base_dir,
+                  output_homepage_path=output_homepage_path, output_posts_dir=output_posts_dir)
 
 class SiteBuilder(object):
     def __init__(self, config, info, post_db):
@@ -129,7 +143,7 @@ class SiteBuilder(object):
         for post in self._post_db.post_map.itervalues():
             homepage_template.posts.append({})
             homepage_template.posts[-1]['title'] = post.title
-            homepage_template.posts[-1]['description'] = post.paragraphs[0]
+            homepage_template.posts[-1]['description'] = post.root_section.paragraphs[0].text
             homepage_template.posts[-1]['tags'] = post.tags
             homepage_template.posts[-1]['url'] = self._UrlForPost(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
@@ -150,8 +164,8 @@ class SiteBuilder(object):
 
         postpage_template.post = {}
         postpage_template.post['title'] = post.title
-        postpage_template.post['description'] = post.paragraphs[0]
-        postpage_template.post['paragraphs'] = post.paragraphs
+        postpage_template.post['description'] = post.root_section.paragraphs[0].text
+        postpage_template.post['paragraphs'] = [p.text for p in post.root_section.paragraphs]
         postpage_template.post['tags'] = post.tags
 
         if post.prev_post is not None:
@@ -208,7 +222,7 @@ class SiteBuilder(object):
             feedpage_template.posts.append({})
             feedpage_template.posts[-1]['title'] = post.title
             feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
-            feedpage_template.posts[-1]['description'] = post.paragraphs[0]
+            feedpage_template.posts[-1]['description'] = post.root_section.paragraphs[0].text
             feedpage_template.posts[-1]['tags'] = post.tags
             feedpage_template.posts[-1]['pub_date_str'] = post.date.strftime('%A, %d %B %Y 00:00:00 %Z')
 
@@ -271,9 +285,8 @@ class SiteBuilder(object):
 
 
 def main():
-    config = Config.Load('config')
-    info = model.Info.Load(config.blog_info_path)
-    post_db = model.PostDB.Load(info, config.blog_posts_dir)
+    config = _ParseConfig('config')
+    (info, post_db) = model_parser.ParseInfoAndPostDB(config.blog_info_path, config.blog_posts_dir)
 
     site_generator = SiteBuilder(config, info, post_db)
     out_dir = site_generator.Generate()

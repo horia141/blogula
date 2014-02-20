@@ -26,12 +26,14 @@
         <p class="text-justify">$paragraph</p>
         #end for
 
+	#if len($post.tags) >= 1
         <p>Tags:
           #for i in range(len($post.tags)-1)
            $post.tags[i],
           #end for
           $post.tags[len($post.tags)-1]
         </p>
+	#end if
 
         <div class="row">
           <span class="small-12 large-12 columns">Global Navigation</span>
