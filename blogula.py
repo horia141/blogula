@@ -143,7 +143,7 @@ class SiteBuilder(object):
         for post in self._post_db.post_map.itervalues():
             homepage_template.posts.append({})
             homepage_template.posts[-1]['title'] = post.title
-            homepage_template.posts[-1]['description'] = post.root_section.paragraphs[0].text
+            homepage_template.posts[-1]['description'] = post.description
             homepage_template.posts[-1]['tags'] = post.tags
             homepage_template.posts[-1]['url'] = self._UrlForPost(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
@@ -164,7 +164,7 @@ class SiteBuilder(object):
 
         postpage_template.post = {}
         postpage_template.post['title'] = post.title
-        postpage_template.post['description'] = post.root_section.paragraphs[0].text
+        postpage_template.post['description'] = post.description
         postpage_template.post['paragraphs'] = [p.text for p in post.root_section.paragraphs]
         postpage_template.post['tags'] = post.tags
 
@@ -222,7 +222,7 @@ class SiteBuilder(object):
             feedpage_template.posts.append({})
             feedpage_template.posts[-1]['title'] = post.title
             feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
-            feedpage_template.posts[-1]['description'] = post.root_section.paragraphs[0].text
+            feedpage_template.posts[-1]['description'] = post.description
             feedpage_template.posts[-1]['tags'] = post.tags
             feedpage_template.posts[-1]['pub_date_str'] = post.date.strftime('%A, %d %B %Y 00:00:00 %Z')
 

@@ -116,6 +116,7 @@ class Post(object):
         self._prev_post = None
         self._next_post_by_series = dict((s, None) for s in series)
         self._prev_post_by_series = dict((s, None) for s in series)
+        self._description = Post._FindFirstParagraph(root_section).text
 
     def __cmp__(self, other):
         assert isinstance(other, Post)
@@ -174,6 +175,19 @@ class Post(object):
     @property
     def prev_post_by_series(self):
         return self._prev_post_by_series
+
+    @property
+    def description(self):
+        return self._description
+
+    @staticmethod
+    def _FindFirstParagraph(section):
+        if len(section.paragraphs) >= 1:
+            return section.paragraphs[0]
+        elif len(section.subsections) >= 1:
+            return Post._FindFirstParagraph(section.subsections[0])
+        else:
+            raise errors.Error('Post without description paragraph')
 
 class PostDB(object):
     def __init__(self, info, post_map, post_maps_by_series):
