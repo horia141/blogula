@@ -39,6 +39,10 @@ class Config(object):
         self._output_base_dir = output_base_dir
         self._output_homepage_path = output_homepage_path
         self._output_posts_dir = output_posts_dir
+        self._presentation_title_heading_level = 1
+        self._presentation_article_title_heading_level = 2
+        self._presentation_article_subtitle_heading_level_min = 3
+        self._presentation_article_subtitle_heading_level_max = 6
 
     @property
     def blog_info_path(self):
@@ -79,6 +83,22 @@ class Config(object):
     @property
     def output_posts_dir(self):
         return self._output_posts_dir
+
+    @property
+    def presentation_title_heading_level(self):
+        return self._presentation_title_heading_level
+
+    @property
+    def presentation_article_title_heading_level(self):
+        return self._presentation_article_title_heading_level
+
+    @property
+    def presentation_article_subtitle_heading_level_min(self):
+        return self._presentation_article_subtitle_heading_level_min
+
+    @property
+    def presentation_article_subtitle_heading_level_max(self):
+        return self._presentation_article_subtitle_heading_level_max
 
 def _ParseConfig(config_path):
     config_text = utils.QuickRead(config_path)
@@ -149,6 +169,13 @@ class SiteBuilder(object):
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
         homepage_template.posts.reverse()
+
+        homepage_template.presentation = {}
+        homepage_template.presentation['title_heading_level'] = \
+            self._config.presentation_title_heading_level
+        homepage_template.presentation['article_title_heading_level'] = \
+            self._config.presentation_article_title_heading_level
+
         homepage_text = str(homepage_template)
         return output.File('text/html', homepage_text)
 
@@ -165,7 +192,8 @@ class SiteBuilder(object):
         postpage_template.post = {}
         postpage_template.post['title'] = post.title
         postpage_template.post['description'] = post.description
-        postpage_template.post['paragraphs'] = [p.text for p in post.root_section.paragraphs]
+        postpage_template.post['lineunits'] = \
+            SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
         postpage_template.post['tags'] = post.tags
 
         if post.prev_post is not None:
@@ -201,6 +229,12 @@ class SiteBuilder(object):
                 postpage_template.post['series'][-1]['next_post']['title'] = post.next_post_by_series[s].title
             else:
                 postpage_template.post['series'][-1]['next_post'] = None
+
+        postpage_template.presentation = {}
+        postpage_template.presentation['title_heading_level'] = \
+            self._config.presentation_title_heading_level
+        postpage_template.presentation['article_title_heading_level'] = \
+            self._config.presentation_article_title_heading_level
 
         postpage_text = str(postpage_template)
         return output.File('text/html', postpage_text)
@@ -283,6 +317,27 @@ class SiteBuilder(object):
     def post_db(self):
         return self._post_db
 
+    @staticmethod
+    def _LinearizeSectionToLineUnits(config, section, level):
+        line_units = []
+
+        if level >= 1:
+            line_units.append({})
+            line_units[-1]['type'] = 'header'
+            line_units[-1]['level'] = \
+                min(config.presentation_article_subtitle_heading_level_min + level - 1,
+                    config.presentation_article_subtitle_heading_level_max)
+            line_units[-1]['text'] = section.title
+
+        for paragraph in section.paragraphs:
+            line_units.append({})
+            line_units[-1]['type'] = 'paragraph'
+            line_units[-1]['text'] = paragraph.text
+
+        for subsection in section.subsections:
+            line_units.extend(SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1))
+
+        return line_units
 
 def main():
     config = _ParseConfig('config')

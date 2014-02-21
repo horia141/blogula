@@ -16,3 +16,4 @@ def Extract(yaml_dict, field_name, type_constraint):
         raise errors.Error('Invalid %s entry' % field_name)
 
     return yaml_dict[field_name]
+

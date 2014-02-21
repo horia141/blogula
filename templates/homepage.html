@@ -20,25 +20,25 @@
   <body>
     <div class="row">
       <div class="small-8 large-8 columns">
-	#for $post in $posts
-	<h2><a href="$post.url">$post.title</a></h2>
-	<p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
-	
-	#if len($post.tags) >= 1
+        #for $post in $posts
+        <h$presentation.article_title_heading_level><a href="$post.url">$post.title</a></h$presentation.article_title_heading_level>
+        <p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
+        
+        #if len($post.tags) >= 1
         <div>Tags:
           #for i in range(len($post.tags)-1)
           $post.tags[i],
           #end for
           $post.tags[len($post.tags)-1]
         </div>
-	#end if
-	#end for
+        #end if
+        #end for
       </div>
 
       <div class="small-4 large-4 columns">
-	<h1><a href="/">$info.title</a></h1>
-	<p><img src="$info.avatar_url" alt="Avatar image"></img></p>
-	<p class="text-justify">$info.description</p>
+        <h$presentation.title_heading_level><a href="/">$info.title</a></h$presentation.title_heading_level>
+        <p><img src="$info.avatar_url" alt="Avatar image"></img></p>
+        <p class="text-justify">$info.description</p>
       </div>
     </div>
 
