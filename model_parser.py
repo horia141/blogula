@@ -26,7 +26,8 @@ def _ParseInfo(info_path):
     if not isinstance(info_raw, dict):
         raise errors.Error('Invalid info file structure')
 
-    title = model.UniformName(utils.Extract(info_raw, 'Title', str))
+    title_raw = utils.Extract(info_raw, 'Title', str)
+    title = ParseText(title_raw.strip())
     url = utils.Extract(info_raw, 'URL', str)
     author = model.UniformName(utils.Extract(info_raw, 'Author', str))
     email = utils.Extract(info_raw, 'Email', str).strip()
@@ -291,7 +292,7 @@ def _ParseAtom(text, c_pos):
 
     return (c_pos, None)
 
-_WORD_RE = re.compile(r'(\w+)', flags=re.UNICODE)
+_WORD_RE = re.compile(r'([^\\{}]+)', flags=re.UNICODE)
 
 def _ParseWord(text, c_pos):
     word_match = _WORD_RE.match(text, c_pos)
@@ -301,13 +302,15 @@ def _ParseWord(text, c_pos):
 
     return (word_match.end(0), model.Word(word_match.group(1)))
 
+_NAME_RE = re.compile(r'([a-zA-Z_][a-zA-Z0-9-]*)')
+
 def _ParseFunction(text, c_pos):
     if text[c_pos] != '\\':
         return (c_pos, None)
 
     new_c_pos = c_pos + 1
 
-    name_match = _WORD_RE.match(text, new_c_pos)
+    name_match = _NAME_RE.match(text, new_c_pos)
 
     if name_match is None:
         raise errors.Error('Invalid function')

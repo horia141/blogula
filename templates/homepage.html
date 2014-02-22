@@ -3,7 +3,7 @@
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en">
   <head>
-    <title>$info.title</title>
+    <title>$info.title_text</title>
 
     <meta name="author" content="$info.author">
     <meta name="description" content="$info.description">
@@ -36,7 +36,7 @@
       </div>
 
       <div class="small-4 large-4 columns">
-        <h$presentation.title_heading_level><a href="/">$info.title</a></h$presentation.title_heading_level>
+        <h$presentation.title_heading_level><a href="/">$info.title_html</a></h$presentation.title_heading_level>
         <p><img src="$info.avatar_url" alt="Avatar image"></img></p>
         <p class="text-justify">$info.description</p>
       </div>
@@ -44,6 +44,12 @@
 
     <script src="/foundation/js/vendor/jquery.js"></script>
     <script src="/foundation/js/foundation.min.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+      });
+    </script>
+    <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script>
       #raw
       $(document).foundation();

@@ -51,7 +51,7 @@ def UniformPath(path):
 class Info(object):
     def __init__(self, title, url, author, email, avatar_path, description, 
                  series, nr_of_posts_in_feed):
-        assert isinstance(title, str)
+        assert isinstance(title, Text)
         assert isinstance(url, str)
         assert isinstance(author, str)
         assert isinstance(email, str)

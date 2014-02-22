@@ -2,7 +2,7 @@
 
 <rss version="2.0">
 <channel>
-  <title>$info.title</title>
+  <title>$info.title_text</title>
   <description>$info.description</description>
   <link>http://$info.url</link>
   <language>en-us</language>

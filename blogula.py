@@ -3,6 +3,7 @@
 import datetime
 import os
 import shutil
+import StringIO
 
 import yaml
 import Cheetah.Template as template
@@ -153,7 +154,8 @@ class SiteBuilder(object):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
         homepage_template = template.Template(homepage_template_text)
         homepage_template.info = {}
-        homepage_template.info['title'] = self._info.title
+        homepage_template.info['title_text'] = SiteBuilder._EvaluateTextToText(self._info.title)
+        homepage_template.info['title_html'] = SiteBuilder._EvaluateTextToHTML(self._info.title)
         homepage_template.info['author'] = self._info.author
         homepage_template.info['avatar_url'] = '/img/avatar.jpg'
         homepage_template.info['description'] = self._info.description
@@ -183,7 +185,8 @@ class SiteBuilder(object):
         postpage_template = template.Template(postpage_template_text)
 
         postpage_template.info = {}
-        postpage_template.info['title'] = self._info.title
+        postpage_template.info['title_text'] = SiteBuilder._EvaluateTextToText(self._info.title)
+        postpage_template.info['title_html'] = SiteBuilder._EvaluateTextToHTML(self._info.title)
         postpage_template.info['author'] = self._info.author
         postpage_template.info['avatar_url'] = '/img/avatar.jpg'
         postpage_template.info['description'] = self._info.description
@@ -242,7 +245,7 @@ class SiteBuilder(object):
         feedpage_template_text = utils.QuickRead(self._config.template_feedpage_path)
         feedpage_template = template.Template(feedpage_template_text)
         feedpage_template.info = {}
-        feedpage_template.info['title'] = self._info.title
+        feedpage_template.info['title_text'] = SiteBuilder._EvaluateTextToText(self._info.title)
         feedpage_template.info['description'] = self._info.description
         feedpage_template.info['url'] = self._info.url
         feedpage_template.info['copyright_year'] = datetime.datetime.now().year
@@ -315,6 +318,72 @@ class SiteBuilder(object):
     @property
     def post_db(self):
         return self._post_db
+
+    @staticmethod
+    def _EvaluateTextToText(text):
+        text_file = StringIO.StringIO()
+
+        for atom in text.atoms:
+            if isinstance(atom, model.Word):
+                text_file.write(atom.text)
+                text_file.write(' ')
+            elif isinstance(atom, model.Function):
+                if atom.name == 'slash':
+                    text_file.write('\\')
+                    text_file.write(' ')
+                elif atom.name == 'brace-beg':
+                    text_file.write('{')
+                    text_file.write(' ')
+                elif atom.name == 'brace-end':
+                    text_file.write('}')
+                    text_file.write(' ')
+                elif atom.name == 'f':
+                    text_file.write(atom.arg_list[0])
+                    text_file.write(' ')
+                else:
+                    raise errors.Error('Unknown function')
+            else:
+                raise errors.Error('Unknown function')
+
+        text_file.seek(-1, 2)
+        text_str = text_file.getvalue()
+        text_file.close()
+
+        return text_str
+
+    @staticmethod
+    def _EvaluateTextToHTML(text):
+        html_file = StringIO.StringIO()
+
+        for atom in text.atoms:
+            if isinstance(atom, model.Word):
+                html_file.write(atom.text)
+                html_file.write(' ')
+            elif isinstance(atom, model.Function):
+                if atom.name == 'slash':
+                    html_file.write('&#92;')
+                    html_file.write(' ')
+                elif atom.name == 'brace-beg':
+                    html_file.write('{')
+                    html_file.write(' ')
+                elif atom.name == 'brace-end':
+                    html_file.write('}')
+                    html_file.write(' ')
+                elif atom.name == 'f':
+                    html_file.write('$')
+                    html_file.write(atom.arg_list[0])
+                    html_file.write('$')
+                    html_file.write(' ')
+                else:
+                    raise errors.Error('Unknown function')
+            else:
+                raise errors.Error('Unknown function')
+
+        html_file.seek(-1, 2)
+        html_str = html_file.getvalue()
+        html_file.close()
+
+        return html_str
 
     @staticmethod
     def _LinearizeSectionToLineUnits(config, section, level):
