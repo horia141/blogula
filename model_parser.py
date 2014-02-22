@@ -7,7 +7,6 @@ import yaml
 
 import errors
 import model
-import names
 import utils
 
 def ParseInfoAndPostDB(info_path, blog_posts_dir):
@@ -27,9 +26,9 @@ def _ParseInfo(info_path):
     if not isinstance(info_raw, dict):
         raise errors.Error('Invalid info file structure')
 
-    title = names.UniformName(utils.Extract(info_raw, 'Title', str))
+    title = model.UniformName(utils.Extract(info_raw, 'Title', str))
     url = utils.Extract(info_raw, 'URL', str)
-    author = names.UniformName(utils.Extract(info_raw, 'Author', str))
+    author = model.UniformName(utils.Extract(info_raw, 'Author', str))
     email = utils.Extract(info_raw, 'Email', str).strip()
     avatar_path = utils.Extract(info_raw, 'AvatarPath', str)
     description = utils.Extract(info_raw, 'Description', str)
@@ -39,7 +38,7 @@ def _ParseInfo(info_path):
     if not all(isinstance(s, str) for s in series_raw):
         raise errors.Error('Invalid Series entry')
 
-    series = frozenset(names.UniformName(s) for s in series_raw)
+    series = frozenset(model.UniformName(s) for s in series_raw)
 
     nr_of_posts_in_feed = utils.Extract(info_raw, 'NrOfPostsInFeed', int)
 
@@ -108,7 +107,7 @@ def _ParsePost(info, post_path, post_path_full):
 
     post_text = utils.QuickRead(post_path_full)
 
-    title = names.UniformName(match_obj.group(5))
+    title = model.UniformName(match_obj.group(5))
 
     try:
         year = int(match_obj.group(1), 10)
@@ -125,8 +124,8 @@ def _ParsePost(info, post_path, post_path_full):
 
     (series_raw, tags_raw, root_section) = _ParsePostText(post_text)
 
-    series = [names.UniformName(t) for t in series_raw.split(',')] if series_raw else []
-    tags = [names.UniformName(t) for t in tags_raw.split(',')] if tags_raw else []
+    series = [model.UniformName(t) for t in series_raw.split(',')] if series_raw else []
+    tags = [model.UniformName(t) for t in tags_raw.split(',')] if tags_raw else []
 
     return model.Post(info=info, title=title, date=date, delta=delta, series=series, tags=tags, 
                       root_section=root_section, path=post_path)

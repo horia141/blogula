@@ -10,7 +10,6 @@ import Cheetah.Template as template
 import errors
 import model
 import model_parser
-import names
 import output
 import utils
 
@@ -148,7 +147,7 @@ class SiteBuilder(object):
         return os.path.join(
             '/',
             self._config.output_posts_dir,
-            names.UniformPath(post.title)) + '.html'
+            model.UniformPath(post.title)) + '.html'
 
     def _GenerateHomepage(self):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
@@ -276,7 +275,7 @@ class SiteBuilder(object):
 
         for post in self._post_db.post_map.itervalues():
             postpage_unit = self._GeneratePostpage(post)
-            posts_dir.Add(names.UniformPath(post.title) + '.html', postpage_unit)
+            posts_dir.Add(model.UniformPath(post.title) + '.html', postpage_unit)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
 
