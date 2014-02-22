@@ -32,7 +32,8 @@ def _ParseInfo(info_path):
     author = model.UniformName(utils.Extract(info_raw, 'Author', str))
     email = utils.Extract(info_raw, 'Email', str).strip()
     avatar_path = utils.Extract(info_raw, 'AvatarPath', str)
-    description = utils.Extract(info_raw, 'Description', str)
+    description_raw = utils.Extract(info_raw, 'Description', str)
+    description = ParseText(description_raw.strip())
 
     series_raw = utils.Extract(info_raw, 'Series', list)
 

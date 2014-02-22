@@ -3,7 +3,7 @@
 <rss version="2.0">
 <channel>
   <title>$info.title_text</title>
-  <description>$info.description</description>
+  <description>$info.description_text</description>
   <link>http://$info.url</link>
   <language>en-us</language>
   <copyright>Copyright $info.copyright_year $info.author</copyright>

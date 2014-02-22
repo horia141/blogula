@@ -56,7 +56,7 @@ class Info(object):
         assert isinstance(author, str)
         assert isinstance(email, str)
         assert isinstance(avatar_path, str)
-        assert isinstance(description, str)
+        assert isinstance(description, Text)
         assert isinstance(series, frozenset)
         assert all(isinstance(s, str) for s in series)
         assert isinstance(nr_of_posts_in_feed, int)

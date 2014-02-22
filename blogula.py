@@ -158,7 +158,8 @@ class SiteBuilder(object):
         homepage_template.info['title_html'] = SiteBuilder._EvaluateTextToHTML(self._info.title)
         homepage_template.info['author'] = self._info.author
         homepage_template.info['avatar_url'] = '/img/avatar.jpg'
-        homepage_template.info['description'] = self._info.description
+        homepage_template.info['description_text'] = SiteBuilder._EvaluateTextToText(self._info.description)
+        homepage_template.info['description_html'] = SiteBuilder._EvaluateTextToHTML(self._info.description)
         homepage_template.posts = []
 
         for post in self._post_db.post_map.itervalues():
@@ -189,7 +190,7 @@ class SiteBuilder(object):
         postpage_template.info['title_html'] = SiteBuilder._EvaluateTextToHTML(self._info.title)
         postpage_template.info['author'] = self._info.author
         postpage_template.info['avatar_url'] = '/img/avatar.jpg'
-        postpage_template.info['description'] = self._info.description
+        postpage_template.info['description_html'] = SiteBuilder._EvaluateTextToHTML(self._info.description)
 
         postpage_template.post = {}
         postpage_template.post['title'] = post.title
@@ -246,7 +247,7 @@ class SiteBuilder(object):
         feedpage_template = template.Template(feedpage_template_text)
         feedpage_template.info = {}
         feedpage_template.info['title_text'] = SiteBuilder._EvaluateTextToText(self._info.title)
-        feedpage_template.info['description'] = self._info.description
+        feedpage_template.info['description_text'] = SiteBuilder._EvaluateTextToText(self._info.description)
         feedpage_template.info['url'] = self._info.url
         feedpage_template.info['copyright_year'] = datetime.datetime.now().year
         feedpage_template.info['author'] = self._info.author
