@@ -104,15 +104,14 @@ class Unit(object):
     pass
 
 class Paragraph(Unit):
-    def __init__(self, atoms):
-        assert isinstance(atoms, list)
-        assert all(isinstance(a, Atom) for a in atoms)
+    def __init__(self, text):
+        assert isinstance(text, str)
 
-        self._atoms = atoms
+        self._text = text
 
     @property
-    def atoms(self):
-        return self._atoms
+    def text(self):
+        return self._text
 
 class Section(Unit):
     def __init__(self, title, paragraphs, subsections):
