@@ -1,6 +1,55 @@
 import datetime
 import re
 
+class Atom(object):
+    pass
+
+class Escape(Atom):
+    _ALLOWED_ESCAPES = frozenset(['\\', '{', '}'])
+
+    def __init__(self, escape_seq):
+        assert escape_seq in Escape._ALLOWED_ESCAPES
+
+        self._escape_seq = escape_seq
+
+    @property
+    def escape_seq(self):
+        return self._escape_seq
+
+class Word(Atom):
+    _WORD_RE = re.compile(r'^\S+$')
+
+    def __init__(self, word_text):
+        assert isinstance(word_text, str)
+        assert Word._WORD_RE.match(word_text) is not None
+
+        self._word_text = word_text
+
+    @property
+    def word_text(self):
+        return self._word_text
+
+class Formula(Atom):
+    def __init__(self, formula_text):
+        assert isinstance(formula_text, str)
+
+        self._formula_text = formula_text
+
+    @property
+    def formula_text(self):
+        return self._formula_text
+
+class Text(object):
+    def __init__(self, atoms):
+        assert isinstance(atoms, list)
+        assert all(isinstance(a, Atom) for a in atoms)
+
+        self._atoms = atoms
+
+    @property
+    def atoms(self):
+        return self._atoms
+
 def UniformName(string):
     return ' '.join(string.split())
 
@@ -61,44 +110,6 @@ class Info(object):
     @property
     def nr_of_posts_in_feed(self):
         return self._nr_of_posts_in_feed
-
-class Atom(object):
-    pass
-
-class Word(object):
-    _WORD_RE = re.compile(r'^\S+$')
-
-    def __init__(self, text):
-        assert isinstance(text, str)
-        assert Word._WORD_RE.match(text) is not None
-
-        self._text = text
-
-    @property
-    def text(self):
-        return self._text
-
-class Escape(object):
-    _ALLOWED_ESCAPES = frozenset(['\\'])
-
-    def __init__(self, escape_seq):
-        assert escape_seq in _ALLOWED_ESCAPES
-
-        self._escape_seq = escape_seq
-
-    @property
-    def escape_seq(self):
-        return self._escape_seq
-
-class Formula(object):
-    def __init__(self, formula):
-        assert isinstance(formula, str)
-
-        self._formula = formula
-
-    @property
-    def formula(self):
-        return self._formula
 
 class Unit(object):
     pass

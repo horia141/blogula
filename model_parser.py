@@ -131,9 +131,9 @@ def _ParsePost(info, post_path, post_path_full):
                       root_section=root_section, path=post_path)
 
 def _ParsePostText(post_text):
-    new_c_pos = _SkipLines(post_text, 0)
+    new_c_pos = _SkipWhiteSpace(post_text, 0)
     (new_c_pos, series_raw) = _ParseSeriesHeader(post_text, new_c_pos)
-    new_c_pos = _SkipLines(post_text, new_c_pos)
+    new_c_pos = _SkipWhiteSpace(post_text, new_c_pos)
     (new_c_pos, tags_raw) = _ParseTagsHeader(post_text, new_c_pos)
     (new_c_pos, root_section) = _ParseSection(post_text, new_c_pos, 0, False)
 
@@ -142,7 +142,7 @@ def _ParsePostText(post_text):
 
     return (series_raw, tags_raw, root_section)
 
-def _SkipLines(text, c_pos):
+def _SkipWhiteSpace(text, c_pos):
     new_c_pos = c_pos
 
     while new_c_pos < len(text):
@@ -206,10 +206,10 @@ def _ParseSection(section_text, c_pos, level, has_title):
 
         title = title_match.group(1).strip()
         new_c_pos = title_match.end()
-        new_c_pos = _SkipLines(section_text, new_c_pos)
+        new_c_pos = _SkipWhiteSpace(section_text, new_c_pos)
     else:
         title = '.root'
-        new_c_pos = _SkipLines(section_text, c_pos)
+        new_c_pos = _SkipWhiteSpace(section_text, c_pos)
 
     (new_c_pos, paragraphs) = _ParseParagraphs(section_text, new_c_pos)
     sections = []
@@ -259,6 +259,89 @@ def _ParseParagraph(paragraph_text, c_pos):
     cleaned_text_lines = selected_text.split('\n')
     cleaned_text = ' '.join(l.strip() for l in cleaned_text_lines if l.strip())
 
-    new_c_pos = _SkipLines(paragraph_text, new_c_pos + skip)
+    new_c_pos = _SkipWhiteSpace(paragraph_text, new_c_pos + skip)
 
     return (new_c_pos, model.Paragraph(cleaned_text))
+
+def ParseText(text):
+    atoms = []
+    new_c_pos = _SkipWhiteSpace(text, 0)    
+
+    while new_c_pos < len(text):
+        (new_c_pos, atom) = _ParseAtom(text, new_c_pos)
+
+        if atom is None:
+            raise errors.Error('Could not parse text region')
+
+        atoms.append(atom)
+        new_c_pos = _SkipWhiteSpace(text, new_c_pos)
+
+    return model.Text(atoms)
+
+def _ParseAtom(text, c_pos):
+    (new_c_pos, escape) = _ParseEscape(text, c_pos)
+
+    if escape is not None:
+        return (new_c_pos, escape)
+
+    (new_c_pos, word) = _ParseWord(text, c_pos)
+
+    if word is not None:
+        return (new_c_pos, word)
+
+    (new_c_pos, formula) = _ParseFormula(text, c_pos)
+
+    if formula is not None:
+        return (new_c_pos, formula)
+
+    return (c_pos, None)
+
+def _ParseEscape(text, c_pos):
+    if text[c_pos:c_pos+6] == '\\slash':
+        return (c_pos + 6, model.Escape('\\'))
+    elif text[c_pos:c_pos+11] == '\\brace-beg':
+        return (c_pos + 1, model.Escape('{'))
+    elif text[c_pos:c_pos+11] == '\\brace-end':
+        return (c_pos + 1, model.Escape('}'))
+    else:
+        return (c_pos, None)
+
+_WORD_RE = re.compile(r'(\w+)', flags=re.UNICODE)
+
+def _ParseWord(text, c_pos):
+    word_match = _WORD_RE.match(text, c_pos)
+
+    if word_match is None:
+        return (c_pos, None)
+
+    return (word_match.end(0), model.Word(word_match.group(1)))
+
+def _ParseFormula(text, c_pos):
+    print text[c_pos:]
+    if text[c_pos:c_pos+2] != '\\f':
+        return (c_pos, None)
+
+    brace_counter = 0
+    new_c_pos = c_pos + 2
+    start_pos = None
+
+    while new_c_pos < len(text):
+        if text[new_c_pos] == '{':
+            if brace_counter == 0:
+                start_pos = new_c_pos + 1
+                
+            brace_counter = brace_counter + 1
+        elif text[new_c_pos] == '}':
+            if brace_counter > 1:
+                brace_counter = brace_counter - 1
+            elif brace_counter == 1:
+                formula_text = text[start_pos:new_c_pos]
+                return (new_c_pos + 1, model.Formula(formula_text))
+            else:
+                raise errors.Error('Invalid formula')
+        elif brace_counter == 0:
+            raise errors.Error('Invalid formula')
+            
+        new_c_pos = new_c_pos + 1
+
+    raise errors.Error('Invalid formula')
