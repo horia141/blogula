@@ -1,4 +1,5 @@
 import datetime
+import re
 
 def UniformName(string):
     return ' '.join(string.split())
@@ -61,18 +62,57 @@ class Info(object):
     def nr_of_posts_in_feed(self):
         return self._nr_of_posts_in_feed
 
-class Unit(object):
+class Atom(object):
     pass
 
-class Paragraph(Unit):
+class Word(object):
+    _WORD_RE = re.compile(r'^\S+$')
+
     def __init__(self, text):
         assert isinstance(text, str)
+        assert Word._WORD_RE.match(text) is not None
 
         self._text = text
 
     @property
     def text(self):
         return self._text
+
+class Escape(object):
+    _ALLOWED_ESCAPES = frozenset(['\\'])
+
+    def __init__(self, escape_seq):
+        assert escape_seq in _ALLOWED_ESCAPES
+
+        self._escape_seq = escape_seq
+
+    @property
+    def escape_seq(self):
+        return self._escape_seq
+
+class Formula(object):
+    def __init__(self, formula):
+        assert isinstance(formula, str)
+
+        self._formula = formula
+
+    @property
+    def formula(self):
+        return self._formula
+
+class Unit(object):
+    pass
+
+class Paragraph(Unit):
+    def __init__(self, atoms):
+        assert isinstance(atoms, list)
+        assert all(isinstance(a, Atom) for a in atoms)
+
+        self._atoms = atoms
+
+    @property
+    def atoms(self):
+        return self._atoms
 
 class Section(Unit):
     def __init__(self, title, paragraphs, subsections):
