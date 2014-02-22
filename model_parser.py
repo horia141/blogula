@@ -279,32 +279,17 @@ def ParseText(text):
     return model.Text(atoms)
 
 def _ParseAtom(text, c_pos):
-    (new_c_pos, escape) = _ParseEscape(text, c_pos)
-
-    if escape is not None:
-        return (new_c_pos, escape)
-
     (new_c_pos, word) = _ParseWord(text, c_pos)
 
     if word is not None:
         return (new_c_pos, word)
 
-    (new_c_pos, formula) = _ParseFormula(text, c_pos)
+    (new_c_pos, function) = _ParseFunction(text, c_pos)
 
-    if formula is not None:
-        return (new_c_pos, formula)
+    if function is not None:
+        return (new_c_pos, function)
 
     return (c_pos, None)
-
-def _ParseEscape(text, c_pos):
-    if text[c_pos:c_pos+6] == '\\slash':
-        return (c_pos + 6, model.Escape('\\'))
-    elif text[c_pos:c_pos+11] == '\\brace-beg':
-        return (c_pos + 1, model.Escape('{'))
-    elif text[c_pos:c_pos+11] == '\\brace-end':
-        return (c_pos + 1, model.Escape('}'))
-    else:
-        return (c_pos, None)
 
 _WORD_RE = re.compile(r'(\w+)', flags=re.UNICODE)
 
@@ -316,32 +301,46 @@ def _ParseWord(text, c_pos):
 
     return (word_match.end(0), model.Word(word_match.group(1)))
 
-def _ParseFormula(text, c_pos):
-    print text[c_pos:]
-    if text[c_pos:c_pos+2] != '\\f':
+def _ParseFunction(text, c_pos):
+    if text[c_pos] != '\\':
         return (c_pos, None)
 
-    brace_counter = 0
-    new_c_pos = c_pos + 2
-    start_pos = None
+    new_c_pos = c_pos + 1
+
+    name_match = _WORD_RE.match(text, new_c_pos)
+
+    if name_match is None:
+        raise errors.Error('Invalid function')
+
+    name = name_match.group(1)
+    new_c_pos = name_match.end(0)
+    arg_list = []
 
     while new_c_pos < len(text):
-        if text[new_c_pos] == '{':
-            if brace_counter == 0:
-                start_pos = new_c_pos + 1
-                
-            brace_counter = brace_counter + 1
-        elif text[new_c_pos] == '}':
-            if brace_counter > 1:
-                brace_counter = brace_counter - 1
-            elif brace_counter == 1:
-                formula_text = text[start_pos:new_c_pos]
-                return (new_c_pos + 1, model.Formula(formula_text))
-            else:
-                raise errors.Error('Invalid formula')
-        elif brace_counter == 0:
-            raise errors.Error('Invalid formula')
-            
-        new_c_pos = new_c_pos + 1
+        brace_counter = 0
+        start_pos = new_c_pos + 1
+        found_arg = False
 
-    raise errors.Error('Invalid formula')
+        while new_c_pos < len(text):
+            if text[new_c_pos] == '{':
+                brace_counter = brace_counter + 1
+            elif text[new_c_pos] == '}':
+                if brace_counter > 1:
+                    brace_counter = brace_counter - 1
+                elif brace_counter == 1:
+                    arg = text[start_pos:new_c_pos]
+                    arg_list.append(arg)
+                    new_c_pos = new_c_pos + 1
+                    found_arg = True
+                    break
+                else:
+                    raise errors.Error('Invalid function')
+            elif brace_counter == 0:
+                break
+            
+            new_c_pos = new_c_pos + 1
+
+        if not found_arg:
+            break
+
+    return (new_c_pos, model.Function(name, arg_list))

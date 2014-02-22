@@ -4,40 +4,32 @@ import re
 class Atom(object):
     pass
 
-class Escape(Atom):
-    _ALLOWED_ESCAPES = frozenset(['\\', '{', '}'])
-
-    def __init__(self, escape_seq):
-        assert escape_seq in Escape._ALLOWED_ESCAPES
-
-        self._escape_seq = escape_seq
-
-    @property
-    def escape_seq(self):
-        return self._escape_seq
-
 class Word(Atom):
-    _WORD_RE = re.compile(r'^\S+$')
+    def __init__(self, text):
+        assert isinstance(text, str)
 
-    def __init__(self, word_text):
-        assert isinstance(word_text, str)
-        assert Word._WORD_RE.match(word_text) is not None
-
-        self._word_text = word_text
+        self._text = text
 
     @property
-    def word_text(self):
-        return self._word_text
+    def text(self):
+        return self._text
 
-class Formula(Atom):
-    def __init__(self, formula_text):
-        assert isinstance(formula_text, str)
-
-        self._formula_text = formula_text
+class Function(Atom):
+    def __init__(self, name, arg_list):
+        assert isinstance(name, str)
+        assert isinstance(arg_list, list)
+        assert all(isinstance(a, str) for a in arg_list)
+        
+        self._name = name
+        self._arg_list = arg_list
 
     @property
-    def formula_text(self):
-        return self._formula_text
+    def name(self):
+        return self._name
+
+    @property
+    def arg_list(self):
+        return self._arg_list
 
 class Text(object):
     def __init__(self, atoms):
