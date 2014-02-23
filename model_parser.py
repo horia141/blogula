@@ -29,7 +29,7 @@ def _ParseInfo(info_path):
     title_raw = utils.Extract(info_raw, 'Title', str)
     title = ParseText(title_raw.strip())
     url = utils.Extract(info_raw, 'URL', str)
-    author = model.UniformName(utils.Extract(info_raw, 'Author', str))
+    author = ' '.join(utils.Extract(info_raw, 'Author', str).split())
     email = utils.Extract(info_raw, 'Email', str).strip()
     avatar_path = utils.Extract(info_raw, 'AvatarPath', str)
     description_raw = utils.Extract(info_raw, 'Description', str)
