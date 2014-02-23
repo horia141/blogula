@@ -74,9 +74,6 @@ class Text(object):
 def UniformName(string):
     return ' '.join(string.split())
 
-def UniformPath(path):
-    return '_'.join(path.lower().split(' '))
-
 class Info(object):
     def __init__(self, title, url, author, email, avatar_path, description, 
                  series, nr_of_posts_in_feed):

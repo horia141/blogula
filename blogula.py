@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import re
 import shutil
 import StringIO
 
@@ -144,11 +145,27 @@ class SiteBuilder(object):
         self._info = info
         self._post_db = post_db
 
+    @staticmethod
+    def _UniformPath(path):
+        def EliminateNonAlpha(word):
+            good_word_file = StringIO.StringIO()
+
+            for ch in word:
+                if re.match('[a-z0-9_]', ch):
+                    good_word_file.write(ch)
+
+            good_word = good_word_file.getvalue()
+            good_word_file.close()
+
+            return good_word
+
+        return '_'.join(EliminateNonAlpha(w) for w in path.lower().split(' '))
+
     def _UrlForPost(self, post):
         return os.path.join(
             '/',
             self._config.output_posts_dir,
-            model.UniformPath(SiteBuilder._EvaluateTextToText(post.title))) + '.html'
+            SiteBuilder._UniformPath(SiteBuilder._EvaluateTextToText(post.title))) + '.html'
 
     def _GenerateHomepage(self):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
@@ -280,7 +297,7 @@ class SiteBuilder(object):
 
         for post in self._post_db.post_map.itervalues():
             postpage_unit = self._GeneratePostpage(post)
-            posts_dir.Add(model.UniformPath(SiteBuilder._EvaluateTextToText(post.title)) + '.html', postpage_unit)
+            posts_dir.Add(SiteBuilder._UniformPath(SiteBuilder._EvaluateTextToText(post.title)) + '.html', postpage_unit)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
 
