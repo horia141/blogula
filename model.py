@@ -10,6 +10,15 @@ class Word(Atom):
 
         self._text = text
 
+    def __hash__(self):
+        return hash(self._text)
+
+    def __eq__(self, other):
+        if not isinstance(other, Word):
+            return False
+
+        return self._text == other._text
+
     @property
     def text(self):
         return self._text
@@ -22,6 +31,16 @@ class Function(Atom):
         
         self._name = name
         self._arg_list = arg_list
+
+    def __hash__(self):
+        return hash((self._name, tuple(self._arg_list)))
+
+    def __eq__(self, other):
+        if not isinstance(other, Function):
+            return False
+
+        return self._name == other._name and len(self._arg_list) == len(other._arg_list) and \
+            all(x == y for (x,y) in zip(self._arg_list, other._arg_list))
 
     @property
     def name(self):
@@ -37,6 +56,16 @@ class Text(object):
         assert all(isinstance(a, Atom) for a in atoms)
 
         self._atoms = atoms
+
+    def __hash__(self):
+        return hash(tuple(self._atoms))
+
+    def __eq__(self, other):
+        if not isinstance(other, Text):
+            return False
+
+        return len(self._atoms) == len(other._atoms) and \
+            all(x == y for (x,y) in zip(self._atoms, other._atoms))
 
     @property
     def atoms(self):
@@ -58,7 +87,7 @@ class Info(object):
         assert isinstance(avatar_path, str)
         assert isinstance(description, Text)
         assert isinstance(series, frozenset)
-        assert all(isinstance(s, str) for s in series)
+        assert all(isinstance(s, Text) for s in series)
         assert isinstance(nr_of_posts_in_feed, int)
         assert nr_of_posts_in_feed > 0
 

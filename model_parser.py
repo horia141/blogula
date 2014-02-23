@@ -40,7 +40,7 @@ def _ParseInfo(info_path):
     if not all(isinstance(s, str) for s in series_raw):
         raise errors.Error('Invalid Series entry')
 
-    series = frozenset(model.UniformName(s) for s in series_raw)
+    series = frozenset(ParseText(s.strip()) for s in series_raw)
 
     nr_of_posts_in_feed = utils.Extract(info_raw, 'NrOfPostsInFeed', int)
 
@@ -126,7 +126,7 @@ def _ParsePost(info, post_path, post_path_full):
 
     (series_raw, tags_raw, root_section) = _ParsePostText(post_text)
 
-    series = [model.UniformName(t) for t in series_raw.split(',')] if series_raw else []
+    series = [ParseText(t) for t in series_raw.split(',')] if series_raw else []
     tags = [model.UniformName(t) for t in tags_raw.split(',')] if tags_raw else []
 
     return model.Post(info=info, title=title, date=date, delta=delta, series=series, tags=tags, 

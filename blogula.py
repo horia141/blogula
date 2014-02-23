@@ -217,7 +217,7 @@ class SiteBuilder(object):
 
         for s in post.series:
             postpage_template.post['series'].append({})
-            postpage_template.post['series'][-1]['title'] = s
+            postpage_template.post['series'][-1]['title_html'] = SiteBuilder._EvaluateTextToHTML(s)
 
             if post.prev_post_by_series[s] is not None:
                 postpage_template.post['series'][-1]['prev_post'] = {}
