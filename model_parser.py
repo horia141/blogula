@@ -207,11 +207,11 @@ def _ParseSection(section_text, c_pos, level, has_title):
         if title_match is None:
             return (c_pos, None)
 
-        title = title_match.group(1).strip()
+        title = ParseText(title_match.group(1).strip())
         new_c_pos = title_match.end()
         new_c_pos = _SkipWhiteSpace(section_text, new_c_pos)
     else:
-        title = '.root'
+        title = model.Text([model.Word('.root')])
         new_c_pos = _SkipWhiteSpace(section_text, c_pos)
 
     (new_c_pos, paragraphs) = _ParseParagraphs(section_text, new_c_pos)

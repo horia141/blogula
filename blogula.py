@@ -414,7 +414,7 @@ class SiteBuilder(object):
             line_units[-1]['level'] = \
                 min(config.presentation_article_subtitle_heading_level_min + level - 1,
                     config.presentation_article_subtitle_heading_level_max)
-            line_units[-1]['text'] = section.title
+            line_units[-1]['text_html'] = SiteBuilder._EvaluateTextToHTML(section.title)
 
         for paragraph in section.paragraphs:
             line_units.append({})

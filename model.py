@@ -141,7 +141,7 @@ class Paragraph(Unit):
 
 class Section(Unit):
     def __init__(self, title, paragraphs, subsections):
-        assert isinstance(title, str)
+        assert isinstance(title, Text)
         assert isinstance(paragraphs, list)
         assert all(isinstance(p, Paragraph) for p in paragraphs)
         assert isinstance(subsections, list)

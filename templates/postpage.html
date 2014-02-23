@@ -25,7 +25,7 @@
 
         #for $lineunit in $post.lineunits
         #if $lineunit.type == 'header'
-        <h$lineunit.level>$lineunit.text</h$lineunit.level>
+        <h$lineunit.level>$lineunit.text_html</h$lineunit.level>
         #else if $lineunit.type == 'paragraph'
         <p class="text-justify">lineunit.text</p>
         #else
