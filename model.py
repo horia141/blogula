@@ -131,7 +131,7 @@ class Unit(object):
 
 class Paragraph(Unit):
     def __init__(self, text):
-        assert isinstance(text, str)
+        assert isinstance(text, Text)
 
         self._text = text
 

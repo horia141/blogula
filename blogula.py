@@ -182,7 +182,7 @@ class SiteBuilder(object):
         for post in self._post_db.post_map.itervalues():
             homepage_template.posts.append({})
             homepage_template.posts[-1]['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
-            homepage_template.posts[-1]['description'] = post.description
+            homepage_template.posts[-1]['description_html'] = SiteBuilder._EvaluateTextToHTML(post.description)
             homepage_template.posts[-1]['tags_html'] = [SiteBuilder._EvaluateTextToHTML(t) for t in post.tags]
             homepage_template.posts[-1]['url'] = self._UrlForPost(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
@@ -212,7 +212,7 @@ class SiteBuilder(object):
         postpage_template.post = {}
         postpage_template.post['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
         postpage_template.post['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
-        postpage_template.post['description'] = post.description
+        postpage_template.post['description_text'] = SiteBuilder._EvaluateTextToText(post.description)
         postpage_template.post['lineunits'] = \
             SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
         postpage_template.post['tags_html'] = [SiteBuilder._EvaluateTextToHTML(t) for t in post.tags]
@@ -277,7 +277,7 @@ class SiteBuilder(object):
             feedpage_template.posts.append({})
             feedpage_template.posts[-1]['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
             feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
-            feedpage_template.posts[-1]['description'] = post.description
+            feedpage_template.posts[-1]['description_text'] = SiteBuilder._EvaluateTextToText(post.description)
             feedpage_template.posts[-1]['tags_text'] = [SiteBuilder._EvaluateTextToText(t) for t in post.tags]
             feedpage_template.posts[-1]['pub_date_str'] = post.date.strftime('%A, %d %B %Y 00:00:00 %Z')
 
@@ -419,7 +419,7 @@ class SiteBuilder(object):
         for paragraph in section.paragraphs:
             line_units.append({})
             line_units[-1]['type'] = 'paragraph'
-            line_units[-1]['text'] = paragraph.text
+            line_units[-1]['text_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.text)
 
         for subsection in section.subsections:
             line_units.extend(SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1))

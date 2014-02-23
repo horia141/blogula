@@ -261,10 +261,11 @@ def _ParseParagraph(paragraph_text, c_pos):
     selected_text = paragraph_text[c_pos:new_c_pos]
     cleaned_text_lines = selected_text.split('\n')
     cleaned_text = ' '.join(l.strip() for l in cleaned_text_lines if l.strip())
+    text = ParseText(cleaned_text)
 
     new_c_pos = _SkipWhiteSpace(paragraph_text, new_c_pos + skip)
 
-    return (new_c_pos, model.Paragraph(cleaned_text))
+    return (new_c_pos, model.Paragraph(text))
 
 def ParseText(text):
     atoms = []

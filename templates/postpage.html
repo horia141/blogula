@@ -7,7 +7,7 @@
     <title>$post.title_text - $info.title_text</title>
 
     <meta name="author" content="$info.author">
-    <meta name="description" content="$post.description">
+    <meta name="description" content="$post.description_text">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
@@ -27,7 +27,7 @@
         #if $lineunit.type == 'header'
         <h$lineunit.level>$lineunit.text_html</h$lineunit.level>
         #else if $lineunit.type == 'paragraph'
-        <p class="text-justify">lineunit.text</p>
+        <p class="text-justify">$lineunit.text_html</p>
         #else
           #raise errors.Error('Invalid paragraph type')
         #end if

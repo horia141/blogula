@@ -18,7 +18,7 @@
   <item>
     <title>$post.title_text</title>
     <link>http://$info.url$post.url</link>
-    <description>$post.description</description>
+    <description>$post.description_text</description>
     <author>$info.email</author>
     #if len($post.tags_text) >= 1
     <category domain="http://$info.url/tags">
