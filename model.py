@@ -71,9 +71,6 @@ class Text(object):
     def atoms(self):
         return self._atoms
 
-def UniformName(string):
-    return ' '.join(string.split())
-
 class Info(object):
     def __init__(self, title, url, author, email, avatar_path, description, 
                  series, nr_of_posts_in_feed):
@@ -174,7 +171,7 @@ class Post(object):
         assert isinstance(series, list)
         assert all(s in info.series for s in series)
         assert isinstance(tags, list)
-        assert all(isinstance(t, str) for t in tags)
+        assert all(isinstance(t, Text) for t in tags)
         assert isinstance(root_section, Section)
         assert isinstance(path, str)
 

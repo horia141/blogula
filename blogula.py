@@ -183,7 +183,7 @@ class SiteBuilder(object):
             homepage_template.posts.append({})
             homepage_template.posts[-1]['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
             homepage_template.posts[-1]['description'] = post.description
-            homepage_template.posts[-1]['tags'] = post.tags
+            homepage_template.posts[-1]['tags_html'] = [SiteBuilder._EvaluateTextToHTML(t) for t in post.tags]
             homepage_template.posts[-1]['url'] = self._UrlForPost(post)
             homepage_template.posts[-1]['date_str'] = post.date.strftime('%d %B %Y')
 
@@ -215,7 +215,7 @@ class SiteBuilder(object):
         postpage_template.post['description'] = post.description
         postpage_template.post['lineunits'] = \
             SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
-        postpage_template.post['tags'] = post.tags
+        postpage_template.post['tags_html'] = [SiteBuilder._EvaluateTextToHTML(t) for t in post.tags]
 
         if post.prev_post is not None:
             postpage_template.post['prev_post'] = {}
@@ -278,7 +278,7 @@ class SiteBuilder(object):
             feedpage_template.posts[-1]['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
             feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
             feedpage_template.posts[-1]['description'] = post.description
-            feedpage_template.posts[-1]['tags'] = post.tags
+            feedpage_template.posts[-1]['tags_text'] = [SiteBuilder._EvaluateTextToText(t) for t in post.tags]
             feedpage_template.posts[-1]['pub_date_str'] = post.date.strftime('%A, %d %B %Y 00:00:00 %Z')
 
         feedpage_template.posts.reverse()

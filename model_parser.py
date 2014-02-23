@@ -128,7 +128,7 @@ def _ParsePost(info, post_path, post_path_full):
     (series_raw, tags_raw, root_section) = _ParsePostText(post_text)
 
     series = [ParseText(t) for t in series_raw.split(',')] if series_raw else []
-    tags = [model.UniformName(t) for t in tags_raw.split(',')] if tags_raw else []
+    tags = [ParseText(t) for t in tags_raw.split(',')] if tags_raw else []
 
     return model.Post(info=info, title=title, date=date, delta=delta, series=series, tags=tags, 
                       root_section=root_section, path=post_path)

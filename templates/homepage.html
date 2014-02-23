@@ -24,12 +24,12 @@
         <h$presentation.article_title_heading_level><a href="$post.url">$post.title_html</a></h$presentation.article_title_heading_level>
         <p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
         
-        #if len($post.tags) >= 1
+        #if len($post.tags_html) >= 1
         <div>Tags:
-          #for i in range(len($post.tags)-1)
-          $post.tags[i],
+          #for i in range(len($post.tags_html)-1)
+          $post.tags_html[i],
           #end for
-          $post.tags[len($post.tags)-1]
+          $post.tags_html[len($post.tags_html)-1]
         </div>
         #end if
         #end for

@@ -33,12 +33,12 @@
         #end if
         #end for
 
-        #if len($post.tags) >= 1
+        #if len($post.tags_html) >= 1
         <p>Tags:
-          #for i in range(len($post.tags)-1)
-           $post.tags[i],
+          #for i in range(len($post.tags_html)-1)
+           $post.tags_html[i],
           #end for
-          $post.tags[len($post.tags)-1]
+          $post.tags_html[len($post.tags_html)-1]
         </p>
         #end if
 
