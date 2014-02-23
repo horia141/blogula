@@ -109,7 +109,8 @@ def _ParsePost(info, post_path, post_path_full):
 
     post_text = utils.QuickRead(post_path_full)
 
-    title = model.UniformName(match_obj.group(5))
+    title_raw = match_obj.group(5)
+    title = ParseText(title_raw.strip())
 
     try:
         year = int(match_obj.group(1), 10)

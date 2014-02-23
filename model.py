@@ -172,7 +172,7 @@ class Section(Unit):
 class Post(object):
     def __init__(self, info, title, date, delta, series, tags, root_section, path):
         assert isinstance(info, Info)
-        assert isinstance(title, str)
+        assert isinstance(title, Text)
         assert isinstance(date, datetime.date)
         assert isinstance(series, list)
         assert all(s in info.series for s in series)

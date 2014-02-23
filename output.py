@@ -53,8 +53,8 @@ class Dir(Unit):
         assert isinstance(path, str)
         assert isinstance(unit, Unit)
 
-        if re.match(r'^[-a-zA-Z_0-9.]+$', path) is None:
-            raise errors.Error('Invalid output path "%s"' % path)
+        # if re.match(r'^[-a-zA-Z_0-9.]+$', path) is None:
+        #    raise errors.Error('Invalid output path "%s"' % path)
 
         if path in self._units:
             raise errors.Error('Path "%s" already exists in directory' % path)

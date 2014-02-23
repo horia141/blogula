@@ -4,7 +4,7 @@
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en">
   <head>
-    <title>$post.title - $info.title_text</title>
+    <title>$post.title_text - $info.title_text</title>
 
     <meta name="author" content="$info.author">
     <meta name="description" content="$post.description">
@@ -21,7 +21,7 @@
   <body>
     <div class="row">
       <div class="small-8 large-8 columns">
-        <h$presentation.article_title_heading_level>$post.title</h$presentation.article_title_heading_level>
+        <h$presentation.article_title_heading_level>$post.title_html</h$presentation.article_title_heading_level>
 
         #for $lineunit in $post.lineunits
         #if $lineunit.type == 'header'
@@ -47,7 +47,7 @@
 
           <div class="small-6 small-6 columns text-left">
             #if $post.prev_post
-            <a href="$post.prev_post.url">$post.prev_post.title</a>
+            <a href="$post.prev_post.url">$post.prev_post.title_html</a>
             #else
             <a href="/">Home</a>
             #end if
@@ -55,7 +55,7 @@
 
           <div class="small-6 small-6 columns text-right">
             #if $post.next_post
-            <a href="$post.next_post.url">$post.next_post.title</a>
+            <a href="$post.next_post.url">$post.next_post.title_html</a>
             #else
             <a href="/">Home</a>
             #end if
@@ -68,7 +68,7 @@
 
           <div class="small-6 small-6 columns text-left">
             #if $s.prev_post
-            <a href="$s.prev_post.url">$s.prev_post.title</a>
+            <a href="$s.prev_post.url">$s.prev_post.title_html</a>
             #else
             <a href="/">Home</a>
             #end if
@@ -76,7 +76,7 @@
 
           <div class="small-6 small-6 columns text-right">
             #if $s.next_post
-            <a href="$s.next_post.url">$s.next_post.title</a>
+            <a href="$s.next_post.url">$s.next_post.title_html</a>
             #else
             <a href="/">Home</a>
             #end if

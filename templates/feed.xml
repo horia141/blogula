@@ -16,7 +16,7 @@
 
   #for $post in $posts
   <item>
-    <title>$post.title</title>
+    <title>$post.title_text</title>
     <link>http://$info.url$post.url</link>
     <description>$post.description</description>
     <author>$info.email</author>

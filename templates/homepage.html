@@ -21,7 +21,7 @@
     <div class="row">
       <div class="small-8 large-8 columns">
         #for $post in $posts
-        <h$presentation.article_title_heading_level><a href="$post.url">$post.title</a></h$presentation.article_title_heading_level>
+        <h$presentation.article_title_heading_level><a href="$post.url">$post.title_html</a></h$presentation.article_title_heading_level>
         <p class="text-justify">$post.description [ $post.date_str ] [ <a href="$post.url">more</a> ]</p>
         
         #if len($post.tags) >= 1

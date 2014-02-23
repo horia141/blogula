@@ -148,7 +148,7 @@ class SiteBuilder(object):
         return os.path.join(
             '/',
             self._config.output_posts_dir,
-            model.UniformPath(post.title)) + '.html'
+            model.UniformPath(SiteBuilder._EvaluateTextToText(post.title))) + '.html'
 
     def _GenerateHomepage(self):
         homepage_template_text = utils.QuickRead(self._config.template_homepage_path)
@@ -164,7 +164,7 @@ class SiteBuilder(object):
 
         for post in self._post_db.post_map.itervalues():
             homepage_template.posts.append({})
-            homepage_template.posts[-1]['title'] = post.title
+            homepage_template.posts[-1]['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
             homepage_template.posts[-1]['description'] = post.description
             homepage_template.posts[-1]['tags'] = post.tags
             homepage_template.posts[-1]['url'] = self._UrlForPost(post)
@@ -193,7 +193,8 @@ class SiteBuilder(object):
         postpage_template.info['description_html'] = SiteBuilder._EvaluateTextToHTML(self._info.description)
 
         postpage_template.post = {}
-        postpage_template.post['title'] = post.title
+        postpage_template.post['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
+        postpage_template.post['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
         postpage_template.post['description'] = post.description
         postpage_template.post['lineunits'] = \
             SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
@@ -202,14 +203,14 @@ class SiteBuilder(object):
         if post.prev_post is not None:
             postpage_template.post['prev_post'] = {}
             postpage_template.post['prev_post']['url'] = self._UrlForPost(post.prev_post)
-            postpage_template.post['prev_post']['title'] = post.prev_post.title
+            postpage_template.post['prev_post']['title_html'] = SiteBuilder._EvaluateTextToHTML(post.prev_post.title)
         else:
             postpage_template.post['prev_post'] = None
 
         if post.next_post is not None:
             postpage_template.post['next_post'] = {}
             postpage_template.post['next_post']['url'] = self._UrlForPost(post.next_post)
-            postpage_template.post['next_post']['title'] = post.next_post.title
+            postpage_template.post['next_post']['title_html'] = SiteBuilder._EvaluateTextToHTML(post.next_post.title)
         else:
             postpage_template.post['next_post'] = None
 
@@ -222,14 +223,14 @@ class SiteBuilder(object):
             if post.prev_post_by_series[s] is not None:
                 postpage_template.post['series'][-1]['prev_post'] = {}
                 postpage_template.post['series'][-1]['prev_post']['url'] = self._UrlForPost(post.prev_post_by_series[s])
-                postpage_template.post['series'][-1]['prev_post']['title'] = post.prev_post_by_series[s].title
+                postpage_template.post['series'][-1]['prev_post']['title_html'] = SiteBuilder._EvaluateTextToHTML(post.prev_post_by_series[s].title)
             else:
                 postpage_template.post['series'][-1]['prev_post'] = None
 
             if post.next_post_by_series[s] is not None:
                 postpage_template.post['series'][-1]['next_post'] = {}
                 postpage_template.post['series'][-1]['next_post']['url'] = self._UrlForPost(post.next_post_by_series[s])
-                postpage_template.post['series'][-1]['next_post']['title'] = post.next_post_by_series[s].title
+                postpage_template.post['series'][-1]['next_post']['title_html'] = SiteBuilder._EvaluateTextToHTML(post.next_post_by_series[s].title)
             else:
                 postpage_template.post['series'][-1]['next_post'] = None
 
@@ -257,7 +258,7 @@ class SiteBuilder(object):
 
         for post in self._post_db.post_map.values()[-self._info.nr_of_posts_in_feed:]:
             feedpage_template.posts.append({})
-            feedpage_template.posts[-1]['title'] = post.title
+            feedpage_template.posts[-1]['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
             feedpage_template.posts[-1]['url'] = self._UrlForPost(post)
             feedpage_template.posts[-1]['description'] = post.description
             feedpage_template.posts[-1]['tags'] = post.tags
@@ -279,7 +280,7 @@ class SiteBuilder(object):
 
         for post in self._post_db.post_map.itervalues():
             postpage_unit = self._GeneratePostpage(post)
-            posts_dir.Add(model.UniformPath(post.title) + '.html', postpage_unit)
+            posts_dir.Add(model.UniformPath(SiteBuilder._EvaluateTextToText(post.title)) + '.html', postpage_unit)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
 
