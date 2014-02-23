@@ -389,9 +389,9 @@ class SiteBuilder(object):
                     html_file.write('}')
                     html_file.write(' ')
                 elif atom.name == 'f':
-                    html_file.write('$')
+                    html_file.write('\(')
                     html_file.write(atom.arg_list[0])
-                    html_file.write('$')
+                    html_file.write('\)')
                     html_file.write(' ')
                 else:
                     raise errors.Error('Unknown function')

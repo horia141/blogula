@@ -96,10 +96,14 @@
     <script src="/foundation/js/foundation.min.js"></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
-        tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+        jax: ["input/TeX","output/SVG"],
+        SVG: {
+          scale: 75,
+          linebreaks: true
+        }
       });
-    </script>
-    <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </script>    
+    <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG"></script>
     <script>
       #raw
       $(document).foundation();
