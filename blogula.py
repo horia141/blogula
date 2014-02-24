@@ -359,10 +359,16 @@ class SiteBuilder(object):
                 elif atom.name == 'f':
                     text_file.write(atom.arg_list[0])
                     text_file.write(' ')
+                elif atom.name == 'def':
+                    text_file.write(atom.arg_list[0])
+                    text_file.write(' ')
+                elif atom.name == 'ref':
+                    text_file.write(atom.arg_list[0])
+                    text_file.write(' ')
                 else:
-                    raise errors.Error('Unknown function')
+                    print('Unknown function %s - skipping' % atom.name)
             else:
-                raise errors.Error('Unknown function')
+                raise errors.Error('Unknown atom')
 
         text_file.seek(-1, 2)
         text_str = text_file.getvalue()
@@ -393,10 +399,20 @@ class SiteBuilder(object):
                     html_file.write(atom.arg_list[0])
                     html_file.write('\)')
                     html_file.write(' ')
+                elif atom.name == 'def':
+                    html_file.write('<strong>')
+                    html_file.write(atom.arg_list[0])
+                    html_file.write('</strong>')
+                    html_file.write(' ')
+                elif atom.name == 'ref':
+                    html_file.write('<a href="#">')
+                    html_file.write(atom.arg_list[0])
+                    html_file.write('</a>')
+                    html_file.write(' ')
                 else:
-                    raise errors.Error('Unknown function')
+                    print('Unknown function %s - skipping' % atom.name)
             else:
-                raise errors.Error('Unknown function')
+                raise errors.Error('Unknown atom')
 
         html_file.seek(-1, 2)
         html_str = html_file.getvalue()
