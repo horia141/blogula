@@ -41,6 +41,7 @@ class Token(object):
         assert token_type in Token._TOKEN_TYPES
         assert isinstance(content, str)
         assert isinstance(source_pos, SourcePos)
+        assert len(content) == source_pos.end_char - source_pos.start_char
 
         self._token_type = token_type
         self._content = content
@@ -156,7 +157,7 @@ def _TryBlob(text, c_pos, c_line):
     source_pos = SourcePos(c_line, new_line, c_pos, new_pos)
     token = Token('blob', text[c_pos:new_pos], source_pos)
 
-    return (new_pos, c_pos, token)
+    return (new_pos, new_line, token)
 
 def _TrySlash(text, c_pos, c_line):
     if text[c_pos] != '\\':
@@ -184,10 +185,10 @@ def _TryParagraphEnd(text, c_pos, c_line):
     saw_end = False
 
     while 1:
-        new_pos = _SkipWS(text, new_pos, c_line)
+        new_new_pos = _SkipWS(text, new_pos, c_line)
 
-        if text[new_pos:new_pos+1] == '\n':
-            new_pos = new_pos + 1
+        if text[new_new_pos:new_new_pos+1] == '\n':
+            new_pos = new_new_pos + 1
             new_line = new_line + 1
             saw_end = True
         else:
