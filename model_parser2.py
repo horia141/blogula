@@ -18,6 +18,15 @@ class SourcePos(object):
         self._start_char = start_char
         self._end_char = end_char
 
+    def __eq__(self, other):
+        if not isinstance(other, SourcePos):
+            return False
+
+        return (self._start_line == other._start_line and
+                self._end_line == other._end_line and
+                self._start_char == other._start_char and
+                self._end_char == other._end_char)
+
     @property
     def start_line(self):
         return self._start_line
@@ -41,7 +50,6 @@ class Token(object):
         assert token_type in Token._TOKEN_TYPES
         assert isinstance(content, str)
         assert isinstance(source_pos, SourcePos)
-        assert len(content) == source_pos.end_char - source_pos.start_char
 
         self._token_type = token_type
         self._content = content
@@ -49,6 +57,14 @@ class Token(object):
 
     def __repr__(self):
         return '%s (%s)' % (self._token_type , self._content)
+
+    def __eq__(self, other):
+        if not isinstance(other, Token):
+            return False
+
+        return (self._token_type == other._token_type and
+                self._content == other._content and
+                self._source_pos == other._source_pos)
 
     @property
     def token_type(self):
@@ -155,7 +171,7 @@ def _TryBlob(text, c_pos, c_line):
         raise errors.Error('B')
 
     source_pos = SourcePos(c_line, new_line, c_pos, new_pos)
-    token = Token('blob', text[c_pos:new_pos], source_pos)
+    token = Token('blob', text[c_pos+1:new_pos-1], source_pos)
 
     return (new_pos, new_line, token)
 
