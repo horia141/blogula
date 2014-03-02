@@ -128,6 +128,7 @@ def _Tokenize(text):
         c_pos = c_pos + 1
         c_line = c_line + 1
 
+        c_pos = _SkipWS(text, c_pos, c_line)
         (new_pos, new_line, paragraph_end) = _TryParagraphEnd(text, c_pos, c_line)
 
         if paragraph_end:
