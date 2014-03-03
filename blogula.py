@@ -11,7 +11,7 @@ import Cheetah.Template as template
 
 import errors
 import model
-import model_parser2 as model_parser
+import model_parser
 import output
 import utils
 
