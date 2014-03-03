@@ -61,7 +61,8 @@ class TestTokenize(unittest.TestCase):
         tokens = mp._Tokenize('hello world')
 
         self.assertEqual([mp.Token('word', 'hello', mp.SourcePos(0, 0, 0, 5)),
-                          mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11))], tokens)
+                          mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(0, 0, 11, 11))], tokens)
 
     def test_TryTokenize_ComplexWords(self):
         tokens = mp._Tokenize('hello world\nhow are \nyou?')
@@ -70,7 +71,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11)),
                           mp.Token('word', 'how', mp.SourcePos(1, 1, 12, 15)),
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 16, 19)),
-                          mp.Token('word', 'you?', mp.SourcePos(2, 2, 21, 25))], tokens)
+                          mp.Token('word', 'you?', mp.SourcePos(2, 2, 21, 25)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 25, 25))], tokens)
 
     def test_TryTokenize_ComplexWordsAndBlob(self):
         tokens = mp._Tokenize('hello world\nhow are \nyou? {special sauce}\n{el\n\n {} \n}')
@@ -81,7 +83,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 16, 19)),
                           mp.Token('word', 'you?', mp.SourcePos(2, 2, 21, 25)),
                           mp.Token('blob', 'special sauce', mp.SourcePos(2, 2, 26, 41)),
-                          mp.Token('blob', 'el\n\n {} \n', mp.SourcePos(3, 6, 42, 53))], tokens)
+                          mp.Token('blob', 'el\n\n {} \n', mp.SourcePos(3, 6, 42, 53)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(6, 6, 53, 53))], tokens)
 
     def test_TryTokenize_ComplexWordsAndSlash(self):
         tokens = mp._Tokenize('hello world\nhow \\are \nyou\\?')
@@ -93,7 +96,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
                           mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
                           mp.Token('slash', '\\', mp.SourcePos(2, 2, 25, 26)),
-                          mp.Token('word', '?', mp.SourcePos(2, 2, 26, 27))], tokens)
+                          mp.Token('word', '?', mp.SourcePos(2, 2, 26, 27)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 27, 27))], tokens)
 
     def test_TryTokenize_ComplexWordsAndSectionMarkers(self):
         tokens = mp._Tokenize('hello world\nhow =are \nyou==?')
@@ -105,7 +109,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
                           mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
                           mp.Token('section-marker', '==', mp.SourcePos(2, 2, 25, 27)),
-                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28))], tokens)
+                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
 
     def test_TryTokenize_ComplexWordsAndListMarkers(self):
         tokens = mp._Tokenize('hello world\nhow *are \nyou**?')
@@ -117,7 +122,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
                           mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
                           mp.Token('list-marker', '**', mp.SourcePos(2, 2, 25, 27)),
-                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28))], tokens)
+                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
 
     def test_TryTokenize_ComplexWordsAndParagraphEnd(self):
         tokens = mp._Tokenize('hello world\n\nhow are you?')
@@ -127,7 +133,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('paragraph-end', '\n', mp.SourcePos(1, 2, 12, 13)),
                           mp.Token('word', 'how', mp.SourcePos(2, 2, 13, 16)),
                           mp.Token('word', 'are', mp.SourcePos(2, 2, 17, 20)),
-                          mp.Token('word', 'you?', mp.SourcePos(2, 2, 21, 25))], tokens)
+                          mp.Token('word', 'you?', mp.SourcePos(2, 2, 21, 25)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 25, 25))], tokens)
 
     def test_TryTokenize_ComplexWordsAndOtherParagraphEnd(self):
         tokens = mp._Tokenize('hello world\n=how are you?')
@@ -138,7 +145,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('section-marker', '=', mp.SourcePos(1, 1, 12, 13)),
                           mp.Token('word', 'how', mp.SourcePos(1, 1, 13, 16)),
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
-                          mp.Token('word', 'you?', mp.SourcePos(1, 1, 21, 25))], tokens)
+                          mp.Token('word', 'you?', mp.SourcePos(1, 1, 21, 25)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(1, 1, 25, 25))], tokens)
 
     def test_TryTokenize_ComplexWordsAndComplexParagraphEnd(self):
         tokens = mp._Tokenize('hello world\n  \n  \n\t  \nhow are you?')
@@ -148,7 +156,8 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('paragraph-end', '\n  \n\t  \n', mp.SourcePos(1, 4, 14, 22)),
                           mp.Token('word', 'how', mp.SourcePos(4, 4, 22, 25)),
                           mp.Token('word', 'are', mp.SourcePos(4, 4, 26, 29)),
-                          mp.Token('word', 'you?', mp.SourcePos(4, 4, 30, 34))], tokens)
+                          mp.Token('word', 'you?', mp.SourcePos(4, 4, 30, 34)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(4, 4, 34, 34))], tokens)
 
 class TestTokenizeHelpers(unittest.TestCase):
     def test_TryWord_OneWord(self):
