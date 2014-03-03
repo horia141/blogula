@@ -4,7 +4,7 @@ import re
 import unittest
 
 import errors
-import model_parser2 as mp
+import model_parser as mp
 
 class TestSourcePos(unittest.TestCase):
     def test_constructor(self):
