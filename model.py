@@ -19,6 +19,9 @@ class Word(Atom):
 
         return self._text == other._text
 
+    def __ne__(self, other):
+        return not (self == other)
+
     @property
     def text(self):
         return self._text
@@ -41,6 +44,9 @@ class Function(Atom):
 
         return self._name == other._name and len(self._arg_list) == len(other._arg_list) and \
             all(x == y for (x,y) in zip(self._arg_list, other._arg_list))
+
+    def __ne__(self, other):
+        return not (self == other)
 
     @property
     def name(self):
@@ -66,6 +72,9 @@ class Text(object):
 
         return len(self._atoms) == len(other._atoms) and \
             all(x == y for (x,y) in zip(self._atoms, other._atoms))
+
+    def __ne__(self, other):
+        return not (self == other)
 
     @property
     def atoms(self):
@@ -189,15 +198,15 @@ class Post(object):
         self._prev_post_by_series = dict((s, None) for s in series)
         self._description = Post._FindFirstParagraph(root_section).text
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         assert isinstance(other, Post)
 
         if self._date < other._date:
-            return -1
+            return True
         elif self._date == other._date:
-            return cmp(self._delta, other._delta)
+            return self._delta < other._delta
         else:
-            return 1
+            return False
 
     @property
     def info(self):
@@ -264,13 +273,13 @@ class PostDB(object):
     def __init__(self, info, post_map, post_maps_by_series):
         assert isinstance(info, Info)
         assert isinstance(post_map, dict)
-        assert all(isinstance(p, str) for p in post_map.iterkeys())
-        assert all(isinstance(p, Post) for p in post_map.itervalues())
+        assert all(isinstance(p, str) for p in post_map.keys())
+        assert all(isinstance(p, Post) for p in post_map.values())
         assert isinstance(post_maps_by_series, dict)
-        assert all(p in info.series for p in post_maps_by_series.iterkeys())
-        assert all(isinstance(ms, dict) for ms in post_maps_by_series.itervalues())
-        assert all(all(isinstance(ps, str) for ps in ms.iterkeys()) for ms in post_maps_by_series.itervalues())
-        assert all(all(isinstance(ps, Post) for ps in ms.itervalues()) for ms in post_maps_by_series.itervalues())
+        assert all(p in info.series for p in post_maps_by_series.keys())
+        assert all(isinstance(ms, dict) for ms in post_maps_by_series.values())
+        assert all(all(isinstance(ps, str) for ps in ms.keys()) for ms in post_maps_by_series.values())
+        assert all(all(isinstance(ps, Post) for ps in ms.values()) for ms in post_maps_by_series.values())
 
         self._info = info
         self._post_map = post_map
