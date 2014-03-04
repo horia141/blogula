@@ -139,14 +139,21 @@ class Unit(object):
     pass
 
 class Paragraph(Unit):
-    def __init__(self, text):
+    def __init__(self, text, subparagraphs):
         assert isinstance(text, Text)
+        assert isinstance(subparagraphs, list)
+        assert all(isinstance(p, Paragraph) for p in subparagraphs)
 
         self._text = text
+        self._subparagraphs = subparagraphs
 
     @property
     def text(self):
         return self._text
+
+    @property
+    def subparagraphs(self):
+        return self._subparagraphs
 
 class Section(Unit):
     def __init__(self, title, paragraphs, subsections):

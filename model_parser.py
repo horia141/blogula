@@ -317,7 +317,7 @@ def _ParseParagraphs(tokens, c_pos):
     paragraphs = []
 
     while 1:
-        (new_pos, paragraph) = _ParseParagraph(tokens, new_pos)
+        (new_pos, paragraph) = _ParseParagraph(tokens, new_pos, 0, False)
 
         if paragraph is None:
             break
@@ -326,16 +326,56 @@ def _ParseParagraphs(tokens, c_pos):
 
     return (new_pos, paragraphs)
 
-def _ParseParagraph(tokens, c_pos):
-    (new_pos, text) = _ParseText(tokens, c_pos)
+def _ParseParagraph(tokens, c_pos, level, has_title):
+    new_pos = c_pos
 
-    if text is None:
-        return (c_pos, None)
+    if has_title:
+        if new_pos >= len(tokens):
+            return (c_pos, None)
 
-    if tokens[new_pos].token_type != 'paragraph-end':
+        if tokens[new_pos].token_type != 'list-marker':
+            return (c_pos, None)
+
+        if tokens[new_pos].content != ('*' * level):
+            return (c_pos, None)
+
+        new_pos = new_pos + 1
+
+        (new_pos, text) = _ParseText(tokens, new_pos)
+
+        if text is None:
+            raise errors.Error('R')
+    else:
+        (new_pos, text) = _ParseText(tokens, new_pos)
+
+        if text is None:
+            return (c_pos, None)
+
+    subparagraphs = []
+
+    while new_pos < len(tokens):
+        (new_pos, subparagraph) = _ParseParagraph(tokens, new_pos, level + 1, True)
+
+        if subparagraph is None:
+            break
+
+        subparagraphs.append(subparagraph)
+
+    if new_pos >= len(tokens):
+        pass
+    elif tokens[new_pos].token_type == 'paragraph-end':
+        if level == 0:
+            new_pos = new_pos + 1
+        else:
+            pass
+    elif tokens[new_pos].token_type == 'section-marker':
+        pass
+    elif tokens[new_pos].token_type == 'list-marker':
+        pass
+    else:
         raise errors.Error('G')
 
-    return (new_pos + 1, model.Paragraph(text))
+    return (new_pos, model.Paragraph(text, subparagraphs))
 
 def _ParseText(tokens, c_pos):
     atoms = []
