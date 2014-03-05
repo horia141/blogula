@@ -422,6 +422,10 @@ class SiteBuilder(object):
 
     @staticmethod
     def _LinearizeSectionToLineUnits(config, section, level):
+        def LinearizeSubparagraphs(subparagraph):
+            return {'text_html': SiteBuilder._EvaluateTextToHTML(subparagraph.text),
+                    'list': [LinearizeSubparagraphs(p) for p in subparagraph.subparagraphs]}
+
         line_units = []
 
         if level >= 1:
@@ -436,6 +440,7 @@ class SiteBuilder(object):
             line_units.append({})
             line_units[-1]['type'] = 'paragraph'
             line_units[-1]['text_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.text)
+            line_units[-1]['list'] = [LinearizeSubparagraphs(p) for p in paragraph.subparagraphs]
 
         for subsection in section.subsections:
             line_units.extend(SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1))
