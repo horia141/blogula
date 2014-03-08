@@ -99,6 +99,34 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', '?', mp.SourcePos(2, 2, 26, 27)),
                           mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 27, 27))], tokens)
 
+    def test_TryTokenize_ComplexWordsAndListMarkers(self):
+        tokens = mp._Tokenize('hello world\nhow *are \nyou**?')
+
+        self.assertEqual([mp.Token('word', 'hello', mp.SourcePos(0, 0, 0, 5)),
+                          mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11)),
+                          mp.Token('word', 'how', mp.SourcePos(1, 1, 12, 15)),
+                          mp.Token('list-marker', '*', mp.SourcePos(1, 1, 16, 17)),
+                          mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
+                          mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
+                          mp.Token('list-marker', '*', mp.SourcePos(2, 2, 25, 26)),
+                          mp.Token('list-marker', '*', mp.SourcePos(2, 2, 26, 27)),
+                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
+
+    def test_TryTokenize_ComplexWordsAndCellMarkers(self):
+        tokens = mp._Tokenize('hello world\nhow %are \nyou%%?')
+
+        self.assertEqual([mp.Token('word', 'hello', mp.SourcePos(0, 0, 0, 5)),
+                          mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11)),
+                          mp.Token('word', 'how', mp.SourcePos(1, 1, 12, 15)),
+                          mp.Token('cell-marker', '%', mp.SourcePos(1, 1, 16, 17)),
+                          mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
+                          mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
+                          mp.Token('cell-marker', '%', mp.SourcePos(2, 2, 25, 26)),
+                          mp.Token('cell-marker', '%', mp.SourcePos(2, 2, 26, 27)),
+                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
+
     def test_TryTokenize_ComplexWordsAndSectionMarkers(self):
         tokens = mp._Tokenize('hello world\nhow =are \nyou==?')
 
@@ -109,19 +137,6 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
                           mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
                           mp.Token('section-marker', '==', mp.SourcePos(2, 2, 25, 27)),
-                          mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
-                          mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
-
-    def test_TryTokenize_ComplexWordsAndListMarkers(self):
-        tokens = mp._Tokenize('hello world\nhow *are \nyou**?')
-
-        self.assertEqual([mp.Token('word', 'hello', mp.SourcePos(0, 0, 0, 5)),
-                          mp.Token('word', 'world', mp.SourcePos(0, 0, 6, 11)),
-                          mp.Token('word', 'how', mp.SourcePos(1, 1, 12, 15)),
-                          mp.Token('list-marker', '*', mp.SourcePos(1, 1, 16, 17)),
-                          mp.Token('word', 'are', mp.SourcePos(1, 1, 17, 20)),
-                          mp.Token('word', 'you', mp.SourcePos(2, 2, 22, 25)),
-                          mp.Token('list-marker', '**', mp.SourcePos(2, 2, 25, 27)),
                           mp.Token('word', '?', mp.SourcePos(2, 2, 27, 28)),
                           mp.Token('paragraph-end', '', mp.SourcePos(2, 2, 28, 28))], tokens)
 
@@ -158,6 +173,34 @@ class TestTokenize(unittest.TestCase):
                           mp.Token('word', 'are', mp.SourcePos(4, 4, 26, 29)),
                           mp.Token('word', 'you?', mp.SourcePos(4, 4, 30, 34)),
                           mp.Token('paragraph-end', '', mp.SourcePos(4, 4, 34, 34))], tokens)
+
+    def test_TryTokenize_Everything(self):
+        tokens = mp._Tokenize('hello\nworld\n\n\\def{space}\n   \n' + 
+                              'List\n*hello\n*world\n\n%code{C++}{x = x + 1}\n\n=section=hello')
+
+        self.assertEqual([mp.Token('word', 'hello', mp.SourcePos(0, 0, 0, 5)),
+                          mp.Token('word', 'world', mp.SourcePos(1, 1, 6, 11)),
+                          mp.Token('paragraph-end', '\n', mp.SourcePos(2, 3, 12, 13)),
+                          mp.Token('slash', '\\', mp.SourcePos(3, 3, 13, 14)),
+                          mp.Token('word', 'def', mp.SourcePos(3, 3, 14, 17)),
+                          mp.Token('blob', 'space', mp.SourcePos(3, 3, 17, 24)),
+                          mp.Token('paragraph-end', '\n', mp.SourcePos(4, 5, 28, 29)),
+                          mp.Token('word', 'List', mp.SourcePos(5, 5, 29, 33)),
+                          mp.Token('list-marker', '*', mp.SourcePos(6, 6, 34, 35)),
+                          mp.Token('word', 'hello', mp.SourcePos(6, 6, 35, 40)),
+                          mp.Token('list-marker', '*', mp.SourcePos(7, 7, 41, 42)),
+                          mp.Token('word', 'world', mp.SourcePos(7, 7, 42, 47)),
+                          mp.Token('paragraph-end', '\n', mp.SourcePos(8, 9, 48, 49)),
+                          mp.Token('cell-marker', '%', mp.SourcePos(9, 9, 49, 50)),
+                          mp.Token('word', 'code', mp.SourcePos(9, 9, 50, 54)),
+                          mp.Token('blob', 'C++', mp.SourcePos(9, 9, 54, 59)),
+                          mp.Token('blob', 'x = x + 1', mp.SourcePos(9, 9, 59, 70)),
+                          mp.Token('paragraph-end', '\n', mp.SourcePos(10, 11, 71, 72)),
+                          mp.Token('section-marker', '=', mp.SourcePos(11, 11, 72, 73)),
+                          mp.Token('word', 'section', mp.SourcePos(11, 11, 73, 80)),
+                          mp.Token('section-marker', '=', mp.SourcePos(11, 11, 80, 81)),
+                          mp.Token('word', 'hello', mp.SourcePos(11, 11, 81, 86)),
+                          mp.Token('paragraph-end', '', mp.SourcePos(11, 11, 86, 86))], tokens)
 
 class TestTokenizeHelpers(unittest.TestCase):
     def test_TryWord_OneWord(self):
@@ -247,48 +290,30 @@ class TestTokenizeHelpers(unittest.TestCase):
         with self.assertRaises(errors.Error):
             mp._TryBlob('{hello-world-ε{}', 0, 0)
 
-    def test_TrySlash_OneSlash(self):
-        (new_pos, slash) = mp._TrySlash('\\', 0, 0)
-
-        self.assertEqual(1, new_pos)
-        self.assertEqual(mp.Token('slash', '\\', mp.SourcePos(0, 0, 0, 1)), slash)
-
-    def test_TrySlash_OneSlash2(self):
-        (new_pos, slash) = mp._TrySlash('hello  \n  \\', 10, 1)
-
-        self.assertEqual(11, new_pos)
-        self.assertEqual(mp.Token('slash', '\\', mp.SourcePos(1, 1, 10, 11)), slash)
-
-    def test_TrySlash_OneSlashAndSomethingElse(self):
-        (new_pos, slash) = mp._TrySlash('\\  \n', 0, 0)
-
-        self.assertEqual(1, new_pos)
-        self.assertEqual(mp.Token('slash', '\\', mp.SourcePos(0, 0, 0, 1)), slash)
-
-    def test_TryMarker_OneMarker(self):
+    def test_TrySpecialSequence_OneSpecialSequence(self):
         re_marker = re.compile(r'(=+)')
-        (new_pos, marker) = mp._TryMarker('=', 'section-marker', re_marker, 0, 0)
+        (new_pos, marker) = mp._TrySpecialSequence('=', 'section-marker', re_marker, 0, 0)
 
         self.assertEqual(1, new_pos)
         self.assertEqual(mp.Token('section-marker', '=', mp.SourcePos(0, 0, 0, 1)), marker)
 
-    def test_TryMarker_OneMarker2(self):
+    def test_TrySpecialSequence_OneSpecialSequence2(self):
         re_marker = re.compile(r'(=+)')
-        (new_pos, marker) = mp._TryMarker('hello  \n  =', 'section-marker', re_marker, 10, 1)
+        (new_pos, marker) = mp._TrySpecialSequence('hello  \n  =', 'section-marker', re_marker, 10, 1)
 
         self.assertEqual(11, new_pos)
         self.assertEqual(mp.Token('section-marker', '=', mp.SourcePos(1, 1, 10, 11)), marker)
 
-    def test_TryMarker_ManyMarkers(self):
+    def test_TrySpecialSequence_ManySpecialSequences(self):
         re_marker = re.compile(r'(=+)')
-        (new_pos, marker) = mp._TryMarker('===', 'section-marker', re_marker, 0, 0)
+        (new_pos, marker) = mp._TrySpecialSequence('===', 'section-marker', re_marker, 0, 0)
 
         self.assertEqual(3, new_pos)
         self.assertEqual(mp.Token('section-marker', '===', mp.SourcePos(0, 0, 0, 3)), marker)
 
-    def test_TryMarker_OneMarkerAndSomethingElse(self):
+    def test_TrySpecialSequence_OneSpecialSequenceAndSomethingElse(self):
         re_marker = re.compile(r'(=+)')
-        (new_pos, marker) = mp._TryMarker('=  \n', 'section-marker', re_marker, 0, 0)
+        (new_pos, marker) = mp._TrySpecialSequence('=  \n', 'section-marker', re_marker, 0, 0)
 
         self.assertEqual(1, new_pos)
         self.assertEqual(mp.Token('section-marker', '=', mp.SourcePos(0, 0, 0, 1)), marker)

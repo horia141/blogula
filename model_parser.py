@@ -51,7 +51,7 @@ class SourcePos(object):
         return self._end_char
 
 class Token(object):
-    _TOKEN_TYPES = frozenset(['word', 'blob', 'slash', 'section-marker', 'list-marker', 'paragraph-end'])
+    _TOKEN_TYPES = frozenset(['word', 'blob', 'slash', 'list-marker', 'cell-marker', 'section-marker', 'paragraph-end'])
 
     def __init__(self, token_type, content, source_pos):
         assert token_type in Token._TOKEN_TYPES
@@ -63,7 +63,7 @@ class Token(object):
         self._source_pos = source_pos
 
     def __repr__(self):
-        return '%s (%s)' % (self._token_type , self._content)
+        return '%s (%s)' % (self._token_type , self._content) # , self._source_pos.start_line, self._source_pos.end_line, self._source_pos.start_char, self._source_pos.end_char)
 
     def __eq__(self, other):
         if not isinstance(other, Token):
@@ -439,10 +439,12 @@ def _ParseFunction(tokens, c_pos):
 
     return (new_pos, model.Function(name, arg_list))
 
-_WORD_RE = re.compile(r'([^{}\\=*\s]+)', flags=re.UNICODE)
+_WORD_RE = re.compile(r'([^{}\\*%=\s]+)', flags=re.UNICODE)
 _WS_RE = re.compile(r'[ \t]+')
+_SLASH_RE = re.compile(r'(\\)')
+_LIST_MARKER_RE = re.compile(r'([*])')
+_CELL_MARKER_RE = re.compile(r'(%)')
 _SECTION_MARKER_RE = re.compile(r'(=+)')
-_LIST_MARKER_RE = re.compile(r'([*]+)')
 
 def _Tokenize(text):
     tokens = []
@@ -463,21 +465,27 @@ def _Tokenize(text):
             c_line = new_line
             continue
 
-        (new_pos, slash) = _TrySlash(text, c_pos, c_line)
+        (new_pos, slash) = _TrySpecialSequence(text, 'slash', _SLASH_RE, c_pos, c_line)
         if slash is not None:
             tokens.append(slash)
             c_pos = _SkipWS(text, new_pos, c_line)
             continue
 
-        (new_pos, section_marker) = _TryMarker(text, 'section-marker', _SECTION_MARKER_RE, c_pos, c_line)
-        if section_marker is not None:
-            tokens.append(section_marker)
+        (new_pos, list_marker) = _TrySpecialSequence(text, 'list-marker', _LIST_MARKER_RE, c_pos, c_line)
+        if list_marker is not None:
+            tokens.append(list_marker)
             c_pos = _SkipWS(text, new_pos, c_line)
             continue
 
-        (new_pos, list_marker) = _TryMarker(text, 'list-marker', _LIST_MARKER_RE, c_pos, c_line)
-        if list_marker is not None:
-            tokens.append(list_marker)
+        (new_pos, cell_marker) = _TrySpecialSequence(text, 'cell-marker', _CELL_MARKER_RE, c_pos, c_line)
+        if cell_marker is not None:
+            tokens.append(cell_marker)
+            c_pos = _SkipWS(text, new_pos, c_line)
+            continue
+
+        (new_pos, section_marker) = _TrySpecialSequence(text, 'section-marker', _SECTION_MARKER_RE, c_pos, c_line)
+        if section_marker is not None:
+            tokens.append(section_marker)
             c_pos = _SkipWS(text, new_pos, c_line)
             continue
 
@@ -540,25 +548,16 @@ def _TryBlob(text, c_pos, c_line):
 
     return (new_pos, new_line, token)
 
-def _TrySlash(text, c_pos, c_line):
-    if text[c_pos] != '\\':
+def _TrySpecialSequence(text, sequence_type, sequence_re, c_pos, c_line):
+    sequence_match = sequence_re.match(text, c_pos)
+
+    if sequence_match is None:
         return (c_pos, None)
 
-    source_pos = SourcePos(c_line, c_line, c_pos, c_pos + 1)
-    token = Token('slash', '\\', source_pos)
+    source_pos = SourcePos(c_line, c_line, sequence_match.start(0), sequence_match.end(0))
+    token = Token(sequence_type, sequence_match.group(1), source_pos)
 
-    return (c_pos + 1, token)
-
-def _TryMarker(text, marker_type, marker_re, c_pos, c_line):
-    marker_match = marker_re.match(text, c_pos)
-
-    if marker_match is None:
-        return (c_pos, None)
-
-    source_pos = SourcePos(c_line, c_line, marker_match.start(0), marker_match.end(0))
-    token = Token(marker_type, marker_match.group(1), source_pos)
-
-    return (marker_match.end(0), token)
+    return (sequence_match.end(0), token)
 
 def _TryParagraphEnd(text, c_pos, c_line):
     new_pos = c_pos
