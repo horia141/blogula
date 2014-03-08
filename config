@@ -5,6 +5,7 @@ Templates:
   PostPagePath: templates/postpage.html
   FeedPagePath: templates/feed.xml
   FoundationDir: templates/foundation
+  BlogulaCSSPath: templates/blogula.css
   ImgDir: templates/img
 Output:
   BaseDir: out

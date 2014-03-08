@@ -17,14 +17,15 @@ import utils
 
 class Config(object):
     def __init__(self, blog_info_path, blog_posts_dir, template_homepage_path, template_postpage_path,
-                 template_feedpage_path, template_foundation_dir, template_img_dir, output_base_dir,
-                 output_homepage_path, output_posts_dir):
+                 template_feedpage_path, template_foundation_dir, template_blogula_css_path, 
+                 template_img_dir, output_base_dir, output_homepage_path, output_posts_dir):
         assert isinstance(blog_info_path, str)
         assert isinstance(blog_posts_dir, str)
         assert isinstance(template_homepage_path, str)
         assert isinstance(template_postpage_path, str)
         assert isinstance(template_feedpage_path, str)
         assert isinstance(template_foundation_dir, str)
+        assert isinstance(template_blogula_css_path, str)
         assert isinstance(template_img_dir, str)
         assert isinstance(output_base_dir, str)
         assert isinstance(output_homepage_path, str)
@@ -36,6 +37,7 @@ class Config(object):
         self._template_postpage_path = template_postpage_path
         self._template_feedpage_path = template_feedpage_path
         self._template_foundation_dir = template_foundation_dir
+        self._template_blogula_css_path = template_blogula_css_path
         self._template_img_dir = template_img_dir
         self._output_base_dir = output_base_dir
         self._output_homepage_path = output_homepage_path
@@ -68,6 +70,10 @@ class Config(object):
     @property
     def template_foundation_dir(self):
         return self._template_foundation_dir
+
+    @property
+    def template_blogula_css_path(self):
+        return self._template_blogula_css_path
 
     @property
     def template_img_dir(self):
@@ -121,6 +127,7 @@ def _ParseConfig(config_path):
     template_postpage_path = utils.Extract(templates_raw, 'PostPagePath', str)
     template_feedpage_path = utils.Extract(templates_raw, 'FeedPagePath', str)
     template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
+    template_blogula_css_path = utils.Extract(templates_raw, 'BlogulaCSSPath', str)
     template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
 
     output_raw = utils.Extract(config_raw, 'Output', dict)
@@ -132,8 +139,9 @@ def _ParseConfig(config_path):
     return Config(blog_info_path=blog_info_path, blog_posts_dir=blog_posts_dir, 
                   template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
                   template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
-                  template_img_dir=template_img_dir, output_base_dir=output_base_dir,
-                  output_homepage_path=output_homepage_path, output_posts_dir=output_posts_dir)
+                  template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir, 
+                  output_base_dir=output_base_dir, output_homepage_path=output_homepage_path, 
+                  output_posts_dir=output_posts_dir)
 
 class SiteBuilder(object):
     def __init__(self, config, info, post_db):
@@ -313,6 +321,11 @@ class SiteBuilder(object):
 
         foundation_unit = output.Copy(self._config.template_foundation_dir)
         out_dir.Add('foundation', foundation_unit)
+
+        # Copy CSS
+
+        blogula_css_unit = output.Copy(self._config.template_blogula_css_path)
+        out_dir.Add('blogula.css', blogula_css_unit)
 
         # Copy avatar image
 
