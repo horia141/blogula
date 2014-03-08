@@ -135,25 +135,86 @@ class Info(object):
     def nr_of_posts_in_feed(self):
         return self._nr_of_posts_in_feed
 
-class Unit(object):
+class Cell(object):
     pass
 
-class Paragraph(Unit):
-    def __init__(self, text, subparagraphs):
+class Textual(Cell):
+    def __init__(self, text):
         assert isinstance(text, Text)
-        assert isinstance(subparagraphs, list)
-        assert all(isinstance(p, Paragraph) for p in subparagraphs)
 
         self._text = text
-        self._subparagraphs = subparagraphs
 
     @property
     def text(self):
         return self._text
 
+class List(Cell):
+    def __init__(self, header_text, items):
+        assert isinstance(header_text, Text)
+        assert isinstance(items, list)
+        assert all(isinstance(l, Text) for l in items)
+
+        self._header_text = header_text
+        self._items = items
+
     @property
-    def subparagraphs(self):
-        return self._subparagraphs
+    def header_text(self):
+        return self._header_text
+
+    @property
+    def items(self):
+        return self._items
+
+class CodeBlock(Cell):
+    def __init__(self, header_text, language, code):
+        assert isinstance(header_text, Text)
+        assert isinstance(language, str)
+        assert isinstance(code, str)
+
+        self._header_text = header_text
+        self._language = language
+        self._code = code
+
+    @property
+    def header_text(self):
+        return self._header_text
+
+    @property
+    def language(self):
+        return self._language
+
+    @property
+    def code(self):
+        return self._code
+
+class Image(Cell):
+    def __init__(self, header_text, path):
+        assert isinstance(header_text, Text)
+        assert isinstance(path, str)
+
+        self._header_text = header_text
+        self._path = path
+
+    @property
+    def header_text(self):
+        return self._header_text
+
+    @property
+    def path(self):
+        return self._path
+
+class Unit(object):
+    pass
+
+class Paragraph(Unit):
+    def __init__(self, cell):
+        assert isinstance(cell, Cell)
+
+        self._cell = cell
+
+    @property
+    def cell(self):
+        return self._cell
 
 class Section(Unit):
     def __init__(self, title, paragraphs, subsections):
