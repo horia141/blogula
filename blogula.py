@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import StringIO
+import urlparse
 
 import pygments
 import pygments.lexers
@@ -209,6 +210,7 @@ class SiteBuilder(object):
         return output.File('text/html', homepage_text)
 
     def _GeneratePostpage(self, post):
+        (line_units, extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
         postpage_template_text = utils.QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
 
@@ -223,8 +225,7 @@ class SiteBuilder(object):
         postpage_template.post['title_text'] = SiteBuilder._EvaluateTextToText(post.title)
         postpage_template.post['title_html'] = SiteBuilder._EvaluateTextToHTML(post.title)
         postpage_template.post['description_text'] = SiteBuilder._EvaluateTextToText(post.description)
-        postpage_template.post['lineunits'] = \
-            SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
+        postpage_template.post['lineunits'] = line_units            
         postpage_template.post['tags_html'] = [SiteBuilder._EvaluateTextToHTML(t) for t in post.tags]
 
         if post.prev_post is not None:
@@ -268,7 +269,7 @@ class SiteBuilder(object):
             self._config.presentation_article_title_heading_level
 
         postpage_text = str(postpage_template)
-        return output.File('text/html', postpage_text)
+        return (output.File('text/html', postpage_text), extra_image_units)
 
     def _GenerateFeed(self):
         feedpage_template_text = utils.QuickRead(self._config.template_feedpage_path)
@@ -304,10 +305,12 @@ class SiteBuilder(object):
 
         # generate one page for each article
         posts_dir = output.Dir()
+        extra_image_units = []
 
         for post in self._post_db.post_map.itervalues():
-            postpage_unit = self._GeneratePostpage(post)
+            (postpage_unit, post_extra_image_units) = self._GeneratePostpage(post)
             posts_dir.Add(SiteBuilder._UniformPath(SiteBuilder._EvaluateTextToText(post.title)) + '.html', postpage_unit)
+            extra_image_units.extend(post_extra_image_units)
 
         out_dir.Add(self._config.output_posts_dir, posts_dir)
 
@@ -335,13 +338,20 @@ class SiteBuilder(object):
         code_highlight_css_unit = output.File('text/css', code_highlight_css)
         out_dir.Add('code_highlight.css', code_highlight_css_unit)
 
-        # Copy avatar image
+        # Copy images image
 
         image_dir = output.Dir()
+
+        ## Copy avatar image
 
         avatar_unit = output.Copy(
             os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path))
         image_dir.Add('avatar.jpg', avatar_unit)
+
+        ## Copy post extra images
+
+        for (basename, unit) in extra_image_units:
+            image_dir.Add(basename, unit)
 
         out_dir.Add('img', image_dir)
 
@@ -444,6 +454,7 @@ class SiteBuilder(object):
     @staticmethod
     def _LinearizeSectionToLineUnits(config, section, level):
         line_units = []
+        extra_image_units = []
 
         if level >= 1:
             line_units.append({})
@@ -493,13 +504,39 @@ class SiteBuilder(object):
                 line_units[-1]['code_html'] = pygments.highlight(paragraph.cell.code, lexer, formatter)
             elif isinstance(paragraph.cell, model.Image):
                 line_units[-1]['type'] = 'image'
+                if paragraph.cell.header_text is not None:
+                    line_units[-1]['has_header'] = True
+                    line_units[-1]['header_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.header_text)
+                    line_units[-1]['alt_text'] = SiteBuilder._EvaluateTextToText(paragraph.cell.header_text)
+                else:
+                    line_units[-1]['has_header'] = False
+                    line_units[-1]['alt_text'] = ''
+
+                split_path = urlparse.urlparse(paragraph.cell.path)
+
+                if split_path.scheme == 'http' or split_path.scheme == 'https':
+                    line_units[-1]['path'] = paragraph.cell.path
+                elif split_path.scheme == '':
+                    image_basename = os.path.normpath(paragraph.cell.path).replace('/', '_')
+                    line_units[-1]['path'] = '/img/%s' % image_basename
+
+                    if os.path.isabs(paragraph.cell.path):
+                        extra_image_path = paragraph.cell.path
+                    else:
+                        extra_image_path = os.path.join(config.blog_posts_dir, paragraph.cell.path)
+
+                    extra_image_units.append((image_basename, output.Copy(extra_image_path)))
+                else:
+                    raise errors.Error('Unsupported path format')
             else:
                 raise errors.Error('Q')
 
         for subsection in section.subsections:
-            line_units.extend(SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1))
+            (sub_line_units, sub_extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1)
+            line_units.extend(sub_line_units)
+            extra_image_units.extend(sub_extra_image_units)
 
-        return line_units
+        return (line_units, extra_image_units)
 
 def main():
     config = _ParseConfig('config')

@@ -52,7 +52,10 @@
 	  #end if
 	  $lineunit.code_html
 	#else if $lineunit.type == 'image'
-	  image
+	  #if $lineunit.has_header
+	  <p class="header text-justify">$lineunit.header_html</p>
+	  #end if
+	  <p><img src="$lineunit.path" alt="$lineunit.alt_text" /></p>
 	#else
           #raise errors.Error('Invalid paragraph type')	
 	#end if
