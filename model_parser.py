@@ -401,7 +401,7 @@ def _ParseCodeBlock(tokens, c_pos):
     if new_pos >= len(tokens):
         return (c_pos, None)
 
-    if tokens[new_pos].token_type != 'word' and tokens[new_pos].content == 'code':
+    if tokens[new_pos].token_type != 'word' or tokens[new_pos].content != 'code':
         return (c_pos, None)
 
     new_pos = new_pos + 1
@@ -432,7 +432,40 @@ def _ParseCodeBlock(tokens, c_pos):
         raise errors.Error('W3')
 
 def _ParseImage(tokens, c_pos):
-    return (c_pos, None)
+    # header_text can be None here.
+    (new_pos, header_text) = _ParseText(tokens, c_pos)
+
+    if new_pos >= len(tokens):
+        return (c_pos, None)
+
+    if tokens[new_pos].token_type != 'cell-marker':
+        return (c_pos, None)
+
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        return (c_pos, None)
+
+    if tokens[new_pos].token_type != 'word' and tokens[new_pos].content == 'image':
+        return (c_pos, None)
+
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        raise errors.Error('I1')
+
+    if tokens[new_pos].token_type != 'blob':
+        raise errors.Error('I2')
+
+    path = tokens[new_pos].content
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        return (new_pos, model.Image(header_text, path))
+    elif tokens[new_pos].token_type == 'paragraph-end':
+        return (new_pos + 1, model.Image(header_text, path))
+    else:
+        raise errors.Error('I3')
 
 def _ParseText(tokens, c_pos):
     atoms = []
