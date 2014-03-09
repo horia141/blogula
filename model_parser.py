@@ -386,6 +386,42 @@ def _ParseList(tokens, c_pos):
         # Raise here for the list as well.
         raise errors.Error('Q')
 
+def _ParseFormula(tokens, c_pos):
+    # header_text can be None here.
+    (new_pos, header_text) = _ParseText(tokens, c_pos)
+
+    if new_pos >= len(tokens):
+        return (c_pos, None)
+
+    if tokens[new_pos].token_type != 'cell-marker':
+        return (c_pos, None)
+
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        return (c_pos, None)
+
+    if tokens[new_pos].token_type != 'word' and tokens[new_pos].content == 'formula':
+        return (c_pos, None)
+
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        raise errors.Error('F1')
+
+    if tokens[new_pos].token_type != 'blob':
+        raise errors.Error('F2')
+
+    formula = tokens[new_pos].content
+    new_pos = new_pos + 1
+
+    if new_pos >= len(tokens):
+        return (new_pos, model.Formula(header_text, formula))
+    elif tokens[new_pos].token_type == 'paragraph-end':
+        return (new_pos + 1, model.Formula(header_text, formula))
+    else:
+        raise errors.Error('F3') 
+
 def _ParseCodeBlock(tokens, c_pos):
     # header_text can be None here.
     (new_pos, header_text) = _ParseText(tokens, c_pos)
@@ -465,7 +501,7 @@ def _ParseImage(tokens, c_pos):
     elif tokens[new_pos].token_type == 'paragraph-end':
         return (new_pos + 1, model.Image(header_text, path))
     else:
-        raise errors.Error('I3')
+        raise errors.Error('I3') 
 
 def _ParseText(tokens, c_pos):
     atoms = []

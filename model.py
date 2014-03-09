@@ -165,6 +165,22 @@ class List(Cell):
     def items(self):
         return self._items
 
+class Formula(Cell):
+    def __init__(self, header_text, formula):
+        assert header_text is None or isinstance(header_text, Text)
+        assert isinstance(formula, str)
+
+        self._header_text = header_text
+        self._formula = formula
+
+    @property
+    def header_text(self):
+        return self._header_text
+
+    @property
+    def formula(self):
+        return self._formula
+
 class CodeBlock(Cell):
     def __init__(self, header_text, language, code):
         assert header_text is None or isinstance(header_text, Text)
