@@ -6,6 +6,8 @@ import re
 import shutil
 import StringIO
 
+import pygments
+import pygments.lexers
 import yaml
 import Cheetah.Template as template
 
@@ -327,6 +329,12 @@ class SiteBuilder(object):
         blogula_css_unit = output.Copy(self._config.template_blogula_css_path)
         out_dir.Add('blogula.css', blogula_css_unit)
 
+        # Generate CSS for CodeBlock cell code highliting.
+
+        code_highlight_css = pygments.formatters.HtmlFormatter().get_style_defs('.code-block-highlight')
+        code_highlight_css_unit = output.File('text/css', code_highlight_css)
+        out_dir.Add('code_highlight.css', code_highlight_css_unit)
+
         # Copy avatar image
 
         image_dir = output.Dir()
@@ -474,7 +482,15 @@ class SiteBuilder(object):
                     line_units[-1]['header_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.header_text)
                 else:
                     line_units[-1]['has_header'] = False
-                line_units[-1]['code'] = paragraph.cell.code
+
+                try:
+                    lexer = pygments.lexers.get_lexer_by_name(paragraph.cell.language)
+                except pygments.util.ClassNotFound as e:
+                    lexer = pygments.lexers.guess_lexer(paragraph.cell.code)
+
+                formatter = pygments.formatters.HtmlFormatter(linenos=True, cssclass='code-block-highlight', cssstyles='font-size:0.75em;')
+
+                line_units[-1]['code_html'] = pygments.highlight(paragraph.cell.code, lexer, formatter)
             elif isinstance(paragraph.cell, model.Image):
                 line_units[-1]['type'] = 'image'
             else:

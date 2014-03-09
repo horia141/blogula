@@ -12,9 +12,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
 
+    <!-- Foundation stylesheets -->
     <link rel="stylesheet" href="/foundation/css/normalize.css">
     <link rel="stylesheet" href="/foundation/css/foundation.css">
+    <!-- Blogula generated stylesheets -->
     <link rel="stylesheet" href="/blogula.css">
+    <link rel="stylesheet" href="/code_highlight.css">
 
     <script src="/foundation/js/vendor/modernizr.js"></script>
   </head>
@@ -31,7 +34,7 @@
 	<p class="text-justify">$lineunit.text_html</p>
 	#else if $lineunit.type == 'list'
 	  #if $lineunit.has_header
-	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  <p class="header text-justify">$lineunit.header_html</p>
 	  #end if
 	  <ul>
 	    #for $item in $lineunit.items
@@ -40,14 +43,14 @@
 	  </ul>
 	#else if $lineunit.type == 'formula'
 	  #if $lineunit.has_header
-	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  <p class="header text-justify">$lineunit.header_html</p>
 	  #end if
 	  <p>\[$lineunit.formula\]</p>
 	#else if $lineunit.type == 'code-block'
 	  #if $lineunit.has_header
-	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  <p class="header text-justify">$lineunit.header_html</p>
 	  #end if
-	  <pre>$lineunit.code</pre>
+	  $lineunit.code_html
 	#else if $lineunit.type == 'image'
 	  image
 	#else
