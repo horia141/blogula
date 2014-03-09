@@ -39,7 +39,10 @@
 	    #end for
 	  </ul>
 	#else if $lineunit.type == 'formula'
-	  formula
+	  #if $lineunit.has_header
+	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  #end if
+	  <p>\[$lineunit.formula\]</p>
 	#else if $lineunit.type == 'code-block'
 	  #if $lineunit.has_header
 	  <p class="list-header text-justify">$lineunit.header_html</p>

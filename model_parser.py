@@ -335,6 +335,10 @@ def _ParseParagraph(tokens, c_pos):
     if list_c:
         return (new_pos, model.Paragraph(list_c))
 
+    (new_pos, formula) = _ParseFormula(tokens, c_pos)
+    if formula:
+        return (new_pos, model.Paragraph(formula))
+
     (new_pos, code_block) = _ParseCodeBlock(tokens, c_pos)
     if code_block:
         return (new_pos, model.Paragraph(code_block))
@@ -401,7 +405,7 @@ def _ParseFormula(tokens, c_pos):
     if new_pos >= len(tokens):
         return (c_pos, None)
 
-    if tokens[new_pos].token_type != 'word' and tokens[new_pos].content == 'formula':
+    if tokens[new_pos].token_type != 'word' or tokens[new_pos].content != 'formula':
         return (c_pos, None)
 
     new_pos = new_pos + 1
@@ -482,7 +486,7 @@ def _ParseImage(tokens, c_pos):
     if new_pos >= len(tokens):
         return (c_pos, None)
 
-    if tokens[new_pos].token_type != 'word' and tokens[new_pos].content == 'image':
+    if tokens[new_pos].token_type != 'word' or tokens[new_pos].content != 'image':
         return (c_pos, None)
 
     new_pos = new_pos + 1

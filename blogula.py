@@ -461,6 +461,12 @@ class SiteBuilder(object):
                 line_units[-1]['items'] = [SiteBuilder._EvaluateTextToHTML(l) for l in paragraph.cell.items]
             elif isinstance(paragraph.cell, model.Formula):
                 line_units[-1]['type'] = 'formula'
+                if paragraph.cell.header_text is not None:
+                    line_units[-1]['has_header'] = True
+                    line_units[-1]['header_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.header_text)
+                else:
+                    line_units[-1]['has_header'] = False
+                line_units[-1]['formula'] = paragraph.cell.formula
             elif isinstance(paragraph.cell, model.CodeBlock):
                 line_units[-1]['type'] = 'code-block'
                 if paragraph.cell.header_text is not None:
