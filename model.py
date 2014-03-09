@@ -280,7 +280,7 @@ class Post(object):
         self._prev_post = None
         self._next_post_by_series = dict((s, None) for s in series)
         self._prev_post_by_series = dict((s, None) for s in series)
-        self._description = Post._FindFirstParagraph(root_section).text
+        self._description = Post._FindFirstTextualParagraph(root_section).cell.text
 
     def __lt__(self, other):
         assert isinstance(other, Post)
@@ -345,11 +345,11 @@ class Post(object):
         return self._description
 
     @staticmethod
-    def _FindFirstParagraph(section):
-        if len(section.paragraphs) >= 1:
+    def _FindFirstTextualParagraph(section):
+        if len(section.paragraphs) >= 1 and isinstance(section.paragraphs[0].cell, Textual):
             return section.paragraphs[0]
         elif len(section.subsections) >= 1:
-            return Post._FindFirstParagraph(section.subsections[0])
+            return Post._FindFirstTextualParagraph(section.subsections[0])
         else:
             raise errors.Error('Post without description paragraph')
 

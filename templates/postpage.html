@@ -24,40 +24,33 @@
       <div class="small-8 large-8 columns">
         <h$presentation.article_title_heading_level>$post.title_html</h$presentation.article_title_heading_level>
 
-        #for $lineunit in $post.lineunits
+	#for $lineunit in $post.lineunits
         #if $lineunit.type == 'header'
         <h$lineunit.level>$lineunit.text_html</h$lineunit.level>
-        #else if $lineunit.type == 'paragraph'
-        <p class="text-justify">$lineunit.text_html</p>
-	  #if len($lineunit.list) > 0
+	#else if $lineunit.type == 'textual'
+	<p class="text-justify">$lineunit.text_html</p>
+	#else if $lineunit.type == 'list'
+	  #if $lineunit.has_header
+	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  #end if
 	  <ul>
-            #for $item1 in $lineunit.list
-            <li>
-	      $item1.text_html
-	      #if len($item1.list) > 0
-	      <ul>
-		#for $item2 in $item1.list
-		<li>
-		  $item2.text_html
-		  #if len($item2.list) > 0
-		  <ul>
-		    #for $item3 in $item2.list
-		    <li>$item3.text_html</li>
-		    #end for
-		  </ul>
-		  #end if
-		</li>
-		#end for
-	      </ul>
-	      #end if
-	    </li>
-            #end for
-          </ul>
-          #end if
-        #else
-          #raise errors.Error('Invalid paragraph type')
-        #end if
-        #end for
+	    #for $item in $lineunit.items
+	    <li class="text-justify">$item</li>
+	    #end for
+	  </ul>
+	#else if $lineunit.type == 'formula'
+	  formula
+	#else if $lineunit.type == 'code-block'
+	  #if $lineunit.has_header
+	  <p class="list-header text-justify">$lineunit.header_html</p>
+	  #end if
+	  <pre>$lineunit.code</pre>
+	#else if $lineunit.type == 'image'
+	  image
+	#else
+          #raise errors.Error('Invalid paragraph type')	
+	#end if
+	#end for
 
         #if len($post.tags_html) >= 1
         <p>Tags:

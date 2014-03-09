@@ -435,10 +435,6 @@ class SiteBuilder(object):
 
     @staticmethod
     def _LinearizeSectionToLineUnits(config, section, level):
-        def LinearizeSubparagraphs(subparagraph):
-            return {'text_html': SiteBuilder._EvaluateTextToHTML(subparagraph.text),
-                    'list': [LinearizeSubparagraphs(p) for p in subparagraph.subparagraphs]}
-
         line_units = []
 
         if level >= 1:
@@ -451,9 +447,32 @@ class SiteBuilder(object):
 
         for paragraph in section.paragraphs:
             line_units.append({})
-            line_units[-1]['type'] = 'paragraph'
-            line_units[-1]['text_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.text)
-            line_units[-1]['list'] = [LinearizeSubparagraphs(p) for p in paragraph.subparagraphs]
+
+            if isinstance(paragraph.cell, model.Textual):
+                line_units[-1]['type'] = 'textual'
+                line_units[-1]['text_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.text)
+            elif isinstance(paragraph.cell, model.List):
+                line_units[-1]['type'] = 'list'
+                if paragraph.cell.header_text is not None:
+                    line_units[-1]['has_header'] = True
+                    line_units[-1]['header_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.header_text)
+                else:
+                    line_units[-1]['has_header'] = False
+                line_units[-1]['items'] = [SiteBuilder._EvaluateTextToHTML(l) for l in paragraph.cell.items]
+            elif isinstance(paragraph.cell, model.Formula):
+                line_units[-1]['type'] = 'formula'
+            elif isinstance(paragraph.cell, model.CodeBlock):
+                line_units[-1]['type'] = 'code-block'
+                if paragraph.cell.header_text is not None:
+                    line_units[-1]['has_header'] = True
+                    line_units[-1]['header_html'] = SiteBuilder._EvaluateTextToHTML(paragraph.cell.header_text)
+                else:
+                    line_units[-1]['has_header'] = False
+                line_units[-1]['code'] = paragraph.cell.code
+            elif isinstance(paragraph.cell, model.Image):
+                line_units[-1]['type'] = 'image'
+            else:
+                raise errors.Error('Q')
 
         for subsection in section.subsections:
             line_units.extend(SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1))
