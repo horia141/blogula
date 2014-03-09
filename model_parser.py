@@ -316,7 +316,7 @@ def _ParseParagraphs(tokens, c_pos):
     new_pos = c_pos
     paragraphs = []
 
-    while 1:
+    while new_pos < len(tokens):
         (new_pos, paragraph) = _ParseParagraph(tokens, new_pos)
 
         if paragraph is None:
@@ -360,7 +360,31 @@ def _ParseTextual(tokens, c_pos):
         return (c_pos, None)
 
 def _ParseList(tokens, c_pos):
-    return (c_pos, None)
+    # header_text can be None here.
+    (new_pos, header_text) = _ParseText(tokens, c_pos)
+    items = []
+
+    while new_pos < len(tokens):
+        if tokens[new_pos].token_type != 'list-marker':
+            break
+
+        (new_pos, item) = _ParseText(tokens, new_pos + 1)
+
+        if item is None:
+            break
+
+        items.append(item)
+
+    if len(items) == 0:
+        return (c_pos, None)
+
+    if new_pos >= len(tokens):
+        return (new_pos, model.List(header_text, items))
+    elif tokens[new_pos].token_type == 'paragraph-end':
+        return (new_pos + 1, model.List(header_text, items))
+    else:
+        # Raise here for the list as well.
+        raise errors.Error('Q')
 
 def _ParseCodeBlock(tokens, c_pos):
     return (c_pos, None)

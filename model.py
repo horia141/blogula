@@ -150,7 +150,7 @@ class Textual(Cell):
 
 class List(Cell):
     def __init__(self, header_text, items):
-        assert isinstance(header_text, Text)
+        assert header_text is None or isinstance(header_text, Text)
         assert isinstance(items, list)
         assert all(isinstance(l, Text) for l in items)
 
@@ -167,7 +167,7 @@ class List(Cell):
 
 class CodeBlock(Cell):
     def __init__(self, header_text, language, code):
-        assert isinstance(header_text, Text)
+        assert header_text is None or isinstance(header_text, Text)
         assert isinstance(language, str)
         assert isinstance(code, str)
 
@@ -189,7 +189,7 @@ class CodeBlock(Cell):
 
 class Image(Cell):
     def __init__(self, header_text, path):
-        assert isinstance(header_text, Text)
+        assert header_text is None or isinstance(header_text, Text)
         assert isinstance(path, str)
 
         self._header_text = header_text
