@@ -16,3 +16,373 @@ Example applications of data science: speech recognition, speech synthesis, face
 
 Examples of processes: the interaction of a ball with Earth's gravitational field, the spread of a disease among a population of individuals, a human face, proper English sentences etc.
 
+The Goals of Tools in Data Analysis:
+* Must be efficient, accurate and general.
+* Can deal with large-scale problem.
+* Make accurate predictions on unseen examples.
+* Handle a variety of different learning problems.
+
+Data analyses could be sorted, in order of difficulty:
+\def{Descriptive} Describe a set of data. First time of analysis performed. Commonly applied to census data. Descriptions can usually not be generalized without making statistical modeling and cannot be used to make predictions without predictive modeling.
+\def{Exploratory} Find relationships you didn't know about. Can be performed on census data or a sample. Useful for future studies. Are not the final say. Cannot be used for generalization or prediction, for the same reasons.
+\def{Inferential} Use a small sample of data to say something about a bigger population. Most done and most taught. You have to estimate the quantity you care about and your uncertinty about the estimate. Depends on population and sampling scheme.
+\def{Predictive} Use data on some objects to predict values on another object. If $X$ predicts $Y$ it does not mean that $X$ causes $Y$ (many many counter examples). Accurate prediction depends heavily on measuring the right variables. There are many prediction models, but more data + simple model is usually enough. Predicting the future is hard.
+\def{Causal} What happens to one variable when you force another variable to change. Randomized studies are required to identify causation, although, if you want to use assumptions and complicated models, you can use non-randomized studies as well. Causal relationships are usually identified as average effets, but may not apply to every individual. Causal models are ``gold standard'' for data analysis.
+\def{Mechanistic} Exact changes in variables that lead to changes in other variables for individual objects - if we change the value of one variable, then we want to predict exactly how another variable will change. Very very hard. Usually modeled by deterministic equations (differential equations). The only random component is the measurement error. Parameters might be inffered with data analysis if they are not known.
+
+= Models =
+
+A model is a mathematical description of a process. Except for very simple cases, a model is an approximation of the process, in the sense that it will not capture every detail of the process. Rather, the aim is to capture the essential qualities of the process. Put more prosaically, wa aim to capture as much as is needed in order to meet our goals. There is the famous statement: "all models are false, but some are useful". In a sense, the only true model of the process is the process itself. Anything else we will build is an approximation.
+
+The model consists of two components. The first one is the description of the population, that is, the set of all possible observations. This is the static/domain description. The second one is the description of the interactions that occur. This is the dynamic description.
+
+Some practical desiderata for data science methods:
+* Efficiency in space and time at the time they are used. For supervised methods this means that the model occupies small space and that performing a prediction is fast.
+* Efficiency in training. The ability to handle large-scale problems. The algorithm must basically be linear.
+
+\def{Prior knowledge} are the assumptions one makes about the process, which are ultimately baked into the model. Choosing a static form, choosing a particular dynamic form, chosing forms for parameter priors etc. all factor into this.
+
+\def{Prior Knowledge} The assumptions one makes about the problem. Every model assumes something. They differ in how much they assume. First assumption - what features you use.
+
+The goal is to use imperfect information (our ``data'') to infer facts, make predictions and make decisions. Descriptive statistics handles summarising data with numbers or pictures. Inferential statistics handles making conclusions or decisions based on data.
+
+A model is a set of distribution functions. A parametric model is one which can be described by a finite number of numbers, usually given as a vector and usually in a way which does not directly represent the distribution function. We denote the parameters as \f{\theta} and their domain as \f{\Theta}. If we are only interested in some parameters, then they are called the parameters of interest, while the others are called the nuisance parameters. The problem of finding the distribution function then reduces to the one of finding the parameters. A nonparameteric model is one which cannot be described by a finite set of numbers, such as the set of all CDFs etc.
+
+A \emph{generative model} for our data is one which fully estimates $p(x,y)$. Knowing this, we can use $p$ to generate new input-label pairs. One usually breaks this down into $p(x,y) = p(y)p(x \given y)$ by the Chain Rule of Probability. We thus have two estimation problems - one for $p(y)$ and another for $p(x \given y)$ - which could be a different estimation problem for each value $y$ may take. We can also use $p$ to generate labels for a known input, by using $p(y \given x) = p(y)p(x \given y) / p(x) = p(y) p(x \given y) / \sum_{\overline{x}} p(y) p(\overline{x} \given y)$ by the Bayes Rule. For most prediction applications we are only interested in one ``best'' label, and the Maximum Aposteriori Estimate for it is $\hat{y}_{\text{MAP}} = \arg\max_{y} p(y \given x) = \arg\max_{y} p(y)p(x \given y)$. We have dropped the $1/p(x)$ term as it did not depend on $p$. A \emph{conditional model} for our data is one which only estimates $p(y \given x)$. This is only useful for prediction, and the MAP is useful here as well. Estimating $p(y \given x)$ is in many cases much simpler than $p(x,y)$.
+
+== Curse Of Dimensionality ==
+
+Important intution: the behaviour of many algorithms is limited in higher dimensions. However, they depend ultimately on the geometry of the dataset, not on the representation. Therefore, if one can somehow evidentiate(?) the geometry and ignore the dimension (either by building pre-processing maps which increase dimension but make it easier to distinguish features or by building pre-processing maps which compress dimension and leave only the important stuff), then one can build very powerfull classifiers/regressors.
+
+Curse of Dimensionality:
+* Things break in higher dimensions.
+* Study the hypercube \f{[0,1]^p}.
+* One example: if we have dimension \f{p}, and we want to build a hypercube around a point \f{x} such that on each axis we capture \f{10\%%} of the interval on that axis, we'll end up with roughly \f{0.1^p} of the dataset in the formed hypercube - which tends to \f{0} as \f{p} increases. So no neighbors for us.
+* If we want to capture \f{10\%%} of the observations in a hypercube, we'd like to have a widht of \f{\sqrt[p]{0.1}} which goes to \f{1} as \f{p} increases. So all we have to include the whole hypercube - neighbors might be very "far away" or points tend to cluster towards the edges.
+
+== Data Collection ==
+
+What is the data "mode": pictures, videos, text, audio, combined etc.
+
+If we have labels, where do we get them: manually label them, crowdsourcing labels, implicit (click logs etc.).
+
+Labels can be noisy, for various reasons.
+
+Data can be problematic - noisy, incomplete, with "bad outliers", with "good outliers".
+
+Can never have enough data - "The Unreasonable Effectiveness of Data".
+
+But you might want to start with less data - for smaller iteration times, cheapness, or because the problem is not that hard (a size of dataset vs quality metric is useful).
+
+When visualizing we want to see both an example as well as the whole dataset.
+
+== Static Component ==
+
+Examples of population descriptors:
+* vectors of numbers.
+* lists of numbers.
+* strings of symbols.
+* sets.
+* graphs.
+* trees.
+* matrices.
+* signals:
+  * audio.
+  * images.
+  * videos.
+* mixed.
+
+Examples of mapping different domains to the language of Statistics/MachineLearning:
+\def{Images} given a grayscale image of size $\hctimes{m}{n}$, the columns of the data table are m*n unitreal values.
+\def{Signals] given a discrete signal of size $(m_1,m_2,...,m_k)$, the columns of the data table are $m_1 m_2 \cdots m_k$ real values, with possible restrictions, as for images to unitreal.
+\def{Text fragments} A list of words is built. Either from a dictionary or from scanning the texts studied for all words. Common words (prepositions, conjugates etc.) are dropped. Rare words are dropped as well. Words that appear in 50\% and 10\%, respectively of the text fragments, can be used. A certain order is assigned to the words: $w_1,w_2,\dots,w_k$. A text fragment is coded as a boolean vector, where $b_i = \{1 \text{ if } w_i \text{ appears in the text fragment } \given 0 \text{ otherwise}\}$. An alternative coding uses $b_i = \text{ number of times } w_i \text{ appears in the text fragment}$.
+\def{Code words} A generalization of what we had with text fragments. If you have a set of code-words, for example, learned patches for images, or learned sound-bites for audio data, instead of correlating with them, you can take every patch from the signal and count it, building a histogram of the code-words. This was done with words, where every text-word was a code-word.
+\def{User-Item database} Each user has an associated row of items. The value can be either 0|1 for things which can have only boolean values (like has seen/ has not had interaction with movie/track/book, has shared/has not shared link etc.), or ordinal values ($1,2,3,4,5$ star ratings) with a default of $0$ for non-interacted items.
+
+=== Features ===
+
+Property or characteristic of some event, object or person that can take on different values or amounts.
+
+A feature/variable is some numeric quantity attached to an observation. The best feature is the one which actually solves the problem (highly correlated with the ansewer). A big source of prior knowledge and a big step in modelling.
+
+Arguably the most important factors.
+
+A feature is a measurement of the data. Good features correlate well with what we're trying to do.
+
+Feature types: Nominal (just equality), Ordinal (equality, comparison), Quantiative Interval (dates, temperatures -- 0 does not have a meaning, equality, comparision, addition, no multiplication), Quantitative Ratio (numbers, all operations).
+
+\def{Levels of Variable} How many and what are the distinct values a variable can take.
+
+\def{Qualitative Variable or Categorical Variable} The values taken by the variable do not imply a numerical ordering (sex, eye color, religion etc.)
+
+\def{Quantitative Variable | Numeric Variable} The values taken by the variable are numbers.
+
+\def{Discrete Variable}
+
+\def{Continuous Variable}
+
+\def{Scale Type} The domain of a dependent variable has a certain structure, which must be taken into account when doing any procedure. The scales, in order of structure for the domain: nominal scale, ordinal scale, interval scale, ratio scale. Notice that using numbers for the domain does not mean that it is ordinal or higher. The scale is basically determined by the measurement procedure.
+
+\def{Nominal Scale} The domain is a simple set of values, with no order, no structure, no operations except equality making sense. The assumption is that the domain is discrete. Examples: gender, handedness, favorite colour, religion etc.
+
+\def{Ordinal Scale} The domaine is like in a nominal scales, but the elements are ordered. However, no other operations are defined and the difference between two elements and another two elements is not "constant". The assumption is that the domain is discrete. Differences between adjacent scale values do not necessarily represent equal intervals on the underlying scale giving rise to the measurements. (In our case, the underlying scale is the true feeling of satisfaction, which we are trying to measure). One can talk about means of the variable starting from here (mostly by statistical consensus). Examples: consumer satisfaction with a product, agreement with a statement etc.
+
+\def{Interval Scale} The domain is like in an ordinal scale, but a difference between two elements means the same things throught the domain. The addition/substraction operations have meaning here. The domain can be discrete or continous. Ratios of elements do not necessarily represent equal magnitude scalings on the underlying scale giving rise to the measurements. There is no true $0$ point. Examples: Fahrenheit temperature scale ($0$ is arbitrary basically) etc.
+
+\def{Ratio Scale} The domain is like an interval scale, but ratios between two elements mean the same thing throught the domain. The multiplication/division operations have meaning here. The domain is assumed to be continuous. There is a true $0$ point, which means the absence of the quantity being measured. Examples: Kelvin temperature scale, light intensity measurements, amount of money etc.
+
+Features are chosen according to "domain knowledge", in general.
+
+Features can be dense (many non-zero numbers (images, audio etc.)) or sparse (many zero numbers (many text document representations)).
+
+Many features is not always good - expensive to store/compute + curse of dimensionality (predictive power = $O(1/d)$).
+
+Good features : scatter plot which shows how a feature varies with the label variable or histogram. We want high correlation.
+
+Features should be on the same scale: (age vs income for example are in widely different scales). Some algos are independent of this, while others are not. Standardization might be necessary.
+
+Feature selection: correlated with output, non-redundant (features are distinct).
+
+Example of feature selection: forward selection (usually faster, but might miss features), backward selection. Metric: mutual information for example.
+
+==== Common Transformation Of Features ====
+
+\def{Taking Logarithms Of A Variable} Taking a logarithm of a set of the data for a variable will reduce positive skew - because of the compressive effects of the logarithm on $[1,+\infty]$. However, for values in $[0,1]$ the situations worsens considerably. Also, if the values are negative - no go.
+
+\def{Log Transform} Apply a logarithm to a variable. Reduces skew - makes distributions more normal. If you take the mean of the log data, and then exponentiate it, you end up with the geometric mean. Making mean comparisons on the log data then is equivalent to making geometric mean comparisons on the original set.
+
+\def{Tukey Ladder Of Powers} We have $X_\lambda = X^\lambda$ if $\lambda > 0$ or $\log{X}$ if $\lambda = 0$ or $-(X^\lambda)$ if $\lambda < 0$. We're supposed to select $\lambda$ such that link between $X_\lambda$ and $Y$ is as close to linear as possible. One objective to measure is $r$ - select $\lambda$ such that $r$ is maximized. We can swap $X$ and $Y$ depending on what is the "right" domain, though. If normality is what you be looking for, the $r$ against normally distributed data (sorted pairs) can be computed - or visually by using the q-q plot.
+
+\def{Box-Cox Transform} We have $X_\lambda = (X^\lambda - 1) / \lambda$. Calculus-voodoo says that as $\lambda \rightarrow 0$ we get $X_\lambda \rightarrow \log{X}$. The form is similar to Tukey's ladder of powers and gives theoretical justification (somewhat) for the assumption that $\lambda = 0$ yields $\log$. Also, it does automatic sign conservation. $1 \Rightarrow 0$ always by this transform. Selecting the best $\lambda$ is done again, by trying to optimize against $r$. If normality is what you be looking for, the $r$ against normally distributed data (sorted pairs) can be computed - or visually by using the q-q plot.
+
+=== Space ===
+
+Structure can be:
+* structured - every element has the same form. Can basically treat it as a fixed-sized tuple - and data as a matrix.
+* unstructured - every element has different form.
+Most methods are designed to work with structured data. There are a couple of approaches for turning non-structured data into structured data:
+* bag-of-words
+* tf-idf
+
+Signal specific feature extraction methods:
+* resizing
+* segmentation of regions of interest
+
+Distances:
+* Euclidean:
+* Correlation: Focuses on the shape of the input profile rather than values. good for signals (images, audio, bag of words). technically treating an observation as a realization of a single variable, rather than as \f{d} separate variables.
+
+Similarities:
+* Jaccary Similarity: Similarity between a space of sets. It is computed as $J(x,y) = \abs{x \cup y} / \abs{x \cap y}$. Since the denominator set has more elements than the nominator, this is a number beteween $[0,1]$. It has $J(x,x) = 1$ and $J(x,y) = J(y,x)$. Can extend this to bags instead of sets, properly counting the number of times an object appears.
+
+== Dynamic Component ==
+
+Our variables are \emph{Random Variable}. We write about them with capital letters $X,Y$ etc. Randomness is hard to define. A variable may be random because we haven't measured it ``completely'' (coin flip) or because is represents a \emph{sample} drawn from a population using a random mechanism or because it is trully random (such as one might find in physics). If we are talking about a specific value we have observed, then that isn't a random variable, and we write about it with lower case letters $x, y$ etc. We write $X = x$ or $X = 1$ to indicate that we have observed a specific value $x$ or $1$ for $X$. Every RVar has an associated \emph{distribution}, denoted by, $Pr(X)$, which gives the probability or probability density of a certain value $x$ of $X$ appearing, denoted by $Pr(X = x)$. Distributions are usually defined by a set of fixed values called \emph{parameters}. For our purposes, these are fixed properties of the population. We write $X \sim \mathcal{N}[\mu,\sigma]$ to denote that $X$ has the $\mathcal{N}[\mu,\sigma]$ distribution, for example.
+
+Examples of models:
+* probablistic.
+* functional with error.
+* functional.
+
+Models:
+* parametric
+* nonparametric
+
+= Types Of Interaction With A Process =
+
+An \emph{observational unit}: the person or thing on which measurements are taken. Also called case, subject, experimental unit etc.
+
+An observed value or \emph{observation} - this is the data. The actual value of a variable for one of the observational units in a dataset.
+
+Data are values of qualitative (categorical) or quantitative (numerical or ordinal) \emph{variables}, belonging to a \emph{set of items} or \emph{population}. It is a measured characteristic of an observation unit. The set of items is the set of objects you are interested in (set of patients in a clinical study, set of visists to a website, set of cars that come of an assembly line). Variables are a masurement of the characteristics of an item (response to a therapy, how long people stay on website, how long does the car work before the first repair). Variables can be qualitative, if they can be discribed by a label (country of origin, sex, given treatement or not etc.) or quantitative numerical, if they can be described by numbers with ordering and field operations (height, duration etc.) or quantitative ordinal, if they have a natural ordering, but no field operations (answers to questionnaires with disagree, strongly disagree etc. or American-style grades (A,B,etc.)). Quantitative variables can be compared. Data comes as \emph{raw data} or \emph{processed data}. Raw data is data as it is from the source and is often hard to use for analysis. Processed data is a transformed version of raw data. This processing is part of the data analysis process and should be as meticulously recorded as the traditional analysis step. Processing may include merging several raw data sets into one processes set, subsetting a raw set to obtain a smaller processed set or several processed sets, applying transforms to numeric variables. Raw data may have many forms, but processed data usually comes in the form of one or more tables, where each \emph{observation} of the variables of an item is a row, and each column stores the values for all observations for a particular variable. Each table stores data about one kind of observation (people/hospitals etc.). The goal is to get \emph{tidy data}. We might also want to use column names that are easy to use and informative, row names that are easy to use and informative, remove obvious mistakes, use variables that are internally consistent (use ``M/F'' instead of ``M'', ``Males'' etc.), and add appropriate transformed variables so it doesn't have to be done every time we do an exploratory analysis or other down the pipeline technique. \emph{Big data} is data which is usually too large to store on one machine. It's all relative.
+
+Some values may be missing. They may bias the results if they are ingnored. We must consider why they are missing and if the fact that they are missing might bias the results of our work.
+
+Modes:
+* online/offline
+* active/passive
+* induction/transduction
+* missing data
+
+Transduction Scenario: A learning algorithm has labeled training data, and makes predictions about seen training data. Eg. computational biology - a network of proteins, each vertex is a protein. No proteins are added. Just need to predict what other proteins do (for which we don't know what they do). In general we have the all the test data we want, but it might be so much, it acts as a "unseen" sample.
+
+The core of data science lies in the types of questions we can ask of a model. The question dictates what form the model has to a certain degree, as well as the model dictating what sorts of questions we can ask:
+* supervised: There is a distinguished output variable. The goal is to predict the output variable based on the other (input) variables.
+
+* unsupervised: Learn relationships and the structure of the data.
+
+Forms of supervised learning:
+* testing
+* prediction: build just the model of the output given the input.
+* inference: quantify the relationship between outputs and inputs.
+* outlier detection / novelty detection
+* ranking
+
+Forms of prediction:
+* classification/decision: binary, multiclass, structured.
+* ranking.
+* regression.
+
+We have input variables (predictors, independent variables, features, variables) and output variables (response, dependent variables). We assume a model of whatever process we're modelling as \f{Y = f(X) + \epsilon}. \f{f} is a fixed but unknown function of \f{X_1,X_2,\dots,X_p} while \f{\epsilon} is a random error term, which is independent of \f{X} and has mean \f{0}. \f{f} is the systematic information that \f{X} provides about \f{Y}. We wish to estimate \f{f}, by \f{\hat{f}}.
+
+A \def{independent variable} is a variable which is somehow manipulated or under the control of the experimenter. An \def{dependent variable} is a variable which is measured. In the process we are studiying, dependent variables depend on the independent variables. We can control the independent variables, or we have access to them, and we want to see about their relationship with the dependent variables.
+
+Forms of unsupervised learning:
+* density estimation
+* manifold estimation
+* clustering
+* nearest neighbors
+
+Goals of estimating \f{f} for prediction:
+* we'll use \f{\hat{Y} = \f{\hat{f}(X)}} - we ignore the error term, since it averages to zero. Our goal is to simply see what the output would be for a given input. Don't care what \f{\hat{f}} looks like, as long as it gives good predictions of \f{Y}.
+* error can be measured by \f{E[(Y - \hat{Y})^2]} - the squared loss, which can in turn be estimated by \f{1/N \sum_{i=1}^N[(y_i - \hat{f}(x_i))^2]}. We can break it down into reducible error (caused by us choosing a certain \f{\hat{f}} - we can improve on this by choosing a better \f{\hat{f}}) and irreducible error (caused by the stochasticity of the process / our lack of information about it - we can't improve on this).
+* There is the classical bias/variance decomposition or reducible/irreducible decompositon: \f{E[(Y-\hat{Y})^2] = (f(X) - \hat{f}(X))^2 + \Var{\epsilon}}, the first part is the reducible part, while the second is the irreducible one. A natural form.
+* The irreducible error provides an upper bound on the accuracy of any method.
+
+Goals of estimating \f{f} for inference:
+* want to understand the relationship between \f{X} and \f{Y} - how \f{Y} changes as a function of \f{X}. Can't ignore the form of \f{\hat{f}}.
+* typical questions are: which predictors are associated with the response? only a small subset of them may be trully influential or  what is the relationship between the response and each input? positive/negative/linear/non-linear or  how linear is the relationship? linear models are easy to interpret and easy to work with, but they might not capture the full behaviour.
+* linear models allow for relatively simple and interpretable inference, but may yield not so accurate results. Highly non-linear models may yield good results, but their interpreation might leave something to be desired.
+
+== Testing ==
+
+Testing: propose a model, with a number of specified parameters, see if the data support it.
+
+We start with a theory or, more precisely, a statement about a certain quantity of interest \f{T}, which can be a parameter in a parametric model, a whole function, a prediction for some input etc., that its takes on certain values. We have two or more such statements, one of which is the null theory. Hypothesis testing says whether the data provide evidence in favor of one or the other of the hypotheses, usually in a very strict and controlled manner.
+
+In binary testing we have the null and alternative hypotheses.
+
+== Learning ==
+
+Learning: propose a model, with a number of parameters, see what values for them make them most likely to be based on the data.
+
+Learning Is About Generalization. It is different from memorisation. Complex rules can be poor predictors. Counter-intuitive - complex models which perfectly capture the training data are not always good.
+
+General approach for learning: We have observed \f{N} data points, called the training data, this is \f{X_t = \set{(x_1,y_1),\dots,(x_n,y_N)}}.
+
+A learning method is a function which builds an estimate of \f{f} starting from \f{X_t}. It is a function returing a function, then. \f{LM(X_t) \rightarrow \hat{f}_{LM}}.
+
+For Parametric methods:
+* two distinct phases: model selection and model fitting.
+* model selection means selecting a functional form / shape for \f{f}. Examples include: linear, neural networks etc. Usually described by a set of parameters \f{\Theta \in \mathbb{R}^m}. Instead of having to estimate a function at each value in the domain, we simply have to find the right \f{m} parameters.
+* model fitting or training means actually finding the \f{m} parameters. This boils to estimating the \f{m} parametrs such that \f{Y \approxeq f[\Theta](X)}. This again boils down to somehow minimizing the expected (or estimated therefor) of the error done by the model on the training data.
+* Most common approach to model fitting is (possibly regularized) least squares.
+* plus: easy to fit, easier to interpret.
+* minus: most relationships are not actually as described by the model.
+* We want to choose flexible models which can fit many different forms of functions. This means having more parameters, in general. This is bad, since we can then have the problem of overfitting the training data, which basically means following the error term and treating it as \f{f}, instead of looking only at \f{f}.
+
+Nonparameteric methods:
+* no assumptions about the form of \f{f}. Just bring \f{\hat{f}} close to \f{f}.
+* plus: a closer form to the function.
+* minus: needs more data, less interpretable.
+* In general, as the flexibility of a method increases, its interpretability decreases.
+* Why select anything less flexibile: interpretation/inference might be very hard. Simple methods have easier interpretation (as well as the statistical tools to perform said inference). Even when prediction is the goal, less flexible models might be prefered, since they have higher resistance to overfitting.
+
+== Selection ==
+
+Selecting: use the data to find the appropriate model.
+
+= Estimators =
+
+A statistics is a number or value, in some particular context. We need to  understand which data was collected, how was it collected, on whom was it collected and for what purpose.
+
+A \emph{statistic} is a value calculated from our observed data. Typically, statistics are \emph{estimates} of the parameters of the population. We want these statistics to be appropriate estimates of the population parameters. We want to be able to generalize what we see in the data to the population.
+
+An \def{estimator} is a statistic which computes some sort of parameter for a population's distribution.
+
+Nice properties of estimators: biasedness, asymptotic ubiasedness, variability.
+
+An estimate of the number of independent pieces of information on which the estimate is baded. In general, the degrees of freedom for an estimate is equal to the number of values (basically $Nd$ here) minus the number of parameters estimated en route to the estimate in question.
+
+Classical example: sample variance is $s^2 = \sum_{i=1}^N (x_i - \hat{u})^2 / (N-1)$. We start with $N$ independent pieces of information - the observations. Then we need to compute the deviances. But, we first compute the mean. Since in the deviance computation, we include the mean, every observation affects a deviance. Therefore the deviances are not independent between them. Therefore we don't have $N$ degrees of freedom. We have $N-1$.
+
+A property of point estimates. Determines whether the estimator statistic tends to systematically under or over estimate the estimator (in numeric terms). More precisely, a statistic is biased if the long-term average value of the statistic is not the parameter it is estimating. The mean / expected value of the sampling distribution is not not equal to the parameter. A given computed sample value might be under or over, but there is no "systematic" problem.
+
+A property of point estimates. Determines whether the estimator statistic tends to vary from one sample to another (again, for numeric values). More precisely, we use the standard error / standard deviance of the sampling distribution for the statistic as a measure of variability.
+
+The smaller the standard error, the more efficient the statistic (less observations needed to obtain a good estimate of the true parameter).
+
+== Sampling distribution ==
+
+Central concept of inference. Consider the fact. If $X$ is a RVar then $Y = f(X)$ is a RVar as well.
+
+The central setup of statistics is that we have a population $D$ from which we sample $N$ observations. Sampling can be seen as having $N$ iid RVars with distribution $D$ and sampling is obtaining a simple $N$-dimensional observation from that $(x_1,\dots,x_N)$.
+
+A statistic $S$ is a function applied to $(x_1,\dots,x_N)$. But we can also view it as a function $S(X_1,\dots,X_N)$ - that is, a RVar itself, a function of RVars. Computing the statistic is like drawing from $S(X_1,\dots,X_N)$.
+
+The sampling distribution is the distribution of $S(X_1,\dots,X_N)$. It generally depends on the distribution of the population and $N$ and other assumptions. It is a theoretical concept and it is used to *infer* how good our estimate is (close to the true value) etc. For example, if we compute a statistic, and assume a sampling distribution, we can then infer how far away from the true value our computed value would be, given a sample size.
+
+Interpretations:
+* It is the distribution of $S$ over $D^N$, derived from the probability over $D^N$ (which factorizes from the one of $D$) and transformed according to $S$.
+* If we were to repeatadly take a sample and compute $S$ for each one, then the distribution of the $S$s would be the sampling distribution. Rather, the empirical PDF/CDF/histogram/relative frequency distribution we compute will tend to the sampling distribution as the number of sample taking tends to infinity.
+
+Finally, anything we compute from a sample has a sampling distribution. Does not mean it makes sense to compute it. The histogram we compute to estimate the sampling distribution in the second interpretation, also has a sampling distribution etc.
+
+Standard error: The standard deviation of the sampling distribution. How spread out do we expect values of the statistic to be.
+
+Usually varies ip with $N$. Intuitively, larger samples make for more precise estimates of the population statistic.
+
+The standard deviation associated with an estimate is called the standard error. It describes the typical error or uncertainty associated with the estimate.
+
+== Point estimation ==
+
+\def{A point estimate} is a statistic which computes a single value as an estimator for some population parameter. It does not reveal the uncertinty associated with the estimate - no sense of how far the sample mean may be from the population mean.
+
+Providing a single "best guess" for a quantity of interest \f{T}, which can be a parameter in a parameteric model, a whole function, a prediction for some input etc.
+
+An estimator is the function which produces the estimate, given the sample. We denote it by \f{\hat{T}} or \f{\hat{T}_n} and we have \f{\hat{T}_n = f(X_1,\dots,X_n)} and it is a random variable, with its own distribution, called the sampling distribution of the estimator. The standard deviation of this distrbution is called the standard error, and is denoted by \f{\se{\hat{T}_n} = \sqrt{\var{\hat{T}_n}}}. This is usually estimated as well.
+
+The bias of an estimator is \f{\bias{\hat{T}_n} = \mean{T}{\hat{T}_n} - T}. An estimator is unbiased if the bias is zero, that is, the mean of the sampling distribution is equal to the actual value of the estimated quantity.
+
+An estimator is consistent if \f{\limprob{\hat{T}}{n}{T}}. The quality of a point estimate can sometimes by assessed by the mean squared error, or MSE defined as \f{MSE_\hat{\T} = \mean{T}{(\hat{T}_n - T)^2}}.
+
+Bias Variance Decomposition of MSE:
+* explains the error for an estimator by reducing it to a bias component (some systematic problem in the way the estimator works) and the variance component (the randomness of the sampling procedure and whatever amplification of this the estimating procedure adds).
+* \f{MSE_\hat{\T} = \bias^2{\hat{T}} + \se^2{\hat{T}}}. Proof Idea: just expand the MSE expression and add and substract \f{\mean^2{\hat{T}_n}}.
+* If we have \f{\lim{\bias{\hat{T}_n}}{0}} and \f{\lim{\se{\hat{T}_n}}{0}} then \f{\hat{T}_n} is consistent. Proof Idea: we have that \f{\lim{\mean{\hat{T}}{(\hat{T} - T)^2}}{0}} which means that \f{\liml2{\hat{T}_n}{T}} and therefore, \f{\limprob{\hat{T}_n}{T}}.
+An estimator is asymptotically Normal if \f{\limdist{(\hat{T}_n - T)/se{\hat{T}_n}} {\mathcal{N}[0,1]}}.
+
+== Interval Estimate ==
+
+\def{An interval estimate} A statistic which computes an interval as an estimator for some population parameter, whose domain has to admit intervals - be ordinal or ratio scales.
+
+=== Confidence Interval ===
+
+Sometimes we have point estimates for a certain parameter of interest. Otherwise, we might want to know an interval where the value might be. The $\alpha \in [0,1]$ confidence interval is one such estimate for a parameter. The way we compute this depends on the actual parameter we're estimating and what distributions we're assuming, and, in general, we'll have different computing methods for different situations. In the worst case, we might simulate/bootstrap. However, the computing method is defined, so that the result it produces, will $\alpha * 100 \%$ of the time contain the true value of our parameter, or, more precisely, if we repeat the experiment $N$ times, $\alpha N$ of those times, the interval will be such that the true value is contained in it. This is similar to a point estimate. If we repeat the experiment $N$ times, we'll get $N$ different point estimates, and sometimes they'll be close and sometimes they'll be far. This is a very precise definition. It does not say that the interval we compute contains the actual value of the parameter with $95\%$ probability. In fact, the real value is either in the interval or not, there's no probabilistic aspect to this. Usually, the $95\%$ or $99\%$ interval are selected. The larger $\alpha$ is the larger the interval becomes (with $\alpha = 100\%$ we might very well have to have the whole domain as the interval) and the smaller $\alpha$ is the smaller the interval becomes (we get a more precise reading of the location of the parameter for this sample, but we accept the possibility that the real value is more likely outside our interval).
+
+Another especially important consideration of confidence intervals is that they only try to capture the population parameter. Our intervals say nothing about the confidence of capturing individual observations, a proportion of the observations, or about capturing point estimates. Confidence intervals only attempt to capture population parameters.
+
+A form of interval estimate, which will contain the population parameter a certain percentage of samples. Select a confidence level of $q$, which is usually $95\%$ or $99\%$. The confidence interval building procedure will return two values $\alpha_1$ and $\alpha_2$ such that, if we repeated the sampling procedure multiple times, the built intervals will contain the population parameter (which is just one) $q$ percent of the time. This is very different from saying that the population parameter is in the interval $q$ percent of the time. It is or it isn't, in an precise way, for every computed interval, but it is as a "long term" behaviour that this interval interests us.
+
+Technically, the procedre is very broad. For a given estimator, consider the sampling distribution and estimate it from the sample (which usually includes estimating the mean and variance of a normal distribution). Then, select a subset of the domain $Q$ such that $P_S(X \in Q) = q/100$.
+
+The standard procedure slects two points symmetric about the mean of the (usually normal distribution) such that we actually obtain an interval $[\alpha_1,\alpha_2]$. Advantages: intervals are symmetric about the point estimate (assuming the estimator is unbiased) and contiguos.
+
+A larger $q$ determines a larger interval. For $q = 100$ we get the full domain (or at least the subset of the domain to which the sampling distribution attributes non-null density).
+
+Providing a "set", usually given as an interval, for a quantity of interest \f{T}, which can be a parameter in a parametric model, a whole function, a prediction for some input etc., such that, in the limit, the parameter will be in a computed set with a given probability \f{1 - \alpha}, called the coverage, and which is usually \f{0.95} or \f{0.99}.
+
+We now have a series of function which produce \f{\hat{C}^T_n = f(X_1,\dots,X_n)}, and which is again a random variable, with its own distribution, and which has \f{\prob{T}(T \in \hat{C}^T_n) \leq 1 - \alpha} for all \f{T \in \mathbb{T}}. In the case of a single dimension, we have confidence intervals, while in multidimensional cases we have confidence spheres or elipses etc.
+
+The parameter is fixed, but the estimator of the confidence set is variable, just like with the point estimates.
+
+Interpretation: if I repeat the experiment \f{K} times, then in \f{(1 - \alpha)N} of the cases we'll have the computed confidence interval contain the actual quantity. More generally, when estimating \f{K} different quantities, we'll have the same effect for \f{(1 - \alpha)N} estimators.
+
+== Frequentist and Baeysian ==
+
+Frequentist, Bayesian
+
+Loss functions
+
+Bias-variance decomposition
+
+== Prediction ==
+
+Bias-Variance-Variance decomposition
+
+Validation error, cross-validation, [all the different ways to evaluate performance]
+
+== Approaches To Estimation ==
+
+Dervied from natural properties, maximum likelihood, maximum aposteriori, loss function minimization
+
