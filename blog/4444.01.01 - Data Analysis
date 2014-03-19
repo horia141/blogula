@@ -1,0 +1,18 @@
+= Overview =
+
+\def{Data science} is a vast set of tools for understanding \ref{process}{processes}. We will consider it an umbrella term for a number of disciplines, such as statistics, data mining, machine learning, business intelligence, collective intelligence etc. When combined with particular domain knowledge, data science is known as either biostatistics, natural language processing, signal processing, econometrics, statistical process control etc. It depends, directly or indirectly, on probability theory, linear algebra, mathematical optimization, multivariable calculus, algorithm analysis, data structures etc.
+
+A \def{process} is a natural/artificial/social phenomenon. We study processes and seek knowledge of them. We express this knowledge in terms of a \def{model} and statements about it. Both the model and the statements are mathematical and probabilistical in nature.
+
+The only way to interact with a processes is to perform a \def{query} on it. The result of a query is called an \def{observation} and it is the description of the process at the moment in time the query was made. The set of all queries is called the \def{population}. Typically we perform a series of \def{queries} in succession, which represent a subset of the population, and which result in a \def{sample}. All of the samples we gather form the \def{data}.
+
+We start with the process and a model for it. Data science provides tools for data collection, that is, which queries to pose to the model, and data analysis and iterpretation, that is, what statements can we make about the model, based on the data we have gathered.
+
+Processes can evolve in time, for the duration of our interaction with it, in which case they are called \def{dynamic} or not, in which case they are called \def{stationary}. A given query can impact future queries, in which case the process is called \def{dependent query} or not, in which case the process is called \def{independent query}.
+
+The result of the \f{i}th query depends on the dynamics and query type of the process. Depending on whether the process is stationary or dynamic, observations can be \def{identically distributed} or not. Depending on whether the process is independent query/dependent query, observations can be \def{independent} or not. A very common situation is for the process to be stationary and indepdent query, in which case we say the observations in the sample are \def{Independent and Identically Distributed} (IID).
+
+Example applications of data science: speech recognition, speech synthesis, face recognition, credit checking, spam detection, automatic translation, entity recognition, handwritten text understanding, sentiment analysis, disease detection, product/music recommendations, collaborative filtering, web-page ranking, weather prediction, stock market prediction, intrusion analysis etc.
+
+Examples of processes: the interaction of a ball with Earth's gravitational field, the spread of a disease among a population of individuals, a human face, proper English sentences etc.
+

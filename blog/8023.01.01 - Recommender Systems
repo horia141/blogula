@@ -1,0 +1,129 @@
+Recommender Systems are tools which seek to predict the rating a user would given to an item, or if the user would prefer/like that item or not.
+
+One needs a set of items. In most cases, there is also a set of users. That is, any one user is not considered individually, but rather in relation to the other users. Both these sets are dynamic during the lifetime of the system. Furthermore, the system might not have access to all users at all times. That is, the system might be queried for a user which isn't registered, but would still need to provide an answer for it. The same problem does not occur, for items.
+
+Basic Tasks:
+* Prediction: how much will a user like a product.
+* Recommendation: produce a set of the top $k$ products a user will like.
+
+Two approaches:
+* Content Based: each item is described by a series of features. It is known that the user prefered some items in the past. We try to find similar items to those and recommend them. Items have features - one must understand what an items is. Treats each user individually. Must understand features "semantically". Generally cannot deviate a lot. A user can be expressed in terms of item space features by looking at the features of the items he preffered, and combining them in some way. Similarities between users can be computed this way. Suffers from "cold start" for items - what to do when there is no data for the user(s).
+* Collaborative Based: we know what each user has preffered in the past. We try to find items liked by similar users to the current user and recommend them. Items don't have features - does not matter what items are. Looks at the whole set of users. Requires large amount of data per user in order to make accurate predictions. Suffers from "cold start" for users - what to do when there is no data for the user(s) and for items.
+  Other issues: scalaibility (hard to process millions of users times millions of items) and sparsity (a user has preffered very few of the large number of items), synonims (can't differentiate between the same item with a different name), gray sheep (outliers basically), black sheep (idiosyncratic tastes), diversity reduction (the rich-get-richer effect - especially as it is hard for new items to gain a lot of traction and start being recommended).
+* Hybrids: either combine the predictions of a content based and collaborative based systems, or add features from one to another etc. Combination can be: weighted, switching, mixed (show results from all), cascade (there is a priority, with lower priority ones breaking the scoring of higher priority ones) etc.
+
+Data collection can be:
+* Explicit: the user is asked to rate the item shomehow: give it a score, a "like", an explicit ranking, making choices between two or more items etc.
+* Implicit: the choices of the user are observed: what items he looks at, viewing times, purchase/interaction history, social network analysis.
+
+Measures of success:
+* Accuracy: how accurate are the recommendations when tested on a hold-out dataset? Precision, recall etc. from IR are also valid here.
+* Diversity: avoid too uniform recommendations (ie. tracks from the same artist).
+* Persistance: good to show items multiple times (for psychological reasons - maybe they did not inspect them accurately the first time etc.)
+* Privacy: how well does the system protect the anonymity of its users (for social network type situations - might leak that a member of a closed group has non-acceptable interests etc.)
+* Robustness: how sensitive is the system to outliers (users with wierd preferences which might dominate a group or items with weird features etc.) or fraud attempts.
+* Serendipity: a measure of how surprising the recommendations are.
+* Coverage: to how many users and product pairs could the system provide a recommendation.
+* Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), Correlation: how different are the predictions of the system from the actualy scores given by the users, on a test set, as measured by MAE, RMSE and correlation between prediction and test. Usually "correlated".
+* Decision support metrics: reversal rate, weighted errors and ROC sensitivity.
+
+Sometimes, the content-based approach characterizes users in terms of some features. For a given user, similar users are found (in terms of these features, not of liked items) and items which appear in the set of liked items are recommended as well.
+
+The naive approach:
+* Consider the rating attributed to a new item the average score the user has attributed to the items he's seen. A user centric view of the world. Has issues with users with too few items and does not take the item into consideration. Assumes all items are the same.
+* Consider the rating attributed to a new item the average score the items has received from all users. An item centric view of the world. Has issues with items with too few users and does not take the user into account. Assumes all users are the same.
+* Taking into consideration both the items a user has rated and how an item is perceived, we can setup the prediction to be the average score of that item minus the average score given by a user. The prediction matrix is then \f{S = \mean{P} - \mean{C}} and each element \f{S(u,p) = \mean{p} - \mean{u}}.
+
+An approach for collaborative filtering (user-based): we have the user-item matrix, which gives for each user and each item, the score the user gave that item, with some sort of null value used to represent no knowledge. One can then view these scores as features describing the users. Now, given a user, we find the \f{k} most similar users to him, using a NN search (usually an approximate version beacuse there are many users). The similarity measure depends on the space of features. For \f{0/1} scores, Hamming distance or cosine. For positive scores, cosine. For \f{-1/1}, Euclidean or Pearson. Then, the rating given for item \f{i} is some aggregate of the ratings of the users in the neighbours set. Either the average, or a convex weighted sum by similarity.
+
+An approach for collaborative filtering (item-based): we have the user-item matrix, which gives for each user and each item, the score the user gave that item, with some sort of null value used to represent no knowledge. One can then view these scores as features describing the items. Given an item, we find similar items to it (according to features given by users), from the set of items rated by the user, using a NN search (again, usually an approximate version because there are many items). The similarity measure depends on the space of features. For \f{0/1} scores, Hamming distance or cosine. For positive scores, cosine. For \f{-1/1}, Euclidean or Pearson. Then, the rating given for item \f{i} is some aggregate of the ratings of the user to the items he has scores. Either the average, or a convex weighted sum by similarity.
+
+General disadvantage of content based:
+* If the data is sparse it is hard to make predictions/recommendation - reduced coverage. Leads to bad accuracy because there is fairly little ratings data that can be included. Leads to loss of neighbour transitivity (because the space is so wierd). Also can lead to loss of commutativity.
+* Scalability: It is not easy to find nearest neighbours when the database is big and/or the dimensionality is very high. See \ref{Nearest Neigbour Search} for solutions to this problem.
+* Synonymy: two products with the same name (or more generally, a product with two entries in the product DB) cannot be distinguished by such systems.
+
+An approach for collaborative filtering - latent models:
+  Both the users and the items can be explained by hidden factors - there is a space of \f{k} factors which determines the items and users (a more probabilistic interpretation). Each user has a representation in this space \f{u_i} and each item has a representation in this space \f{f_i}. The model we assume is that the score given by a user to an item \f{s_{ij}} can be determined by the inner product of \f{u_i} and \f{m_j} or \f{s_{ij} = u_i^Tm_j}.
+  This leads to a factorization of \f{S = UM} where \f{S \in \matrix{R}{\abs{\mathbb{U}}}{\abs{\mathbb{M}}}} is the score matrix, \f{U \in \matrix{R}{\abs{\mathbb{U}}}{k}} is a matrix containing user representation as lines and \f{M \in \matrix{R}{k}{\abs{\mathbb{M}}}} is a matrix containing item representations as columns.
+  It is a factorization like many others (SVD for example - but that has issues because the matrix doesn't contain a lot of data).
+  To solve it, find \f{U,M} which minimize a regularized MSE measure for each element: \f{(u_i^\star,m_j^\star) = \arg\min_{u_i,m_j} \sum_{u_i, m_j} (s_{ij} - u_i^Tm_j)^2 + \lambda (\norm{u_i}^2 + \norm{m_j}^2)}. This is achieved by either gradient descent, stochastic gradient descent or alternating least squares (holding \f{m_j} fixed while minimizing \f{u_i} leads to a least squares problem, then repeat with \f{u_i} fixed, until convergence).
+  To add biases extend the model as \f{s_{ij} = \mu + b^u_i + b^m_j + u_i^Tm_j} where \f{\mu} is the mean score of all the items, \f{b^u_i} is the average bias of user \f{i} when rating items and \f{b^m_j} is the average bias of people for movie \f{j}. Same optimization issues apply.
+  Common extensions add implicit preferences of the user (which are usually boolean). If \f{N(u_i)} is the set of items which are preffered implicitly by the user then we must include the factors for each item in this set in our model. Usually normalized.
+  Similarly, if there are attributes for each user \f{A(u_i)}, and each attribute has a factor representation, then we have to include these.
+  A more complete model becomes \f{s_{ij} = \mu + b^u_i + b^m_j + u_i^T(m_j + \sqrt{N(u_i)} \sum_{l\in N(u_i)} x_l + \sum_{l \in A(u_i)} y_l)}.
+  One can then use the same treatement to data as well.
+  One can add temporal elements to the mix. If we know dates for the preferences we have, we can split the model dependent on time, and each parameter then gets a time version. Corresponding explosion in time.
+  For models with implicit feedback, a modulating \f{c_{ij}} confidence level can be introduced in the cost function (for just the MSE term), like so \f{\sum_{i,j} c_{ij} (s_{ij} - \mu + b^u_i + \dots)^2 + \lambda ({b^u_i}^2 + \dots)}.
+  Increasing model complxity leads to more parameters to tune, increased training time but reduced MSE - so a win.
+
+An approach to collaborative filtering - latent semantic indexing:
+* Same discussion as from \ref{An approach to collaborative filtering - latent models}
+* Uses the full SVD on the user-product matrix. Hence it is less robust etc.
+* Some properties of the SVD:
+  * Factorizes the matrix \f{S = URV^T}, where \f{U} and \f{V} are orthogonal matrices of appropriate sizes and \f{R} is a diagonal matrix, with \emph{singular values} in descending magnitude on this diagonal.
+  * Selecting only \f{k} rows of \f{U} and \f{V} results in the best rank-\f{k} approximation of \f{S} in terms of the Frobenius norm.
+
+Classical Datasets:
+* MovieLens
+* Netflix Prize
+
+Sources:
+* Matrix Factorization Techniques For Recommender Systems
+* Using Collaborative Filtering To Weave An Information Tapestry
+
+= Recommendation Systems = 
+
+The filtering problem: It basically requires recommending interesting things to people.
+
+In the jargon of the field we start with a data matrix whose rows are people and whose columns are items in the world. Each row is of the same type (see Statistics), which is usually a ordered discrete set (specifying a level of attractiveness of the item to a person) or just a discrete set (specifying wether an action was done or not done, for example). A row is called the preference vector or preference of a certain person. Most of this row is empty (contains a default value which is understood as such), as, in most real situations a person cannot see all movies or listen to all music or read all books etc.
+
+One way to recommend is to take each item, compute the mean of scores (for those people who voted for it) and the standard deviation, and recommend those with highest mean or highest mean and lowest variance or highest coefficient of variation or highest Signal to Noise ratio (the latter two being scale aware).
+
+This is a decent solution, as it will tend to favor "classics" - items which everybody agrees on are good. The results are not stellar, because they do not take into account the particuliarities of each person. If a person likes action films, and is recommended only comedies, because everybody likes those, then he will not be satisfied by what he sees from the system. A different approach is needed.
+
+Another way is to look at the preferences of a person and ask what is the most probable score he would give a product, given that we know what he's already liked. Bayes theory will lead us to using the mean of the scores given by the user so far. Again, this is not a good solution, even though it produces personalised scores. Every movie will be rated the same.
+
+A collaborative filtering algorithm works by searching a large group of people and finding a smaller set with tastes similar to yours. It looks at other things they like and combines them to create a ranked list of suggestions.
+
+Say you have two persons, with descriptors p1 and p2. Two ways to compute similarity between these two is the Euclidean distance and the Pearson correlation.
+
+If you treat the descriptors as points in a high-dimensional vector space (of dimension equal to the number of items we consider) then using the Euclidean distance for similarity computation is the way to go. The intuition here is that people with similar preferences will be closer together in space than people with contrasting preferences. However, the special form \f{1 / (1 +  \left|p1 - p2 \right|)} is used so that higher values are assigned to close points and lower values to far off points. The maximum is 1 and the minimum 0.
+
+A problem with this approach is the Curse of Dimensionality, which appears in many forms in many places, and basically says that dimension dependent approaches to problems become less efficient as the dimension increases, on account of there being a need for an exponential in dimension number of "samples" to properly understand the space, a need which cannot be fulfilled in most applications. There are many experiments: relative area of circumscribed sphere in unit hypercube going to zero as the dimension increases or distribution of distance between two random points getting weirder as dimension increases.
+
+[See curse\_of\_dim.m for a display of this effect : as the dimension increases, most distances are very close to 1, and an outlier group slowly increases \dots it's quite interesting actually]
+
+If you treat the descriptors as realizations of a random variable for each user, then a way to compare these things would be to see if there is any form of linear dependence between th
+em. A good measure of linear dependence, robust to changes in scale between the variables is Pearson's correlation coefficient. If P1 is the RVar associated with person 1 and P2 is the RVar associated with person 2, then we can compute the coefficient as:
+
+%formula{
+Pearson[P1,P2] = Cov(P1,P2) / (Std(P1) * Std(P2))
+}
+
+This will yield a value between [-1,1]. Negative values mean negative correlations, which translate into one person liking what the other does not. These are useful as well.
+
+There are other metrics as well: the Manhattan/taxicab metric, Hamming distance, etc.
+
+A first step in any "metric" based filtering algorithm is, once a suitable metric has been found, to sort the datatable by distance to the desired user.
+
+The first strategy useful here is to recommend items which were reviewed by the best matching other persons and which were given a high score by them (for a suitable definition of high) and which weren't reviewed by the targeted person. This strategy has several pitfalls though. Highly ranked items viewed by persons not similar to the user won't get a chanche to be seen. The case can be made that since the persons have different tastes, its probable the user won't like them anyway, but, for movies, for example, there is a universality effect: good movies (with good scores) tend to be liked by a lot of people regardless of what other prefferences they might have. On the opposite side, it could turn up items which were reviewed good by the closer persons but really bad by other persons.
+
+To correct for this, another strategy is employed. In fact, we start from the simple filtering problem we stated initially was not that OK. What we do now is weight each score by each person the normalized similarity of that person to the user. You can see the simple filtering as a special case, where every person had similarity 1 / (P - 1) to the reference person. We then recommend the movies with the highest scores.
+
+For finding similar items, just computing the item-item similarity is good. You can also compute which users are most likely to rate as good a certain product, by applying the full algorithm above, and this can be useful for internal stuff. Therefore, by working on the transposes matrix and applying the same algorithms, we get to double the types of problems we can handle.
+
+What we've done until now is user-based collaborative filtering. This works when the database of users/items is relatively small, but begins to break down as more users and items are added and the overlap between groups of users begins to shrink.
+
+The alternative to user-based collaborative filtering is called item-based collaborative filtering. The is useful when the set of users and items is big and the set of items doesn't change very fast, relatiely. The first thing it does it pre-compute the similarities between items. Then, for a certain user, find out its better ranked items and find the other items that are most similar to those, from the precomputed table. The score of an item is given by the score of the item I have seen, multiplied by the similarity of that movie to the one under consideration. You can also normalize by the sum of the similarities in order to get a value in the domain we are expecting.
+
+On dense datasets item-based filtering performs as well as user-based filterings, but on sparse ones, the item-based approach is better.
+
+Another type of score is the Tanimoto score. [[[ See Wikipedia for info about it ]]] It is defined for boolean domains and is computed as 1 - intersection / union of the boolean vectors. Another distance metric is Hamming distance. Another one is Manhattan distance.
+
+An improvement to user-based methods is to pre-compute user-user differences and use only the k most similar users when recommending movies.
+
+We can say two customers are similar if their sets of purchased items have a high Jaccard similarity. Likewise, two items that have sets of purchasers with high Jaccard similarity will be deemed similar. It is unlikely that any two customers have Jaccard similarity very high, but even a Jaccard similarity like \f{20\%} might be unusual enough to identify customers with similar tastes. The same observation holds for items; Jaccard similarities need not be very high to be significant. By combining similarity finding with clustering, we might be able to discover that items of certain kinds are mutually similar and put them in one group. Then, we can get a more powerful notion of customer-similarity by asking whether they made purchases within many of the same groups.
+
+For rating systems. We can see items as similar if they were bought or rated highly by many of the same customers, and see customersas similar if they bought or rated highly many of the same movies. The same observations that we made for the above situation apply here as well: similarities need not be high to be significant, and clustering items will make things easier. In addition, the matter of ratings introduces a new element. Some options are: ignore low-rated customer/item pairs; that is, treat these events as if the customer never bought the item, when comparing customers, imagine two set elements for each movie, ``liked'' and ``hated''. If a customer rated a movie highly, put the ``liked'' for that movie in the customer's set. If they gave a low rating to a movie, put ``hated'' for that movie in their set. Then, we can look for high Jaccard similarity among these sets. We can do a similar trick when comparing movies. If ratings are 1-to-5-stars, put a movie in a customer's set n times if they rated the movie n-stars. Then, use Jaccard similarity for bags when measuring the similarity of customers. 
+

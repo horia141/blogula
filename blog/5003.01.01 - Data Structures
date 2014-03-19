@@ -1,0 +1,343 @@
+We are interested in developing algorithms and studying their properties. Algorithms are descriptions of the computations necessary to solve a certain problem using a certain computational model. To specify an algorithm for a problem, one first needs to specify a computational model (which defines what an algorithm is allowed to do), a problem instance formulation (which defines how the problem is presented to the algorithm) and a way to combine the building blocks of the computational model in order to solve the problem. We are interested in studying wether an algorithm is correct or not, that is, if it solves the problem? (provide a proof of this fact) We are also interested in the resources consumed by the algorithm. The most important resources are time: how many execution steps does it take to solve an instance and space: how many model components are required in order to solve an instance. Determining what is important depends mostly on the problem and different classes of algorithms have different resource types.
+
+For example:
+* How many comparisons are made.
+* How many multiplications are made.
+* How many accesses to main memory are made.
+* How many network packets are sent.
+* How many random bits are consumed.
+* How many accesses to disk are made.
+* How many API calls to a payment service are made.
+* How many SMSs are sent.
+* How many processes are used.
+
+Computation models: Random Access Machine, Parallel Random Access Machine, Communicating Sequential Processes, Pointer Machine, Deterministic Finite State Automaton, NonDeterministic Finite State Automaton, Determinisitc Pushdown Automaton, NonDeterminisitc Pushdown Automaton, Linear Bounded Automaton, Turing Machine, Universal Turing Machine, Boolean Circuits, Comparison Networks, Neural Networks, Cellular Automata. Not all can express the same classes of problems. Also, for two models which can explain the same class of problems, there might be running time differences. Simiarly, if a problem can be expressed by two models, there might be running time differences.
+
+Data Models:
+* Stack: l\f{=}size(), push(k), k\f{=}pop().
+* Queue: l\f{=}size(), push(k), k\f{=}pop().
+* Deque: l\f{=}size(), push_front(k), k\f{=}pop_front(), push_back(k), k\f{=}pop_back().
+* List: l\f{=}size(), insert(i,k), remove(i), set(i,k), get(i), insertAll(i, c), removeRange(i, l).
+* Priority Queue with k is Comparable: l\f{=}size(), enque(k), k\f{=}deque().
+* Random Queue: l\f{=}size(), enque(k), k\f{=}deque().
+* UMap: l\f{=}size(), insert(k,v), remove(k), lookup(k).
+* SMap with k is Comparable: l\f{=}size(), insert(k,v), remove(k), find(k).
+* USet: l\f{=}size(), insert(k), remove(k), contains(k).
+* SSet: l\f{=}size(), insert(k), remove(k), contains(k).
+* Symbol String: 
+* Vector/Matrix with BLAS Interface: 
+
+Abstractions or models are simplifications of the world. Here are several useful abstractions in Computer Science, all collections of objects of some sort, as well as examples of how they can be used:
+* Stack: A collection of objects, which supports adding and removing objects, and which maintains the temporal order of these operations, in the sense that removal eliminates the most recently added object in the stack. Common actions: push(o), pop(), top() (look at the last element, but don't remove it). Used in parsing, as a core concept in programming languages (the call stack), depth first search in trees and graphs etc.
+* Queue: A collection of objects, which supports adding and removing objects, and which maintains the temporal order of these operations, in the sense that removal eliminates the oldest object in the queue. Common actions: enque(o), deque(), top() (look at the first element, but don't remove it). Used to model communication between processes, where each message is equally important, breadth first search in trees and graphs etc.
+* List: A collection of objects, which supports adding and removing objects, which associates a unique positive integer index to each element, such that the set of indices is continuous. Allows access to an element based on this index. Common actions: insertAfter(i, o), removeAt(i), set(i, o), get(i). Used whenever a group of objects need to be stored and every element must be accessible.
+* Priority Queue: A collection of objects, which supports adding and removing objects, and which associates a priority to each element. Removal eliminates the element with highest priority. The priority must be a member of a totally ordered set, which is usually the integers. Common actions: insert(p, o), removeHighestPriority(). Used to model communication between processes, where messages might have different levels of importance, in various graph traversal algorithms (A*) etc.
+* Ordered Dictionary: A collection of objects, which supports adding and removing objects, and which associates a key with each element. The key must be a member of a totally ordered set. Allows access to an element based on its key, as well as finding the next lowest and previous highest elements, given a certain key. Common actions: insert(k, o), remove(k), findNext(k), findPrev(k). Used whenever a group of objects must be associated with another group of objects, such that retrieval can be made by specifying the first object, and it is desired to iterate over the elements in order.
+* Unordered Dictionary: A collection of objects, which supports adding and removing objects, and which associated a key with each element. There are no restrictions on the key. Allows access to an element based on its key. Common actions: insert(k, o), remove(k). Used whenever a group of objects must be associated with another grou of objects, such that retrieval can be made by specifying the first object.
+* Ordered Set: A collection of objects, which supports adding and removing objects, and which allows for testing the membership of a certain object in the set. The objects must be members of a totally ordered set and at most one "copy" of an object can exist in the set. Allows finding the next lowest and previous highest  elements, given a certain object. Common actions: insert(o), remove(o), isMember(o), findNext(o), findPrev(o). Used to find distinct elements in a larger collection, to filter a larger collection and treat specially only elements in the set etc., all these while allowing iteration in order.
+* Unordered Set: A collection of objects, which supports adding and removing objects, and which allows for testing the membership of a certain object in the set. At most one "copy" of an object can exist in the set. Common actions: insert(o), remove(o), isMember(o). Used to find distinct elements in a larger collection, to filter a larger collection and treat specially only elements in the set etc.
+
+We work with many more abstractions than these, though. Here is a non-exhaustive list of them: numbers, strings, relations, functions, relational databases, disjoint sets, graphs, automata (finite state, pushdown, linear bounded), Turing machines, grammars (regular, context free, context dependent), propositional logic, predicate logic, linear models, gaussian mixture models, matrix factorization models, basically any association of a probablistic model to describe a process, audo signals as sequences of numbers, images, differential equations etc.
+
+Data Structure Implementations of Data Models:
+* Stack: ArrayStack.
+* Queue: ArrayQueue.
+* Deque
+* List: ArrayList.
+* Priority Queue with k is Comparable
+* Random Queue: ArrayRandomQueue.
+* UMap
+* SMap with k is Comparable
+* USet
+* SSet with k is Comparable
+* Symbol String
+* Vector/Matrix with BLAS Interface
+
+Concepts:
+* Load-Factor \f{\rho}: the ratio of the size/number of objects in a data structure to the size/number of storage units requested. Load factor is a number between \f{0} and \f{1}.
+* Iterator: an object used to visit and perform some computation on each element in a data model :
+* DontCareIterator: visit keys in an backing structure dependent way. For operations which don't have a preference for the visit order.
+* InsertionIterataor: visit keys in order of insertion into data model.
+* RemovalIterator: visit keys in order of removal from data model.
+* ForwardIterator with k Comparable: visit keys from the smallest key to the largest.
+* BackwardIterator with k Comparable: visit keys from the largest key to the smallest.
+
+General remarks about the backing structure:
+* Array:
+  * Examples: all with Array or Bitmap in name, heap, hash tables etc.
+  * Time:
+    * Constant time to access element by key.
+    * Linear time for grow/shrink.
+    * Constant time for grow/shrink at the back.
+  * Space:
+    * Needs to be pre-allocated.
+    * Overhead is O(\f{sizeof(V)(n - \rho)}). If load-factor is large, overhead is small.
+    * What value should the not-yet-used elements take? 
+    * Might run out of space to grow, even though some free-space remains.
+  * Implementation:
+    * Good cache-locality if workload permits (traversal).
+* Linked:
+  * Examples: all with SList or DList in name, trees etc.
+  * Time:
+    * Depth time to access element by key.
+    * Depth time for grow/shrnk, except
+    * Constant time for grow/shrink at all positions (if iterator available).
+    * Might need to do rebalancing after grow/shrink.
+  * Space:
+    * Grow and shrink with each operation.
+    * Overhead is O(\f{\rho}). If \f{sizeof(V) \approx sizeof(K)}, overhead is large.
+  * Implementation: 
+    * Bad cache-locality regardless of workload.
+
+* A note on growing/shrinking strategies for array backed data structures:
+  * Every time an operation which adds an element is performed, we might have to increase the backing array (because we ran out of space in it). Every time an operation which removes an element is performed, we might have to decrease the backing array (because we don't want to waste space).
+  * A good growing/shrinking strategy doubles the size of the backing array when no more elements can be added, and halves the backing array when two thirds or three quarters of the backing array is unused. If we'd shrink when only a half is unused, then we have the risk of sequences of insert/remove operations forcing allocations/deallocations in succession.
+  * T [Characterization Of Memory Copied For Double-Quarter Grow/Shrink Strategy]
+      In a series of \f{m} insert/remove operations we perform \f{O(m)} copy operations.
+    P [Characterization Of Memory Copied For Double-Quarter Grow/Shrink Strategy]
+      Suppose we have \f{r} resize operations, with \f{r \leq m}.
+      The number of elements at resize \f{i} is \f{n_i}. We do \f{O(n_i)} work per resize. In total we do \f{T = \sum_{i=1}^r O(n_i)} work to copy things.
+      We will prove that at resize \f{i} we add at most \f{n_i / 2 - 1} new elements.
+      Therefore, since we add at most \f{m} elements, we have \f{\sum_{i=1}^r (n_i / 2 - 1) \leq m} or \f{T = \sum_{i=1}^r O(n_i) = O(m)}.
+      If resize \f{i} is called after a insert, then the previous call to a resize happened when we had \f{n_i/2} elements. Therefore we must have had at least \f{n_i/2} inserts in between.
+      If resize \f{i} is called after a remove, then we have \f{4n_i \leq \abs{b}}. The previous call to resize had at least \f{\abs{b}/2} elements (maybe even more, if another shrink). We had to drop \f{\abs{b}/2 - \abs{b}/4 = \abs{b}/4 \geq n_i > n_i/2} elements to get here, at least.
+
+* A note on circular arrays:
+  * Appear in array implementation of queues, deques and some lists.
+  * Usually will hold the array \f{b}, an offset \f{o} and a number of used elements \f{n_u}. \f{o} is the conceptual head of the array.
+  * To access the \f{i^{\text{th}}} element, we access \f{(o + i) % \abs{b}} of the underlying array.
+  * On a grow, it is a good ideea to arrange elements such that \f{o = 0}.
+  * On a shrink, it is mandatory to first arrange elements such that \f{o = 0}.
+
+= The Stack Model =
+
+ArrayStack:
+* Quick: implements the stack data model by using an array as a backing structure.
+* Stores the array (\f{b}) and number of contained values (\f{n_u}).
+* Pushing adds elements to the back of the array. Poping removes elements from the back of the array.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}.
+* push(k) writes an element at position \f{n_u} in the array and increments \f{n_u}. This is \f{O(1)} time amortized, since growing might occur.
+* pop() reads and returns the element at position \f{n_u} in the array and decrements \f{n_u}. This is \f{O(1)} time amortized, since shrinking might occur.
+* Operations are cache-friendly, as they happen only around the back of the array.
+
+= The Queue Model =
+
+ArrayQueue:
+* Quick: implements the queue data model by using an array as a backing structure.
+* Stores the array (\f{b}), the offset of the first element in the queue (\f{o}) and the number of contained values (\f{n_u}).
+* Enquing adds elements at the back of the array. Poping removes elements from the front of the array. \f{o} keeps track of where the front is, while \f{(o + n_u) \% \abs{s}} keeps track of where the back is. Sequences of such operations can make the region with active objects be split at the front and back of the array, which means that the final elements of the queue are at the front while the initial elements are at the back.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}. In any case, a reshuffle is done so that \f{o = 0} and elements are in simple order in the new array.
+* enque(k) writes an element at position \f{(o + n_u) \% \abs{b}} in the array and increments \f{n_u}. This is \f{O(1)} time amortized, since growing might occur
+* deque() reads and returns the element at position \f{o} in the array and sets \f{o} to \f{(o + 1) \% \abs{b}}. This is \f{O(1)} time amortized, since shrinking might occur.
+* Operations are cache-friendly, as they happen around two points of the array.
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space. 
+
+= The Deque Model =
+
+ArrayDeque:
+* Quick: implements the deque data model by using an array as a backing structure.
+* Stores the array (\f{b}), the offset of the first element in the deque (\f{o}) and the number of contained values (\f{n_u}).
+* Push_back adds elements at the back of the array. Pop_back removes elements at the back of the array. Push_front adds elements at the front of the array. Pop_front removes elements at the front of the array. \f{o} keeps track of where the front is, while \f{(o + n_u) \% \abs{s}} keeps track of where the back is. Sequences of such operations can make the region with active objects be split at the front and back of the array, which means that the final elements of the deque are at the front while the initial elements are at the back. This is acceptable, in order to make things run faster - no need to shift to the right when \f{o} is \f{0}.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}. In any case, a reshuffle is done so that \f{o = 0} and elements are in simple order in the new array.
+* push_back(k) writes an element at position \f{(o + n_u) \% \abs{b}} in the array and increments \f{n_u}. This is \f{O(1)} time amortized, since growing might occur.
+* pop_back() reads and returns the element at position \f{(o + n_u) \% \abs{b}} in the array and decrements \f{n_u}. This is \f{O(1)} time amortized, since shrinking might occur.
+* push_front(k) writes an element at position \f{(o - 1) \% \abs{b}} in the array and sets \f{o} to \f{(o - 1) \% \abs{b}}. This is \f{O(1)} time amortized, since growing might occur.
+* pop_back() reads and returns the element at position \f{o} in the array and sets \f{o} to \f{(o + 1) \% \abs{b}}. This is \f{O(1)} time amortized, since shrinking might occur.
+* Operations are cache-friendly, as they happen around two points of the array.
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space.
+
+= The List Model =
+
+ArrayList:
+* Quick: implements the list data model by using an array as a backing structure.
+* Stores the array (\f{b}) and the number of contained values (\f{n_u}).
+* Inserting adds an element before the current element. Inserting at position \f{n_u} (technically invalid key) appends. Each insert forces a move of \f{O(n-i)} elements. Remove removes the current element. Each remove forces a move of \f{O(n-i)} elements.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}.
+* insert(i,k) moves all elements right of \f{i} and \f{i} one position to the right, writes \f{k} at position \f{i} in the array and increments \f{n_u}. This is \f{O(n-i + 1)} in time amortized, since growing might occur.
+* remove(i) moves all elements right of \f{i} one position to the left and decrements \f{n_u}. This is \f{O(n-i + 1)} in time amortized, since shrinking might occur.
+* set(i,k) simply sets \f{k} at position \f{i} in the array. set(i,k) is \f{O(1)}.
+* get(i) retrieves the element at position \f{i} in the array. get(i) is \f{O(1)}.
+* insertAll(i, c) moves all elements right of \f{i} inclusive \f{n_c} position to the right, writes every element in \f{c} at position \f{i, i+1,\dots,i+n_c-1} and increments \f{n_u} by \f{n_c}.  This is \f{O(n-i+n_c+1)} in time amortized, since growing might occur. Better than the naive \f{O(n_c (n-i+1))}.
+* removeRange(i, l) moves all elements right of \f{i + l} inclusive \f{l} positions to the left and decrements \f{n_u} by \f{l}. This is \f{O(n-i-l+1)} in time amortized, since shrinking might occur. Better than the naive \f{O(l (n-i-l/2))}.
+* Operations have the possibility of being cache-friendly (indices are close-by).
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space.
+
+Array2List:
+* Quick: implements the list data model by using an array as a backing structure. Uses the back of the array to store initial elements, much like a ArrayQueue/ArrayDeque.
+* Stores the array (\f{b}), the offset of the first element in the deque (\f{o}) and the number of contained values (\f{n_u}).
+* Inserting adds an element before the current element. If the index is in the first half, we move the elements before the index one cell to the left, modularly. If the index is in the right half, we move theelements after the index one cell to the right. Each insert forces a move of \f{O(\min(i,n-i))} elements. Remove removes the current elemente. Each remove forces a move of \f{O(\min(i,n-i))} elements.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}.
+* insert(i,k) moves all elements left of \f{(o + i) % \abs{b}} one position to the left, modularly, if \f{i < n_u/2} else it moves all elements right of \f{(o + i) % \abs{b}} and \f{(o + i) % \abs{b}} one position to the right, modularly. It then writes \f{k} at position \f{(o + i) % \abs{b}} and increments \f{n_u}. This is \f{O(\min(i,n-i)+1)} in time amortized, since growing might occur.
+* remove(i) moves all elements left of \f{(o + i) % \abs{b}} inclusive one position to the right, modularly, if \f{i < n_u/2} else it moves all elements right of \f{(o + i) % \abs{b}} inclusive one position to the left, modularly. It then decrements \f{n_u}. This is \f{O(\min(i,n-i)+1)} in time amortized, since shrinking might occur.
+* insertAll(i,c) behaves as you'd expect. Decision to move left-right made by looking at overlap between \f{i \colon i+l-1} and \f{0 \colon \floor{n_u/2}-1} and \f{\floor{n_u/2} \colon n_u - 1}.
+* removeRange(i,l) behaves as you'd expect. Decision to move left-right made by looking at overlap between \f{i \colon i+l-1} and \f{0 \colon \floor{n_u/2}-1} and \f{\floor{n_u/2} \colon n_u - 1}.
+* set(i,k) simply sets \f{k} at position \f{(o + i) % \abs{b}} in the array. set(i,k) is \f{O(1)}.
+* get(i) retrieves the element at position \f{(o + i) % \abs{b}} in the array. get(i) is \f{O(1)}.
+* Operations have the possibility of being cache-friendly (indices are close-by).
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space.
+
+TwoStackList:
+* Quick: implements the list data model by using two arrays as backing structures. Elements in the first one are in reverse order, so that a pop() retrieves the first element of the list.
+* Stores the two arrays (\f{b_f} and \f{b_b}) and the number of contained elements (\f{n_f} and \f{n_b}). The total number of elements is \f{n_u = n_f + n_b}.
+* We want to have roughly the same number of elements in each array. If \f{3n_f \leq n_b} we move elements from \f{b_b} to \f{n_f}. If \f{3n_b \leq n_f} we move elements from \f{b_f} to \f{b_b}. After a rebalance \f{b_f} contans \f{\floor{n_u/2}} elements and \f{b_b} contains \f{\ceil{n_u/2}} elements.
+* The arrays are doubled in size when \f{n_u = \abs{b_f} + \abs{b_b}}. The arrays are halfed in size when \f{4n_u = \abs{b_f} + \abs{b_b}}.
+* insert(i,k) shifts \f{n_f - (n_f - i) = i} elements from \f{b_f} to the right if \f{i < n_f} and writes \f{k} at position \f{n_f - i} else moves \f{n_b - (i - n_f) = n - i} elements from \f{b_b} to the right if \f{n_f \leq i \leq n_f + n_b} and writes \f{k} at position \f{i - n_f}. Because of balancing constraints, if \f{i < n_u / 4} or \f{n_u - i > n_u / 4} we can be sure we have fall into the first or second case. For middle values, we have questions. Still, it means that \f{n / 4 \leq i \leq 3n / 4} or \f{n - i \geq n / 4} or \f{O(n) = O(i) = O(n-i)}. By fancy hand-waving time is \f{O(\min(i,n-i) + 1)} amortized.
+* remove(i) shifts \f{n_f - (n_f - i) = i} elements from \f{b_f} to the left if \f{i < n_f} else moves \f{n_b - (i - n_f) = n - i} elements from \f{b_b} to the left if \f{n_f \leq i \leq n_f + n_b}. Because of balancing constraints, if \f{i < n_u / 4} or \f{n_u - i > n_u / 4} we can be sure we have fall into the first or second case. For middle values, we have questions. Still, it means that \f{n / 4 \leq i \leq 3n / 4} or \f{n - i \geq n / 4} or \f{O(n) = O(i) = O(n-i)}. By fancy hand-waving time is \f{O(\min(i,n-i) + 1)} amortized.
+* insertAll(i,c) behaves as you'd expect. Decision to move left-right made by looking at overlap between \f{i \colon i+l-1} and \f{0 \colon \floor{n_f/2}-1} and \f{\floor{n_f/2} \colon n_f + n_b - 1}.
+* removeRange(i,l) behaves as you'd expect. Decision to move left-right made by looking at overlap between \f{i \colon i+l-1} and \f{0 \colon \floor{n_f/2}-1} and \f{\floor{n_f/2} \colon n_f + n_b - 1}.
+* set(i,k) simply sets \f{k} at position \f{n_f - i} if \f{i < n_f} else sets \f{k} at position \f{i - n_f} otherwise. This is \f{O(1)}.
+* get(i) retrieves the element at position \f{n_f - i} if \f{i < n_f} else retrieves the element at position \f{i - n_f} otherwise. This is \f{O(1)}.
+* Operations have the possibility of being cache-friendly (indices are close-by).
+* Insert/remove do balancing. Balancing is \f{O(n)}, but we'll prove it is amortized \f{O(1)}.
+  T [Characterization of Memory Copied For TwoStack Balancing]
+    In a series of \f{m} insert/remove operations we perform \f{O(m)} copy operations in the balancing.
+  P [Characterization of Memory Copied For TwoStack Balancing]
+    Suppose we have \f{r} balance operations, with \f{r \leq m}.
+    The number of elements at resize \f{i} is \f{n_i}. We do \f{O(n_i)} work per resize. In total we do \f{T = \sum_{i=1}^r O(n_i)} work to copy things.
+    Let \f{b_i} be the absolute difference between \f{n_f^i} and \f{n_b^i}. We have \f{\sum_{i=1}^r b_i \leq m} - differences are made by adding in one place and not the other, and we can't have more such additions than we have add/remove operations. 
+    We will prove that \f{b_i \leq n_i / 2 - 1}.
+    Let \f{\hat{b}_i} be the difference between \f{n_f} and \f{n_b} just after the \f{i-1} rebalancing. Then \f{\hat{b}_i = \abs{\ceil{n_u/2} - \floor{n_u/2}} \leq 1}.
+    We must add at least \f{b_i - \hat{b}_i} elements in the array since the \f{i-1} rebalancing. 
+    Suppose that \f{3n_f < n_b} (just  before rebalancing). Then we have that \f{n_i = n_f + n_b \leq 4/3 n_b}.
+    Also \f{b_i = n_b - n_F > n_b - n_b/3 = 2/3 n_b = 2/3 3/4 n = 1/2 n}. 
+    Therefore \f{b_i - \hat{b}_i > 1/2 n - 1}.
+    If this is the case, then \f{T = \sum{i=1}^r b_i \leq m} (lower bound on added elements) leads to \f{\sum_{i=1}^r O(n_i) = O(m)}, which is what we wanted.
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space.
+
+* Dimensions for array organization:
+  * Simple/Circular.
+  * Single/Rootish.
+
+The Rootish Idea:
+* Quick: implements the stack, queue, deque and list data model using \f{r} arrays of increasing size as a backing structure. Wastes at most \f{O(\sqrt{n})} space. Known as \f{2-level tiered-vector}.
+* Stores a list of \f{r} arrays (\f{b_i}), of sizes \f{1,2,\dots,r+1} and the number of contained values (\f{n_u}). Arrays are compacted, so that only the last two contain missing elements (and if \f{r-2} contains, then \f{r-1} is empty).
+* We have \f{\abs{b} = r*(r+1)/2}. The index \f{i} is translated to \f{i - k(k+1)/2}, where \f{k} is the largest integer such that \f{k(k+1)/2} is smaller than \f{i} (or alternatively with larger). \f{k} is \f{\floor{(-1 + \sqrt{1 + 8i}) / 2}} (using a 2nd degree equation to compute it). \f{r = O(\sqrt{n})} because \f{r} is the smallest integer such that \f{r(r + 1)/2} is larger than \f{n} and \f{r} is \f{\ceil{(-3 + \sqrt{9 + 8i})/2}} (using a 2nd degree equation to compute it).
+* A new array is allocated when \f{n_u = \abs{r}}. Array \f{r} is dropped if arrays \f{r} and \f{r-1} are empty \f{n_u \leq (r-1)(r-2) / 2}. These are \f{O(r) = O(\sqrt{n})}. In any case, amortized (theorem), these are \f{O(1)}, because for another grow we need another \f{r+1} inserts, and for a remove \f{r-1} removes, at least.
+* insert and remove take linear time - we move as before. 
+* The total space wasted is \f{O(\sqrt{n})} - \f{O(\sqrt{n})} from pointers and \f{O(\sqrt{n})} from actual space in the buffer.
+  T [\f{\sqrt{n}} is the best waste space one can have with several buffers]
+    If we're implementing a ``linear'' model with several buffers, then the wasted space is bounded below by \f{\sqrt{n}}.
+  P [\f{\sqrt{n}} is the best waste space one can have with several buffers]
+    If we have more than \f{\sqrt{n}} buffers, then we need an array of at least \f{\sqrt{n}} pointers for them, and this is wasted space.
+    If we have less than \f{\sqrt{n}} buffers, then, there is a buffer, which has, by the pidgeonhole principle, more than \f{n/r} elements.
+    Since \f{r \leq \sqrt{n}} we have that \f{n/r > n/\sqrt{n}} therefore this buffer contains more than \f{\sqrt{n}} elements.
+    Since it had to be allocated at one point, this is wasted space - problems.
+    Therefore, in any situation, we must have at least \f{\sqrt{n}} wasted space.
+
+The Treque Idea:
+* Store two arrays of equal size.
+* When inserting or removing, if \f{i < n/2} then insert/remove in the first, with complexity \f{O(1 + \min(i,n/2 - i))}, else insert/remove in the second, with complexity \f{O(1 + \min(i - n/2,n - i))}. Overall we have \f{O(1 + \min(i,n-i,\abs{n/2 - i}))}.
+
+The Rootish Idea with Deques:
+* Force length of each block in a Rootish Idea Array to be i + 2.
+* Allow between \f{l_i-1} and \f{l_i+1} elements in each block.
+* Each block acts as a deque. We must keep an offset and an length together : extra \f{O(\sqrt{n})} space.
+* When we add an item, we might be full, therefore we'll add another block. This is amortized \f{O(1)}.
+* When we add an item, we go from the first block to the last, an \f{O(\sqrt{n})} operation, and find the proper block for an element, by seeing if the index is in the block (due to variable length, we can't compute this). When we find it, we insert it, 
+
+= The Random Queue Model =
+
+ArrayRandomQueue:
+* Quick: implements the random queue data model by using an array as a backing structure, and using clever swaps in order to enque and deque elements in constant time, without fragmentation or amortized bookkeeping.
+* Stores the array (\f{b}), and the number of contained values (\f{n_u}).
+* enque adds elements to the back of the array. deque selects a random element uniformly from the array and returns it, while also moving the last element (at position \f{n_u - 1}) over the removed element and decrementing \f{n_u}.
+* The array is doubled in size when \f{n_u = \abs{b}}. The array is halfed in size when \f{4n_u = \abs{b}}. 
+* enque(k) writes an element at position \f{n_u} and increments \f{n_u}. This is \f{O(1)} time amortized, since growing might occur.
+* deque() generates a random integer unformly between \f{0} and \f{n_u-1}, returns it in \f{q}, overwrites the removed position with the element at \f{n_u-1} and decrements \f{n_u}. This is \f{O(1)} time amortized, since shrinking might occur.
+* Operations are not cache-friendly, as the access pattern is random.
+* Wasteful of space. At most \f{75\%} wasted space. After a grow, \f{50\%} wasted space.
+
+= Lists =
+
+A finite sequence of one or more elements. An element may appear more than once. Mathematically a tuple. Usually elements come from the same set.
+
+Length of a list: number of elements in the list. Empty list \f{()} or \f{\epsilon} has length \f{0}.
+
+A recursive definition of lists: a list is eithe empty (the base case) or consist of a first element called the head, and the remainder list called the tail (the inductive case).
+
+Any element in the list is identified by its position in the list. Element \f{a_i} is at position \f{i}, preceding \f{a_{i+1}} and succeding/following \f{a_{i-1}}. A position holding element \f{x} is said to be an occurance of \f{x}.
+
+A sublist is a continuous portion between positions \f{i} and \f{j} with \f{1 \leq i \leq j \leq n}. If \f{i=j} the sublist is empty. The empty list is thus a sublist of every list. There are at most \f{n(n+1)/2} distinct non-empty sublists of a list of a list of length \f{n} (code each sublist as a binary vector of length \f{n} and require all \f{1}s to be consecutive). Some may repeat themselves so this is only the upper bound. There are at least \f{n} non-empty distinct sublists (if the list is all of the same element - only length matters).
+
+A subsequence is a selection of elements in a list, not necessarily consecutive (like sublists) but in the same order as in the list. The empty list is a subsequence of every list. There are at most \f{2^n-1} distinct non-empty subsequences of a list of length \f{n} (code each sublist by a binary vector of length \f{n}). Some may repeat themselves so this is only the upper bound. There are at least \f{n} non-empty distinct sublists (if the list is all of the same element - only length matters).
+
+A prefix is any sublist which starts at the beginning of the list. There are \f{n} non-empty prefixes. A suffix is any sublist which starts at the end of the list. There are \f{n} non-empty sufixes. \f{\epsilon} is both a prefix and a suffix for any list.
+
+Insertion into a list at position \f{i} - make the inserted element be the new element at position \f{i} with a tail the rest of the list. A push is an insertion at position \f{n+1}.
+
+Lookup an element \f{x} on a list - find the first position where \f{x} appers.
+
+Delete an element \f{x} of a list - remove the first occurance of \f{x} from the list, such that, the tail of element \f{i-1} becomes the tail of \f{x}.
+
+Concatenate two lists \f{L} and \f{M} - form a list which beings with \f{L} and continues with \f{M} (\f{M} is the tail of the last element of \f{L}). The empty list is the identity for concatenation.
+
+Fist/Last return the first and last element of the list (work only on \f{n \geq 1}).
+
+Retrive return the element at position \f{i} from the list.
+
+Insert, lookup, delete all have a similar base case and induction case form. Then their running time \f{T(1) = O(1)} and \f{T(n) = T(n-1) + O(1)}, therefore \f{T(n) = O(n)} in the worst case. In the average case we have \f{(n+1)/2} as the mean position of our element - still linear.
+
+Trick: if using lists to implement dictionaries, then we must make insert check for presence of an element before adding an element wherever. Or we could insert at the head, and let delete remove all occurances of an element. This makes insertion faster at the cost of more memory and a slower delete (expected and average are \f{O(n)}). We could use a sorted list, in which case lookup finishes as soon as we see a larger element (on average \f{n/2}). Also, placing tests judiciously helps us with the constant factors.
+
+Representation of lists: lists are represented by a node structure, which contains the linkage information from one element to the next one (the tail one), and, optionally to the previous one. The first case is a singly-linked list, while the latter a doubly linked list. One can also use sentinels (in the doubly linked form) - an empty node which points to the head and tail and which makes all sorts of tests for null not be needed. Lists can also be represented by arrays. Retrieve is super-fast, but insert, delete etc. are equally 'slow'.
+
+= Stacks =
+
+Stack: a type of list which only supports adding and removing elements at one end. All stack operations are done in constant time. If the stack is bounded (in the array case we cannot grow anymore) a useful operation is is-full, also constant time. is-empty is useful as well. One also has the top operation - which just returns the value of the top-most element, but does not remove it. If \f{(a_1,\dots,a_n)} is the order of elements after \f{m} pushes and pops, then \f{a_i} was pused before \f{a_{i+1}} (if \f{i} is the last position of \f{a_i} at time \f{t}, then no ulterior pop can remove it (otherwise it wouldn't be the last position). Now, if we insert \f{a_{i+1}} before \f{a_i}, then, there is no ulterior pop to remove it, therefore \f{a_i} will be inserted after it, and appear after it, resulting in a constradiction). A LIFO list.
+
+Representations of Stacks: the singly-linked list and array implementation of stacks are the two standard ones. In both cases standard operations take \f{O(1)} time.
+
+Notable uses of stacks: evaluating postfix expressions. Given a list of symbols, some of which are numbers/variables and some of which are operators, we can evaluate the expression as such: walk from the start to the finish of the list of symbols. A number / variable encountered is pushed onto the stack. An operator encountered pops the required number of elements and pushes the result back onto the stack. One can also transform prefix expression to postfix (walk the string backwards and push onto the stack or use two stacks).
+
+Notable uses of stacks: the run-time 'stack' of a program.
+
+Activation record: the region of memory set aside during program execution for all the variable local to a procedure as well as hidden data about a procedure, but for a specific call. Thus, in a call to a recursive function there are as many activation records as the current level in the call path. It is a dynamic record. The stack of a program is a stack of activation records. When we call a function, we create a new activation record and push it to the top of the stack. When a procedure terminates, we remove its associated activation record from the top of the stack. When an exception is thrown, activation records are removed from the stack until one which has a suitable exception handler is met.
+
+= Queues =
+
+Queue: a type of list which only supports adding elements at one end and removing elements at the other end. All queue operations are done in constant time. If the queue is bounded (in the array case we cannot grow anymore) a useful operation is is-full, also constant time. is-empty is useful as well. One also has the top operation - which just returns the value of the top-most element, but does not remove it. If \f{(a_1,\dots,a_n)} is the order of elements after \f{m} enques and deques, then \f{a_i} was enqueued before \f{a_{i+1}} (if \f{i} is the last position of \f{a_i} at time \f{t}, then no ulterior ulterior deque can remove it (otherwise it wouldn't be the last position). Now, if we insert \f{a_{i+1}} before \f{a_i}, then, there is no ulterior deque to remove it, therefore \f{a_i} will be inserted after it, and appear after it, resulting in a constradiction). A FIFO list.
+
+Representations of Queues: the singly-linked list and array implementation of queues are the two standard ones. In both cases standard operations take \f{O(1)} time. [Talk about circular arrays]
+
+= Sets =
+
+Algebra of sets: [laws of union, intersection, distributive] - assoc+comm allow us to make operations of the same kind in any order (just like for addition, and for a similar reason). We also have \f{(S \setminus (T \cup R)) = ((S \setminus T) \setminus R)} (or \f{a - (b+c) = (a - b) -c}), \f{((S \cup T) \setminus R) = ((S \setminus R) \cup (T \setminus R))}. \f{\emptyset} is identity for union, but there is no identity for intersection or difference. Union is idempotent and intersection is idempotent.
+
+Implementation wise, it is often useful to talk about atoms and sets. Atoms are indivisible units (integers, numbers in general, booleans, points, complex structures even), while sets are the things that hold them. Not very formal, but it makes things easier.
+
+Representation of sets: linked lists. Insert/Delete/Lookup are the classic linked list counterparts. However, they are adjusted to only insert if the element is not found, therefore insert will always take \f{cn} time. On the other hand, union means first copying the nodes of one list, then inserting the nodes of the other list one by one. The processing time is \f{O(nm)}. For intersection, we walk the first list, and lookup its nodes in the second list. If it is in the second list, we add it to the output list. Similarly for difference, only we add if we don't find it in the second list. Both of these take \f{O(nm)} time. No space overhead is used, except the space for the new list. 
+
+Representation of sets: sorted linked lists. Insert/Delete/Lookup are still the classic linked list counterparts, with the tiwst that they can stop once we encounter an element larger than the one we try to include. Complexity \f{cn/2} on average. On the other hand, union is a simple merge operation between two sorted lists (but which has to take extra care when finding two nodes of equal value - if that is the case, we skip a beat - remove the equal element from the second list - we'll end up doing this until we find a larger element, at which point we add the smaller element in the first list - that way we don't include duplicates). In any case, time complexity is \f{O(n + m)} - linear in both sizes. Intersection is done in the same manner, by a modified merge. If we have two equal elements, we add them to the output list. Otherwise, we skip an element from the smaller list (it can grow to be equal to the larger, but the larger can only go up). It is \f{O(n+m)}. Difference is also done by a modified merge. If we have two equal elements, we skip them. If the head of the first list is smaller than the head of the second, we add it (the larger headed second list cannot contain it anymore). Otherwise we skip the second list, in order to make it bigger (if we would continue with the first list, we might include elements from the second). So we always strive to have the situation of the first list having smaller elements than the second. This is also \f{O(n+m)}. Can prove all these more formally by induction on the sum of the length lists involved. Symmetric difference is simpler. If the two elements at the heads are equal, we skip them. Otherwise we add the smaller to the output list. Complexity is again \f{O(n+m)}.
+
+Representation of sets: characteristic-vector. If every element of the sets we talk about are members of some set \f{U} with a small number of elements (tens, maybe hundreds), then we can build a long binary word (just like in the power-set proof) to describe a certain subet. We thus use an array of numbers to describe the set. If \f{x \in A} then the position for \f{x} is set to \f{1} in the representation of \f{A}. Otherwise \f{0}. Must follow a consistent ordering inall sets. Insertion, deletion and lookupa are \f{O(1)} (set \f{A[x] = true} for example). We must also initialize a set to all false, which is \f{O(\abs{U})}. Union is done as an OR of the corresponding elements from two sets and it is \f{O(\abs{U})} as well. Intersection is done as an AND of the corresponding elements from two sets and it is \f{O(\abs{U})} as well. Difference is done as \f{A[i] \land \lnot B[i]} of the corresponding elements from the two sets and it is \f{O(\abs{U})} as well. This can be extended to bags, by using several bits / or if using integers other values than \f{0} and \f{1}. Complexity is the same, but constant factors differ.
+
+= Hash Tables =
+
+Representation of sets: hash tables. Building on the previous characteristic vector approach, if \f{U} becomes too big, then we can't realistically use bit-map for it. However, if the number of elements from \f{U} in a typical set is small or the actually valid elements are few (compare actual words with the set of all possible words), then we might get away with a nice trick. Assume we use an array of \f{B} elements and have a function, a hash function, which, when given an input \f{x} maps it to \f{\hcrange{0}{B-1}}, we could store an element to the cell/bucket the hash function of it produces. Naturally there will be overlaps, therefore we actually store a list for each bucket, which holds the stored elements. If the hasing function uniformly distributes the inputs, then we expect each cell to to have \f{n / B} elements. If \f{B \approxto n} then we have \f{O(1)} elements per cell. Now, lookup simply ammounts to computing the hash function, retrieving the header of the list from the appropriate cell and walking till we find the element in the list or if we don't bailing. The time is dominated by the time to search the list - since the list has length \f{O(1)} in our setup, the total time, is, on average \f{O(1)}. Insertion and deletion also take \f{O(1)} time, and are resolved in terms of list operations. We have assumed that such a function exists.
+
+Desiderata for hash functions:
+* independent of the size of the dataset: this is trivial to accomplish - we only look at the parameter.
+* easy to compute - usually such functions are \f{O(k)} where \f{k} is the size of the input object (small for numbers, large for strings).
+* uniformly distributes the input in buckets. If \f{X} is a RVar taking values in \f{\hcrange{1}{L}}, uniformly distributed, then \f{h(X)} is also a RVar and we want it to be uniformly distributed in \f{\hcrange{1}{B}}. Or \f{P(h(X) = i) = 1/B}.
+* we might want some mixing properties as well, for example, consecutive numbers should not be assigned to the same cell. This is basically if we suspect that our inputs are not really uniformly distributed (which is the case if only a portion of the domain of an integer is a typical input for our function).
+
+Examples of hash functions (assume \f{B} is given) for integers:
+* \f{h(x) = x \% B} - the remainder of dividing by \f{B}. If \f{B = 2^q} then this is the least significant bits. independent of dataset size and easy to compute are true. Build the function \f{x \rightarrow (a,b)} such that \f{x = aB + b}. We have two RVars now \f{(A,B)}, with \f{B \in \hrange{0}{B-1}}. The probability mass is distributed in \f{L} points in this space. Simplify - both are power of \f{2}. Then, for a given \f{B=i} we have \f{2^{l_L - l_B}} points which map into this (all who have \f{i} as the least \f{l_B} significant bits). They all have the same probability mass, and when summed, they have mass \f{1/2^{l_B}}. This is valid for any \f{i}, therefore the distribution is uniform. If \f{B} is not a power of \f{2}, things get a little bit skewed. Consider the largest multiple of \f{B} smaller than \f{L} - \f{Q}. If we restrict to that domain, each remainder gets \f{Q/B 1/L} probability mass. The \f{L - Q} smallest remainders gete an extra \f{1/L}. Not too much, but for small \f{L} it skews things a little bit.
+* \f{h(x) = (x \star P) \% B} - multiply \f{x} by a large odd number \f{P} and divide by \f{B}. Multiplication by an odd \f{P} can be seen as application of a permutation determined by that number [more group theory here please!] In any case, we can see that we first permute \f{\hcrange{1}{n}} and then we apply the same hash function as before. We gets extra mixing properties, in case all our inputs are close together, as a large \f{P} tends to mix things up quite a bit [more formal please!].
+
+Examples of hash functions (assume \f{B} is given) for integers for strings:
+* \f{h(x) = (\sum_{i=1}^k x_i) \% B} or \f{h(x) = ((\sum_{i=1}^k x_i) \star P) \% B}.
+
+= Relations =
+
+Relation has its inverse just like a directed graph has its transpose.
+
+Since a function is a special kind of set, we can use the set data structures to respresent small functions, which have no discernable form as computation. These are called LookUp Tables (LUTs). We work with tuples of the form \f{(a,b)} when inserting, but we use \f{a} as key and overwrite if it is the case because there must only be one \f{a} which maps to \f{b}. Calling the function is equivalent to lookup. We can use lists (insert must check and overwrite existing pair with same \f{a}), charactristic vectors (function must be total or range have a reserved invalid value), hash tables, trees etc. as the underlying data structure, and we have the same performance characteristics. Hashing depends only on first value in the pair. 
+
+Since a relation is a special kind of set, we can use the set data structures to respresent relations. We work with tuples of the form \f{(a,b)} when inserting, but we use \f{a} as key and ignore \f{b}, but allow duplicates of \f{a}. We can use lists (append at front or append where another \f{a} is found so that all pairs with same \f{a} stick together, for faster retrieval - must still check for duplicates of \f{(a,b)} though), charactristic vectors (array cells must be lists to hold the values - every bucket contains on average \f{m=n/\abs{D}} - the total number of pairs in the relation divide by the number of domain values), hash tables (we have \f{O(\max(m, n/B))} time here, where \f{m} is as for characteristic vector - at most \f{n/m} domain values we have, therefore at most \f{n/m} buckets are non-empty, and this means we have \f{n/(n/m)} average elements per bucket. we select the maximum of this and \f{n/B}), trees etc. as the underlying data structure, and we have the same performance characteristics. Lookup must return a list of values, which is especially fast in characteristic vectors approach, or when we keep pairs with same \f{a} value together. Hashing depends only on first value in the pair. Every insert in any form must check for duplicates.
+
+Transitive closure of a relation: extension of a relation with all the pairs it needs in order to be transitive. Is unique for a given relation.
+
+Topological sorting of a relation: extension of a partial order relation with all the pairs it needs in order to be a total order. Is the topological sort in graph theory. There are many such sorts for a given relation (see how many in topological sorting note).
+
+Connected components of a relation: extension of a relation to smallest equivalence relation, by following reflexivity, transitivity and symmetry to infer pairs connected indirectly through other pairs. It is the connected components problem in graph theory.
