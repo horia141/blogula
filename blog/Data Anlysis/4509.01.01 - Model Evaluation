@@ -1,0 +1,41 @@
+  define {Model Evaluation} {
+    First, pick a baseline - maybe "random choosing" or beat probability of seeing stuff or beat a known good system.
+    Measure what you care: money, +1s. You can't always measure it. We can create metrics for goodness and badness.
+    [standard discussion of binary classification performance eval: tp, fp, fn, tn, accuracy, precision, recall]
+    For clustering: Dunn Index (higher is better)
+    For regression: MSE.
+    These are proxies for what we want - do not optimize the metric instead of the actual thing we want to optimize.
+    [standard discussion of train/test and train/validation/test system, k-fold validation]
+    Sometimes people use staggared test sets - use a part of the test set in 1mo, another in 3mo and the last before launch.
+    Confusion matrix.
+    Splitting data : random (not necessarily good as statistics would say) vs deliberate (choose splits so we have equal classes as in test set/wild).
+    Bweare of over-fitting.
+  }
+
+\subsection{Model Checking}
+
+Model checking can lead to some problems: overfitting, overtesting (doing a lot of tests $\Rightarrow$ P-values and confidence intervals don't have the power you claim they do) and biased inference. Still, good to do to not miss something very obvious.
+
+For example, for linear regression you assume:
+\vspace{-0.6em}
+\begin{enumerate}
+\itemsep0em
+\item[variance is constant] Heteroskedastic situation. confidence intervals and P-values are not right if they're computed with the constant variance assumption. You can see if another variable explains the increased variance or use sandwich variance estimators for big $N$.
+\item[you are summarizing a linear trend] Maybe the trend is not linear. You see a pattern in the residuals and you also see variable variance. One could use Poisson regression, use a data transformation, smooth the data or fit a nonlinear tred, use regression anyway but interptet just the linear trend between the variables, but abstain from predicting, and use sandwich estimators if $N$ is big.
+\item[you have all the right terms in the model] Use exploratory analysis to identify other variables to include (maybe if they're really OK to see),  use sandwich estimators if $N$ is big and report unexplained patterns in the data.
+\item[there are no big outliers] Try fitting the model with the outliers. Then try fitting the model without the outliers. If there is a big difference, be careful - something interesting is happening. Is it OK to remove them? If they are experimental mistakes - remove and document them. If they are real - consider reporting how sensitive your estimate is to the outliers. Consider using a robust linear model fit.
+\end{enumerate}
+\vspace{-0.6em}
+
+A tool for seeing if our assumptions hold is plotting the residuals and plotting a QQ-plot of the residuals with the $\mathcal{N}[0,1]$ distribution on the $x$ axis and the standardized quantiles on the $y$ axis - they should be on the $f(x) = x$ line, since we assume they're normal.
+
+For GLMs (Logistic, Poisson etc.), the \emph{deviance} is also used. Compares your model with a perfect fit model and sees if the variance your model explains is still good. It doesn't say what's wrong. It may be big even for conservative models and it also depends on sample size (like P-values).
+
+$R^2$ - (variance of residuals) is also a used summary, but it might be bad.
+
+Any number we use is necesarily limited.
+
+\subsubsection{Model Checking by Simulation}
+
+You simulate data from your model to see if it matches the data you already have. You should try to violate your assumptions to see what breaks. This simulation should be repeated so you can observe different datasets and see how robuts your answers are. Your variables should be generated from distributions similar to the ones infered from the data.
+

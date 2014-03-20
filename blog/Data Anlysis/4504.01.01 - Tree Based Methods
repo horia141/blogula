@@ -1,0 +1,75 @@
+=== Tree Based Models ===
+
+\subsubsection{Trees}
+
+* One can turn a classification tree output (with counts for each class at the leafes) for binary classes into a ranker by taking the log (optional) of the class count ratios.
+
+* Decision / Regression tree: a (logical, local, nonparametric) model. Feature tree whose labels are class distributions / regression functions. Learning must actually build the tree. First find a good feature to split on the top of the tree. Then repeat the procedure recursively for all the children (all values or ranges of values), using only the subsets of the dataset which respect the constraints of the branch. Once a limit is reached, or a singleton instance is reached, we compute the distribution of outputs or perform a regression and return the result. The best feature to split is one that maximally increases the 'purities' (according to some measure) of the resulting subsets.
+  The model is more easily interpretable than a geometric or probabilistic mode.
+  Assumes the feature space is a set.
+  Has translation invariance - and all others (right??).
+
+A type of model which can adapt to nonlinearities and they are easy to implement and interpret. However they can overfit very easily, hard to estimate  uncertainty, even with CV, and results may be variable. Fitting multiple trees (forest) is better.
+
+Algorithm: start with all variables in one group. Find the variable/split that best separates the outcomes. Divide the data into two groups (leaves) on that split (node). Withing each split, find the best variable/split that separates the outcomes. Continue until the groups are too small or suffciently pure. Measures of impurity: misclassification error, gini index, cross-entropy or deviance.
+
+To predict, simply follow the tree and test at each node the variable we want.
+
+Another classifier type is the Decision Tree. We assume all the setup from the Bayesian classifier, as before. A decision tree is a simple procedure for determining what class an observation belongs to. Being a tree, in the CS meaning, it consists of nodes. There are two types of these. There are question nodes and there are answer nodes. Question nodes consist of the root and all other nodes except the leafes, while answer nodes are the leafes. Question nodes ask a question about the observation while answer nodes provide the result for classification. This usually comes as a single class, but can come as a distribution over $C$, in a manner similar to the results of bayesian classification. The question reffers to the value of a feature from the observation. Depending on the type of the variable, the question can be wether the observation has an exact value in that feature, or if the value is in a certain range. Usually the question is binary. For categoric features, the question is of the form ``Is the feature value $X_i(x)$ equal to value $t \in \text{Dom}(X_i)$?''. For numeric features, the question is of the form ``Is the feature value $X_i(x)$ greater than the value $t \in \text{Dom}(X_i)$?''. Of course, the question can have a bigger fan-out. For categorical variables, each distinct value can be an answer. The question would then be ``Which of the values in $\text{Dom}(X_i)$ does $X_i(x)$ take?''. For numeric features, more than two intervals can be produced. The question could then be ``In which of the intervals in $\{(\min(\text{Dom}(X_i)),t_1],(t_1,t_2],...,(t_k,\max(\text{Dom}(X_i)))\}$ does $X_i(i)$ belong?''. Questions can be asked about pairs and triples of variables as well. The more complex the question becomes, the harder it is to build such a tree from data. In the limit case, the question could be the classification problem itself ``What class from $C$ does $x$ belong to?''.
+
+We can build the estimator $\hat{h}[\text{node}](x)$ as such $\hat{h}[\text{tree with root } r](x) = \hat{h}'[r](x)$ where $\hat{h}'[\text{node with question } q](x) = \hat{h}'[q(x)](x)$ and $\hat{h}[\text{node with answer } a](x) = a$. This is a formal way of describing the following simple algorithm: you start with your tree, an observation $x$ and the current node set to the root. If the current node is a question node, you ask its question for the observation $x$ and get an answer. You then set the current node to be the child of the current node that is associated with the answer we obtained. If the current node is an answer node, you simply return the associated answer.
+
+This algorithm can be extended to handle data with missing values or imprecise values: that is, for categorical variables, knowing the subset of $\text{Dom}(X_i)$ where the real value could be, or for numerical variables, knowing an interval from $\text{Dom}(X_i)$ where the real value could be. The way we handle this is, when we ask a question which depends on missing/imprecise feature, we return multiple answers, one for each way in which the question could be answered. Then, for each answer, we run the decision procedure recursively, and we get several answers, this time. These are most likely distributions over $C$. We join them by summing associated probabilities. To keep things simple, each branch of a question node has an associated weight, computed at build-time. We multiply each answer distribution with the weight of the answer, and we normalize by the sum of selected answers, so that we get valid results. For example, if we get two answers, and one returns $C_1$ with prob $p_1$ and the other $C_2$ with prob $p_2$, and the weights are $w_1 = 0.6$ and $w_2 = 0.12$ then, the resulting distribution has $C_1$ with prob $p_1*0.6/0.72=0.8333$ and $C_2$ with prob $p_2*0.12/0.72=0.1666$.
+
+Regression problems can be similarly attempted with decision trees, the only change being that the answer is a distribution over a continunous domain.
+
+The advantages of decision trees are that they seamlesly handle categoric and numeric data, that they provide, for the user, an understanding of what decisions are being made in order to reach a result, and that they can handle missing or imprecise data. Furthermore, by visualising the tree, insights into the data can be obtained (what features are most important, what is the best discriminant single feature for a certain outcome etc.). Also, no preprocessing or normalization is necessary.
+
+Problems with decision trees is that they cannot handle, in classification, cases with many tens or hundreds of distinct responses. Also, for numerical problems, only membership in a set is used as a means of classification. Using differences of variables or other, more complex relationships, is difficult if not impossible, directly - extra computes have to be added to the dataset. Signal processing for example, is not a task well suited to decision trees.
+
+We are left now with how to train such a model. There are more than one algorithm, and more than one variant for each algorithm, depending on how powerful we wish the trees to be made. One such algorithm is called CART - classification and regression trees. Let us start first with the classification problem. For this case, consider initially that the training dataset would all have just one label. Then, our classifier would be simple, it would assign every observation to the same label. The entropy of the dataset, considering only labels would be minimal - it would be 0. Ofcourse, real datasets contain all of the labels. So, the decision tree learning method is a way of bringing us to that state, or at least as close as possible to it. What we do is select one variable Xi and use it split the dataset. If the variable is binary, the set is split into two parts, one with observations which have $X_i(x)$ equal to 1, and the other with observations which have $X_i(x)$ equal to 0. For categorial values in general, we have $\abs{\text{Dom}(X_i)}$ new subsets, each with a common value for that variable. For numerical variables, and assuming just a split in two of the domain, we can use the mean, mode or median of the Xi distribution as the test value. Now, each of these new sets will have a new entropy relative to the outcome. How to pick the besti Xi then? We may pick the one which causes the biggest drop in entropy: that is, the one which causes the difference between entropy of original set and weighted sum of entropies of new sets to be maximum. Once we found this, we build the root with this feature Xi and continue the process recursively for all branches, but not using Xi again. We stop, ideally, when the subset we have contains only one type of response value. If that is the case, we build an answer node with a delta distribution around the response value. This might not always happen. It can happen that we are left with no features and still no single response. If that is the case, we return a distribution estimated from the dataset we have at hand. It might also happen that we are left with no data. If this is the case, the parent split the data and there were no categorical values with a certain value for a feature (this cannot happen for numerical variables where we take mean or modes or medians as tests). The parent should deal with this. Whenever it splits the data and there is at least one dataset without any observations, it should estimate a distribution from the full dataset and return an answer node, as there isn't enough data to estimate correctly what to do. Also, when computing the sum entropy, it is multiplied by the weight of the branch: the proportion of observations on this branch relative to the whole dataset for the parent. The weights are also used in classification.
+
+This describes the general algorithm. A number of improvements can be made, though. What tends to happen for large datasets is that the trees get very large. Early stopping can be employed, refusing to build new branches to a node if the decrease in entropy is lower than a threshold, returning just the answer instead. This can cause problems though. Alternatively, after the tree is built, it can be pruned in a bottom-up approach, merging nodes for which the entropy difference obtained by merging is below a certain threshold.
+
+The gini coefficient can be used instead of entropy as a measure of dispersideness. In general, any measure of disorder in a set could be used. For regression problems, the standard deviation or variation of the outcomes is used.
+
+Alternatively, instead of computed statistics from a numeric field, the actual values from the dataset can be used, although this tends to slow things down.
+
+- Tree Models:
+  - [standard discussion]
+  - the tree must be prunned:
+    - bad approach / greedy: stop dividing once there isn't a big increase in RSS from splitting. Might miss good splits  because of that.
+    - better approach: build full tree and prune it.
+      - all subtrees approach:
+        - test every possible subtree and select the one with best cross-validation error.
+	- similar problems with best subset selection:
+          - there are a lot of trees.
+          - by chance we'll find a very good tree, because there are so many of them.
+      - cost complexity pruning / weakest link pruning:
+        - [description here]
+  - Classification trees:
+    - use gini index or cross-entropy instead of RSS, since they are more sensitive.
+  - Model is \f{Y = \sum_{i=1}^M c_m I[X \in R_m]} where \f{R_m} is a leaf region and \f{c_m} is the medium vaue predicete there.
+  - Advantages:
+    - easyer to interpret + easier display (even than linear).
+    - closer to human decision making.
+    - easily handle qualitative predictors (no dummy variables).
+  - Disadvantages:
+    - not as good as a good linear model, in practice (need to emply baggin, random forests or boosting to get best results).
+  - Trees suffer from high variance, in general.
+
+- Bagged Trees:
+  - apply bagging to trees, since they have the high variance low-bias properties needed for successful bagging application.
+  - makes them harder to interpret: can't really explain \f{B=100} trees as easily as a single tree. This is not a problem for prediction, but it is for inference/understanding.
+  - We can produce a variable importance plot by looking at each variable for the sum of the error it reduces when it is used as a node in the graph.
+
+\subsubsection{Random Forests}
+
+Similar to random trees, but, we bootstram samples, and at each split, we bootstrap variables as well. We grow multiple trees and vote. The result is very accurate, but it is slow, hard to interpret and prone to over-fitting. Separate trees can be combined (paralellization).
+
+- Random Forests:
+  - a big issue in bagged trees is that the trees are correlated, sometimes highly so. If there is one very good predictor, all trees will tend to split on it on the first node, which is not ideal. Averaging correlated variables reduces the variance slower than averaging independent ones.
+  - solution: restrict trees to subsets of variables. more precisely, whenever we have to do a split for a tree, we do it from \f{m} randomly chosen features, instead of the full set. This decreases correlation.
+  - a good value for \f{m} is \f{\sqrt{d}}, but lower values can be selected for very correlated features.
+  - the same behavior with \f{B} - increase it until you get stability in the OOB error.
+  - \f{m} can't really be chosen by cross-validation, unless you want to do a very time consuming and error prone (because of typical reasons) setup.

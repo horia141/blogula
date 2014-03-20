@@ -1,0 +1,108 @@
+- Resampling methods:
+  - validation set:
+    - split set randomly in two. train on one and test on the other.
+    - higher verifiability in rest error estimated as well as worse fit. overestimate test error.
+  - leave one out cross validation:
+    - split set into validation and test set \f{N} time. each time one observation is in the test at and the others in the training set. the error is the mean of all the errors for all the folds  - lower bias and an better estimate of the test error.
+     - same result every time since you don't have randomness.
+     - more computationally expensive.
+     - linear models have \f{CV = 1/N \sum_{i=1}^{N} ((y_i - \hat{y}_I)/(1-h_I))^2} where \f{h_I} is the leverage of that observation.
+  - k-gold cross validation:
+    - for k times perform a split into k buckets randomly. eat on one and train on the others.
+    - average error is the reported result.
+    - easier to compute.
+  - one usually uses k-fold cross validation with \f{k = 5} or \f{k = 10}. there is a bias variance trade off occurring. using high k we get fairly unbiased estimates of the test error but the values are highly correlated since the models are trained on roughly the same data. hence higher variance. lower k means higher bias but lower variance.
+  - same approach for classification.
+  - can be used along side hypothesis testing for features and derived features to aid model selection.
+
+=== Resampling Methods ===
+
+\subsubsection{Combining Predictors}
+
+You can combine classifiers by averagging/voting. This improves accuracy but reduced interpretability. Consider a binary classification problem. If we have $k$ completely independent classifiers which have accuracy $p$ each and which we use in a majority vote. We have a mistake if at least two of them. [do simple binomial distribution calculus] to show $p(\text{right combined}) > p$.
+
+Strategies: bagging (see previous), boosting and combining.
+
+\subsection{The Bootstrap}
+
+One of the most powerful tools in Statistics. Can be used to estimate standard errors, to improve predictions, performing hypothesis tests, improving predictors. The ideea of teh bootstrap is to treat our sample as the population, take subsamples from it, and compute the thing we're interested in on each sample. We then get an idea of the variability in the overall sample. In cases where we don't want to make assumptions about the distributions of the data, or we make assumptions but we don't have nice analytical results about confidence intervals, parameter estimation etc. we can use the bootstrap.
+
+Some things we shouldn't bootstrap: $\max$, $\min$.
+
+We should be careful near the boundaries and with non-linear functions.
+
+We can see prediction errors by bootstrapping. [example]
+
+We can also do bootstrap aggregating (bagging). We resample cases and recalculate predictions and average or majority vote. You get similar bias, but reduced variance. It is useful for non-linear functions. Not so good on linear-models, because those have low variance to begin with. 
+
+We can bag trees: resample data, recalculate tree, return average/mode of predictors. These are stable, but not random forests.
+
+- bootstrap:
+  - simple idea: in order to compute measures of variability for complex statistics for which we maybe don't have nice models like for linear etc. or if the assumptions of the model don't hold then we use the bootstrap.
+  - sample from the training data with replacement \{B} subsamples, compute the statistic cans compute variance across this for the statistic. gold Jerry!
+
+- The Bootstrap:
+  - A method for estimating the sampling distribution of an estimator, and for producing
+    standard errors and confidence intervals derived from it.
+  - Since we usually have that \f{\var{T_n}} is dependent on \f{CDF}, the approach is
+    to generate samples from \f{CDF}, compute the estimator for each one, and then
+    compute the distribution/standard errors/confidence intervals from this. However,
+    given the fact that we don't usually have \f{CDF}, we will use \f{\hat{CDF}_n}.
+  - Two approximations take place, first when building \f{\hat{CDF}_n} and then when
+    computing the estimators.
+  - In some cases, we can find closed forms for \f{T}, so we don't need the simulation
+    step.
+  - The most important observation is that, in order to simulate sampling from
+    \f{\hat{F}_n}, we only need to draw observations at random from the original sample,
+    since \f{\hat{F}_n} is built by placing a mass of \f{1/n} at each observation
+    value.
+  - Variance estimation:
+    - draw \f{k} samples of size \f{n} from \f{\hat{F}_n}, and compute for each the
+      estimator \f{\hat{T}_n^i}.
+    - compute the variance \f{\var{\text{Boot}}{\hat{T}_n^\star}} as the variance of
+      the estimator.
+  - Normal confidence intervals:
+    - If regularity conditions are met (sample is large enough or distribution not
+      to skewed etc.) then the distribution of \f{\hat{T}_n} is nearly normal.
+    - We can use the bootstrap variance to build confidence intervals because we'll
+      have \f{\hat{T}_n \distas \mathcal{N}[T, \var{\text{Boot}}{\hat{T}_n^\star}]}.
+    - The interval is \f{(\hat{T}_n - Z_{\alpha/2} \var{\text{Boot}}{\hat{T}_n^\star},
+      \hat{T}_n + Z_{\alpha/2} \var{\text{Boot}}{\hat{T}_n^\star})}.
+  - Percentile confidence intervals:
+    - Since we build an estimate of sampling distribution of the estimator, we can
+      use it to give the confidence interval for the estimator as well, by looking
+      at appropriate percentiles.
+    - The interval is \f{({\hat{CDF}_{\hat{T}_n^\star}_k}^{-1}(\alpha/2),
+      {\hat{CDF}_{\hat{T}_n^\star}_k}^{-1}(1 - \alpha/2))}.
+  - Pivotal confidence intervals:
+    [there is some discussion here. it is intuitive, but laborious]
+  - The Jackknife:
+    - A restricted form of bootstrapping.
+    - We build \f{n} samples by removing one observation from the original sample.
+    - Then, we compute the estimator from each new sample, and compute the variance
+      by \f{\var{\text{Jack}}{\hat{T}_n} = (n-1)/n \sum_{i=1}^n (T_{i} - \mean{T}_n)^2}.
+    - We have that \f{\limprob{\var{\text{Jack}}{\hat{T}_n} / \var{T}}{1}}, so this is
+      a form of consistency.
+
+- Bagging:
+  - bootstrapping applied to building models.
+  - select \f{B} samples from the original sample, as in the bootstrap procedure (ideally one would select separate samples, but we don't live in that world) and build \f{B} models on them.
+  - for regression: return the average of the predicted models.
+  - for classification: return the majority of the predicted models (or averaged returned density if that's what they return).
+  - good for models with high variance and low bias, since by averaging we reduce the variance but keep the bias. for high bias models with low variance, such as linear models in certain contexts (nonlinear process, \f{N > p}), this doesn't help that much.
+  - B is not critical (doesn't need to be selected by cross-validation). We can set it as high as computational budgets allow.
+  - Out-of-Bag error:
+    - using cross-validation to measure the performance for a given \f{B} can be expensive.
+    - but, technically, when we build a simple random sample out of a given training sample, of the same size, for bootstrapping, we select, on average only \f{2/3} elements of the traning sample.
+    - for a procedure with \f{B} models, an observation will not be included in the training of \f{B/3} models, on average. We can compute an error using these trees, with mean and variance.
+    - we can compute it across the dataset, and, for sufficiently large \f{B} it will be an estimate of the test error.
+    - much easier to compute than cross-validation.
+
+- Boosting:
+  - a general procedure for building ensambles of models, like bagging.
+  - however, it builds the models successively. The model at step \f{i} fits the residuals from fitting all the models until step \f{i-1}.
+  - boosting preffers really simple models (high bias, low variance) and basically lowers the bias by accumulating models? decision stumps are one example of such models.
+  - the general algorithm builds a model \f{Y = \sum_{i=1}^B \lambda f^i(X)}. Where \f{f^i} is learned on the data \f{(X,r^{i-1})} and \f{r^i = r^i - \lambda f^i(X)}.
+  - \f{\lambda} is a learning control parameter. This should be set to a small value, such as \f{0.01} or \f{0.001}. It should be set by cross-validation technically.
+  - \f{B} should also be set by cross-validation, since this time with a high enough value we can overfit, though the effect is very small, much less pronounced than in other cases.
+

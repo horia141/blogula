@@ -1,0 +1,67 @@
+=== Principal Component Analsyis ===
+
+- Principal Component Analysis:
+  - [standard PCA discussion]
+  - the first \f{M} principal vectors define a subspace which is closest to the datapoints.
+  - standardization needed.
+  - [discussion on variance explained]
+
+define {Singular Value Decomposition | PCA} {
+  Every real-valued matrix $M$ can be decomposed as following: $M = USV^T$.
+  Where $U$ of dim $\hcrange{n}{n}$ is the left singular vectors matrix, $S$ is an $\hctimes{n}{d}$ diagonal matrix with singular values and $V^T$ in $\hcrange{d}{d}$ is the right singular vectors matrix.
+  Truncated SVD - provides a rank $k$ approximation of the data matrix by simply using the first $k$ eigenvectores.
+  Theorem by Eckart-Young - the truncated SVD is the best approximation of $M$, in terms of minimizing the Frobenius norm.
+  When M is zero-centered, the procedure is known as Principal Component Analysis.
+}
+
+Does not work with missing values.
+
+=== Latent Variable Models ===
+
+\subsubsection{NonNegative Matrix Factorization}
+
+One form of feature learning is Non-Negative Matrix Factorization (NMF). Starting from the sample matrix, the goal is to factorize it into the product of two other matrices, the weights and features matrix, that is, find $W$ and $F$ such that $X = WF$.
+
+The features matrix has dimension $\hctimes{k}{d}$ while the weights matrix has dimension $\hctimes{N}{k}$. The number $k$ is the number of features we're searching for, and is user selected. Each row of $F$ describes a feature in terms of the variables we're working with. Each value $F_{ij}$ describes the importance of variable $j$ from the original dataset to feature $i$. Each row of $W$ describes the coefficients which express an observation in $X$ as a linear combination of the features in $F$.
+
+The reason it's called non-negative matrix factorization is that the two matrices it finds will contain positive terms. Technically, other types of factorizations could be used, but using positive terms will result in easier to understand $W$ and $F$. Also, it is usually desired that $k < N$. This way, we find a group of features which explain the observations. If $k = N$, we might find the observations themselves, which is not what we want, most of the time. If $k > N$ we're already trying to find sparse codes.
+
+To find these matices, we can build a cost function $\left|X - WH\right|^2$ and try to minimize this using the tools from Optimization, more precisely gradient descent or simulated annealing. This however does not work so well in practice. A common strategy for these types of problems, where we have a dataset, and we try to approximate it by a combination of two objects, can be solved satisfactory, by first optimizing for the first object and keeping the second fixed, then optimizing for the second and keeping the first fixed, and repeating this procedure until convergence. Luckily, the cost function is convex in both $W$ and $H$, so there are local minima obtainable by appropriate methods for both of them.
+
+However, there is an even better algorithm. The updates that happen are $H = (W^t X) ./ (W^t W H) .* H$ and $W = (X H^t) ./ (W H H^t) .* W$.
+
+You can visualize the features by maybe selecting the most important (highest weights) variables or displaying them as signals if signal processing etc. Also, they can be displayed in terms of the observations which draw their most from them.
+
+\subsection{Dimensionality Reduction}
+
+Another form of unsupervised learning is dimensionality reduction. Dimensionality reduction tries to "project" our high dimensional domain to a lower dimensional one, usually 2 or 3 dimensional, where interesting groupings of observations cand be seen directly by a human observed. More generally, it can reduce to any dimension, in the hopes that working in the new space (doing classification, for example) will be easire.
+
+\subsubsection{Multidimensional Scaling}
+
+One form of dimensionality reduction is multidimensional scaling. This tries to map $d$-dimensional observations to $2$D or $3$D by placing them as points in the plane/volume and trying to make the distances between points in the plane the same as similarities/distances between observations in the original space.
+
+\subsection{Feature Learning}
+
+A generalization of clustering is feature extraction. This is again, a form of unsupervised learning, but, whereas clustering assigned an observation to a single cluster, described by an representative observation (a mean of some sort of all assigned observations), feature learning tries to find a set of observations which can be combined to reconstruct those from the original dataset.
+
+define {Matrix Factorizations} {
+  Examples: SVD, NonNegative Matrix Factorization, LSI, LDA etc.
+  Facilitate Matrix Completion, which is useful for recommender systems.
+  Most have a $k$ parameter.
+  How to choose $K$:
+    SVD/PCA: look a the eigenvalues [discussion of K needed for a certain reconstruction error]
+}
+
+define {Topic Modelling} {
+  Learn "topics" and a topical characterization of each document.
+  A document can be seen as a "distribution" over topics.
+  Each topic is a distribution over words.
+  Examples: LDA
+}
+
+define {Latent Dirichlet Allocation | LDA} {
+  Dirichlet Distribution: a distribution over distributions.
+}
+
+
+

@@ -1,0 +1,51 @@
+=== Discriminant Analsysis ===
+
+C-Means: An algorithm for binary/multiclass classification. Assume binary. Compute class center $m_{+}$ and $m_{-}$. Estimate as $\hat{m_{+}} = 1 / N_+ \sum_{i=1}^N_+ \textbf{X}_i^+$ and $\hat{m_{-}} = 1 / N_- \sum_{i=1}^N_- \textbf{X}_i^-$. Given $x$ we classify according to the closest class mean. We need to store two class centers $\Theta(2d)$. Training complexity is $\Theta(Nd)$. Usage complexity is $\Theta(2T_d)$. Resulting classifier is linear (?) and sum of inner products. We have $f(x) = \norm{m_+ - x} - \norm{m_- - x} = \sum_{i=1}^N \alpha_i \langle \textbf{X}_i, x \rangle + \beta$, where $\alpha_i = \textbf{Y}_i / N_{\textbf{Y}_i}$ and $\beta = 1 / N_+^2 \sum_{i=1}^N_+ \sum_{j=1}^N_+ \langle \textbf{X}_i^+, \textbf{X}_j^+ \rangle - 1 / N_-^2 \sum_{i=1}^N_- \sum_{j=1}^N_- \langle \textbf{X}_i^-, \textbf{X}_j^- \rangle$. Can be kernelized.
+
+\subsubsection{Naive Bayes}
+
+* Naive Bayes Classifier: a (probabilistic, global, parametric) model. Estimating $P(X \given Y)$ - the likelihood function is hard. we assume the simplest thing we can - that each feature is independent of the others, given $Y$. All we need to know is then the marginal likelihoods for each feature and we have $P(X \given Y) = \prod{i=1}^d P(X_i \given Y)$. These can be estimated by simple counts - $P(X_i = q \given Y = +1)$ is the number of times feature $X_i$ has value $q$ in a positive observation, for example. Once again, learning reduces to simple operations - counting and division in this case. Sometimes we need to 'smooth' the estimates, to account for rare but used word. sWe also estimate $P(Y=+1)$ and $P(Y=-1)$ and we have our model. The assumption of independence is huge - and doesn't work in many cases. But when it does, we have a simple and efficient classifier, which can also be trained in an an online fashion.
+ Assumes the feature space is a set.
+ Has translation, (??? all others are weird tho' - might not be) rotation, scaling/variance and invertible linear transformation invariance.
+
+Now, since we know estimating $p(x \given c)$ is hard, why not go the other way around? Why not assume a really simple distribution and see what happens? This is the reasoning behind the Naive Bayes Classifier, which assumes that each feature is independent of the others. Therefore, we can factorize $p(x \given c)$ as $p(x \given c) = \prod_{i=1}^d p(x_i \given c)$. The estimator becomes $\hat{h}[p](x) = \arg\max_c p(x \given c) p(c) = \arg\max_c \prod_{i=1}^d p(x_i \given c) p(c)$. The distributions $p(x_i \given c)$ can be easily estimated from the data, being $1$D estimation problems. There are several techniques here employed, basically half of Statistics being devoted to this. This simplifying assumption does not cripple the classifier. In fact, for spam detection, Bayesian classifiers were the first proposed and among the best performers so far.
+
+Naive Bayes: An algorithm for binary/multiclass classification. $\textbf{X}$ and $\textbf{Y}$ are jointly drawn from $p(X,Y)$. We have $p(y \given x) = p(x \given y) p(y) / p(x)$. Select $y^\star = \arg\max_{y \in \mathbb{Y}} p(y \given x)$. Since $p(x)$ is constant, we have, $y^\star = \arg\max_{y \in \mathbb{Y}} p(x \given y) p(y)$. For binary, we have the likelihood ration $L(x) = p(1 \given x) / p(0 \given x) = p(x \given 1)p(1) / p(x \given 0)p(0) \geq c$. $c$ is used to control the FPR. The ML estimator for $p(y)$ is used, $\hat{p(y)} = \sum_{i=1}^N [\textbf{Y}_i == y] / N$. $p(x \given y)$ is hard however. We assume that $x_i \perp x_j \given y$ - features are only determined by the class, but not by other features. A very strong assumption. We have $p(x \given y) = \prod_{i=1}^d p(x_i \given y)$. The ML estimator for $p(x_i \given y)$ can be used, $\hat{p(x_j \given y)} = \sum_{i=1}^N [\textbf{X}_{ij} = x_j \text{ and } \textbf{Y}_i == y] / \sum_{i=1}^N [\textbf{Y}_i == y]$. This works if $X_j$ is discrete, but for continuous $X_j$, we need to compute a histogram, or do density estimation in general. Tricks: use log-likelihood, use Laplace smoothing (add $1$ to all counts). Select $c$ by ROC. We need to store $\hat{p(y)}$ and $\hat{p(x_i \given y)}$ or $\Theta(\abs{\mathbb{Y}} + d\abs{\mathbb{Y}}\abs{\mathbb{X}})$. Training complexity ? and usage complexity.
+
+- Linear Discriminant Analysis:
+  - general approach: take the Bayes classifier and we decompose \f{P(Y = k \given X = x) = P(Y = k) / \sum_{i} P(Y = i) P(X = x \given Y = i) P(X = x \given Y = k)}. We need to estimate \f{P(Y)}, which is in general easy and \f{P(X = x \given Y = k)} which is hard and for which we need extra assumptions.
+  - The selected class is the one of larger probability. We can drop the normaliztion factor.
+  - Ordinary LDA:
+    - Assume \f{X \given Y=k \distas \Normal{\mu_k, \sigma^2}} for all \f{k}.
+    - This will result in assigning to \f{k} which maximizes \f{x \mu_k / \sigma^2 - \mu_k^2 / 2\sigma_k^2 + \log{P(Y = k)}}.
+    - We use sample statistics to compute all these values. Special care for \f{\sigma^2}. It is \f{\sigma^2 = 1 / (N-k) \sum_{k} \sum_{x \given y = k} (x - \mu_k)^2} - sort of weighted sum of variances.
+    - All distributions have equal variance.
+    - For the binary case, finding the maximum will result in the problem of finding a threshold for the class, which is actually \f{(\mu_1 + \mu_2) / 2}.
+    - The discriminant function is linear in \f{X}. Although the form is different form the linear regression result.
+  - LDA:
+    - Assume \f{X \given Y=k \distas \Normal{\mu_k, \Sigma^2}} for all \f{k}.
+    - This will result in assigning to \f{k} which maximizes \f{x^T \Sigma^{-1} \mu_k - 1/2 \mu_k^T \Sigma^{-1} \mu_k + \log{P(Y = k)}} - very similar to the one-dimensional case.
+    - The discriminant function is linear in \f{X}. Although the form is different form the linear regression result.
+    - All distributions have equal variance.
+  - pluses:
+    - does not suffer from unstableness of logistic regression estimates in well-separated case. 
+    - good multiclass.
+    - need to estimate \f{Kp} parameters technically, since this is a linear form :-/.
+    - better than QDA with few observations, therefore higher risk of variance.
+  - QDA:
+    - Assume \f{X \given Y=k \distas \Normal{\mu_k, \Sigma_k^2}} for all \f{k}.
+    - This will result in assigning to \f{k} which maximizes \f{-1/2 x^T 
+Sigma_k^{-1} x + x^T \Sigma^{-1} \mu_k - 1/2 \mu_k^T \Sigma^{-1} \mu_k + \log{P(Y = k)}} - very similar to the one-dimensional case.
+    - The discriminant function is quadratic in \f{x}.
+    - The distributions have different variances, now.
+    - we have to estimate \f{Kp(p+1)/2} parameters.
+    - has higher variance and lower bias than LDA, but may suffer when there are few observations.
+
+- Link between Logistic regression, LDA, QDA, kNN:
+  - One can write the logit for the probabilities produced by LDA/QDA as a linear function. Very similar to logistic regression. The fittin procedures are different, however. In general, if the assumptions hold, LDA/QDA is better than logistic. Otherwise, logistic may be better, as it assumes less.
+  - If the decision surface is significantly non-linear, kNN will beat these (in lower dimensions of course).
+  - In high dimensions, generally use logistic, since it assumes less, and you only need to estimate \f{p} parameters.
+
+- some issues with least squares fitting of linear models:
+  - good for high \f{N}. low values of this have higher variance, higher bias or can't be fit at all if \f{p > N}.
+  - not so interpretable for high \f{p} - better to just have a few non zero.
