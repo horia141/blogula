@@ -46,5 +46,8 @@ code_image_new_geometry(
 }
 }
 
+Some heading text for the image:
+%image{Valley.jpg}
+
 A third image:
 %image{http://i.imgur.com/gcK425y.jpg}
