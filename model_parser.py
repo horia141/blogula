@@ -557,6 +557,7 @@ def _ParseFunction(tokens, c_pos):
         raise errors.Error('C')
 
     if tokens[new_pos].token_type != 'word':
+        print tokens[c_pos-20:c_pos+20]
         raise errors.Error('D')
 
     name = tokens[new_pos].content
