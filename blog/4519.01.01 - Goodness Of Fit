@@ -1,0 +1,14 @@
+We ssume \f{X \distas \mathcal{X}[\mu,\sigma]}. Graphical:
+* Draw a histogram. Estimate \f{\mu} as \f{\hat{\mu}} and \f{\sigma} as \f{\hat{\sigma}} and overlay the theoretical \f{\mathcal{N}[\hat{mu}, \hat{\sigma}]} graph. Ascertain normality.
+
+= Q-Q Plot =
+
+A plot used for sample-distribution, sample-sample and distribution-distribution comparisions, which shows in a graphical and intuitive way, how good a fit there is between the two distributions.
+
+For sample-distribution. Order the sample and compute quantiles for each observation. These will be \f{1/n, 2/n, \dots, n/n} (depending on computing method though). Then, compute theoretical quantiles, that is, the value from the distribution which is larger than \f{i/n} of the other values. We now have a set of pairs, which we plot. We're building a parametric curve in the space \f{D^2} indexed by \f{q \in [0,1]}. If the sample comes from the distribution, the resulting curve should actually be the straight line \f{y=x}. We'll see problems, of course, and we can get a feeling for the differences of the actual population distribution and the one we think it is.
+
+For sample-sample the procedure is similar, only a sorting and paring is necessary. If the two samples have different sizes, interpolation might be necessary, but it's already tricky.
+
+Finally distribution-distribution is more flexible, but if the CDFs are not continuous, we must be careful - do interpolations.
+
+A typical Q-Q plot tests a sample against the standard normal (which has readily computed quantiles). The sample must be normalized for a fair comparison, so we must compute Z-scores first.
