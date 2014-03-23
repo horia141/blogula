@@ -1,0 +1,189 @@
+\def{Data} Information that has  been collected from an experiment, a survey, an historical record etc.
+
+\def{Univariate Data} Population has only one variable of interest.
+\def{Bivariate Data} Population has two variables of interest.
+\def{Multivariate Data} Population has many variables of interest.
+
+Spaces: the input space \f{X}, output space \f{Y} (the set of "labels").
+
+Sometimes it's better to perform centering, scaling, X-normalization on data in order for some methods (especially distance based ones) to work - very large variables will dominate small ones, even though it might be that the small magnitude ones are important.
+
+Data has variability associated with it. In many situations we have the Real World, which is represented by our Data and the Theoretical World, which is represented by scientific and statistical models. Statistical inference means making conclusions and decisions based on data.
+
+The \def{population} the group that we are interested in making conclusions about. A \def{census} is a collection of data on the entire population. Gathering a census can be econo mically or physically impossible. A \def{sample} is a subset of the population. The goal is then to make conclusions about the population, using just the sample. The population corresponds to the Theoretical World. The statistical model can be used to describe the variation of the data in the population as well as how statistics computed from the data vary from one sample to what we would of had if we selected another sample. How to collect data so that we can make generalizations from our data to the group we're interested in, correctly.
+
+A \def{parameter} is a value that describes the theoretical world of the population that we're interested in.
+
+We need the sample to be \def{representative} of the population. Even if we have a small sample, we have good estimates. We use randomisation to do so. We have \def{Simple Random Sample} (SRS) - each possible sample of size \f{n} from the population is equally likely to be the sample that is chosen. We have \def{Stratified Sampling} - divide the population into non-overlapping subgroups called strata and choose SRS withing each group. More convenient sometimes, ensures that the characteristics of each subgroup can be examined and gives more accurate estimates if there is less per-subgroup variance then per-population. We have \def{Cluster Sampling} - divide the population into non-overlapping subgroups called clusters, select clusters at random, and include all individuals in the chosen clusters in the samples. Each cluster should be representative. Non-random sample selections are \def{Systematic Sampling} - select every \f{k^{\text{th}}} item from the population, after we do an ordering. If the ordering has a ``structure'', we might end up with a non-representative sample. A \def{Convenienve or Volunteer Sample} - use the first \f{n} individuals that are available or the individual who volunteer to participate. This will almost surely give a non-representative sample which cannot be generalised to the population. A sample is \def{biased} if it differs from the population in a systematic way. This will result in statistics that are either too large or too small. Types of biases are \def{Selection Bias} - occurs whtn the sample is selected in such a way that it systematically excludes or under-represents part of the population or \def{Measurement or Response Bias} - occurs when the data are collected in such a way that it dents to result in observed values that are different from the actual value in some systematic way (the instrument is broken) or \def{Nonresponse  bias} - responses are not obtained from all individuals selected for inclusion in a sample.
+
+If our goal is to be able to generalise from a sample to a population, without bias, we need to select a random sample.
+
+[If we have \f{NN} items in the population we have \f{\binom{NN}{N}} samples. SRS gives each of these the same probability of being selected, that is \f{1/\binom{NN}{N}}. Alternatively, each item has probability of being selected \f{1/NN} and a sample is collected by choosing \f{N} individuals at random, without replacement. What happens with infinite populations? Then, there is no \f{NN} to speak of. What probability should we assign each individual, if the probabilities we want to have are equal? What happens when the population is uncountably infinite? What density should we use? In the real life, due to physical constraints (there is, by current physical models, a finite amount of matter in the Universe, or at least in our immediate vecinity, we have minimum distances, energies, maximum velocities etc.), the problem is treatable by using astronomically large \f{NN} and microscopically small \f{1/NN}. Still ...]
+
+Norm: a geometric notion - the distance to the origin - a function \f{\norm{\star}} which is positive and only zero for \f{0}, has \f{\norm{\alpha x} = \abs{\alpha} \norm{x}} and respects the Triangle inequality \f{\norm{x + y} \leq \norm{x} + \norm{y}}. A norm induces a distance. Distance: a geometric notion - a function \f{d(x,y)} which is positive and only zero for \f{d(x,x)}, commutative \f{d(x,y) = d(y,x)} and it respects the Triangle inequality \f{d(x,y) \leq d(x,z) + d(z,y)}. Examples: Euclidean, \f{\mathcal{L}^p}, Mahalanobis, String Edit Distance, Hamming distance, Kullback-Liebler divergence etc. Intuitively, observatuons which have a 'small' distance beteween them, are similar. Euclidean distance: \f{\norm{x - y} = \sqrt{\sum_{i=1}^d (x_i - y_i)^2}}. Typical distance in normal space. Also \f{\norm{x - y}^2 = (x - y)^T(x - y) = x^Tx - 2x^Ty + y^Ty = \norm{x}^2 - 2\norm{x}\norm{y}\cos{\Phi} + \norm{y}^2}.
+
+What we might assume of the set of instances:
+* It just exists - a set with no special structure - this is not-common, as we can't do many tricks with it.
+* It has an associated probability measure - some girls are bigger than others.
+* It has a vector space structure - we have a meaningful addition and scalar product. Elements are vectors.
+* It is a inner product space - we can derive a norm \f{\norm{x} = \sqrt{\inner{x,x}}} and a distance \f{d(x,y) = \norm{x - y}}. Also, the inner product can be used to directly measure similarity. This is also a normed vector space and a metric space.
+* It is a normed vector space - we can derive a distance \f{d(x,y) = \norm{x - y}} from it. This is also a metric vector space.
+* It is a metric vector space - we have a distance and vector space structure.
+* It is a metric space - we only have a distance.
+
+Linear separability: wrt binary classification, a dataset is linearly separable if there exists a plane \f{(w,t)} such that all positive examples are on one side \f{wx^+ \geq 0} and all negative examples are on the other size \f{wx^- < 0}. Usually doesn't occur in practice (except in very spare and high-dim cases such as text classification). We have a rough approximation to linear sperability.
+
+Margin (of a linear classifier): the distance between a decision boundry and the closest instance (either positive or negative). If the margin is stricly positive, we have a linearly separable data set. Learning algorithms which produce classifiers with higher margin are better.
+
+Margin (for a binary classifier): for an observation \f{x} the product \f{z(x) = l(x)\hat{h}(x)}, where \f{\hat{h}} is the output of a classifier (label, score, (maybe probability - 0.5)). If this is positive, we have a correct prediction. If it is negative, we have a bad prediction, assuming positive output means vote for positive class and negative for negative class.
+
+Residual (for a regressor): for an observation \f{x}, the difference between \f{f(x)} and \f{\hat{f}(x)}. Typically symmetric around \f{0}.
+
+Coherence (for a clusterer): on average, two instance from the same cluster are 'more similar' than two instances from differnt clusters.
+
+Bag of words representation: treat a document as a set of words from a alphabet set. Code as vector with number of appearances for each word.
+
+Features can be used to zoom on a certain regions of the instance space(in logical models / trees). Otherwise features can be used as directly, using their full 'resolution'  (in linear models).
+
+Consider a \f{d} dimensional binary object, where \f{d} is in the order of a hundred or a thousand. The averag distance between two objects is \f{d/2}. However, the variance of the distance is very small, so small than for \f{d = 1000}, \f{99.8\%} of the objects are between \f{450} and \f{550} distance from a randomly chosen object.
+
+Curse of Dimensionality: low dimensional stuff doesn't behave like high dimensional stuff. Need exponentially more observations to cover space as dimension increases.
+
+Blessing of Smoothness/Sparsity: data (complex one at least) lives on a smooth manifold embedded in \f{\mathbb{R}^d}, which is ammendable to ML methods.
+
+Important intution: the behaviour of many algorithms is limited in higher dimensions. However, they depend ultimately on the geometry of the dataset, not on the representation. Therefore, if one can somehow evidentiate(?) the geometry and ignore the dimension (either by building pre-processing maps which increase dimension but make it easier to distinguish features or by building pre-processing maps which compress dimension and leave only the important stuff), then one can build very powerfull classifiers/regressors.
+
+Curse of Dimensionality:
+* Things break in higher dimensions.
+* Study the hypercube \f{[0,1]^p}.
+* One example: if we have dimension \f{p}, and we want to build a hypercube around a point \f{x} such that on each axis we capture \f{10\%%} of the interval on that axis, we'll end up with roughly \f{0.1^p} of the dataset in the formed hypercube - which tends to \f{0} as \f{p} increases. So no neighbors for us.
+* If we want to capture \f{10\%%} of the observations in a hypercube, we'd like to have a widht of \f{\sqrt[p]{0.1}} which goes to \f{1} as \f{p} increases. So all we have to include the whole hypercube - neighbors might be very "far away" or points tend to cluster towards the edges.
+
+= Data Collection =
+
+What is the data "mode": pictures, videos, text, audio, combined etc.
+
+If we have labels, where do we get them: manually label them, crowdsourcing labels, implicit (click logs etc.).
+
+Labels can be noisy, for various reasons.
+
+Data can be problematic - noisy, incomplete, with "bad outliers", with "good outliers".
+
+Can never have enough data - "The Unreasonable Effectiveness of Data".
+
+But you might want to start with less data - for smaller iteration times, cheapness, or because the problem is not that hard (a size of dataset vs quality metric is useful).
+
+When visualizing we want to see both an example as well as the whole dataset.
+
+= Static Component =
+
+Examples of population descriptors:
+* vectors of numbers.
+* lists of numbers.
+* strings of symbols.
+* sets.
+* graphs.
+* trees.
+* matrices.
+* signals:
+  * audio.
+  * images.
+  * videos.
+* mixed.
+
+Examples of mapping different domains to the language of Statistics/MachineLearning:
+* \def{Images} given a grayscale image of size \f{\hctimes{m}{n}}, the columns of the data table are m*n unitreal values.
+* \def{Signals} given a discrete signal of size \f{(m_1,m_2,...,m_k)}, the columns of the data table are \f{m_1 m_2 \cdots m_k} real values, with possible restrictions, as for images to unitreal.
+* \def{Text fragments} A list of words is built. Either from a dictionary or from scanning the texts studied for all words. Common words (prepositions, conjugates etc.) are dropped. Rare words are dropped as well. Words that appear in \f{50\%} and \f{10\%}, respectively of the text fragments, can be used. A certain order is assigned to the words: \f{w_1,w_2,\dots,w_k}. A text fragment is coded as a boolean vector, where \f{b_i = \{1 \text{ if } w_i \text{ appears in the text fragment } \given 0 \text{ otherwise}\}}. An alternative coding uses \f{b_i = \text{ number of times } w_i \text{ appears in the text fragment}}.
+* \def{Code words} A generalization of what we had with text fragments. If you have a set of code-words, for example, learned patches for images, or learned sound-bites for audio data, instead of correlating with them, you can take every patch from the signal and count it, building a histogram of the code-words. This was done with words, where every text-word was a code-word.
+* \def{User-Item database} Each user has an associated row of items. The value can be either 0|1 for things which can have only boolean values (like has seen/ has not had interaction with movie/track/book, has shared/has not shared link etc.), or ordinal values (\f{1,2,3,4,5} star ratings) with a default of \f{0} for non-interacted items.
+
+= Features =
+
+Property or characteristic of some event, object or person that can take on different values or amounts.
+
+A feature/variable is some numeric quantity attached to an observation. The best feature is the one which actually solves the problem (highly correlated with the ansewer). A big source of prior knowledge and a big step in modelling.
+
+Arguably the most important factors.
+
+A feature is a measurement of the data. Good features correlate well with what we're trying to do.
+
+Feature types: Nominal (just equality), Ordinal (equality, comparison), Quantiative Interval (dates, temperatures -- 0 does not have a meaning, equality, comparision, addition, no multiplication), Quantitative Ratio (numbers, all operations).
+
+\def{Levels of Variable} How many and what are the distinct values a variable can take.
+
+\def{Qualitative Variable or Categorical Variable} The values taken by the variable do not imply a numerical ordering (sex, eye color, religion etc.)
+
+\def{Quantitative Variable | Numeric Variable} The values taken by the variable are numbers.
+
+\def{Discrete Variable}
+
+\def{Continuous Variable}
+
+\def{Scale Type} The domain of a dependent variable has a certain structure, which must be taken into account when doing any procedure. The scales, in order of structure for the domain: nominal scale, ordinal scale, interval scale, ratio scale. Notice that using numbers for the domain does not mean that it is ordinal or higher. The scale is basically determined by the measurement procedure.
+
+\def{Nominal Scale} The domain is a simple set of values, with no order, no structure, no operations except equality making sense. The assumption is that the domain is discrete. Examples: gender, handedness, favorite colour, religion etc.
+
+\def{Ordinal Scale} The domaine is like in a nominal scales, but the elements are ordered. However, no other operations are defined and the difference between two elements and another two elements is not "constant". The assumption is that the domain is discrete. Differences between adjacent scale values do not necessarily represent equal intervals on the underlying scale giving rise to the measurements. (In our case, the underlying scale is the true feeling of satisfaction, which we are trying to measure). One can talk about means of the variable starting from here (mostly by statistical consensus). Examples: consumer satisfaction with a product, agreement with a statement etc.
+
+\def{Interval Scale} The domain is like in an ordinal scale, but a difference between two elements means the same things throught the domain. The addition/substraction operations have meaning here. The domain can be discrete or continous. Ratios of elements do not necessarily represent equal magnitude scalings on the underlying scale giving rise to the measurements. There is no true \f{0} point. Examples: Fahrenheit temperature scale (\f{0} is arbitrary basically) etc.
+
+\def{Ratio Scale} The domain is like an interval scale, but ratios between two elements mean the same thing throught the domain. The multiplication/division operations have meaning here. The domain is assumed to be continuous. There is a true \f{0} point, which means the absence of the quantity being measured. Examples: Kelvin temperature scale, light intensity measurements, amount of money etc.
+
+Features are chosen according to "domain knowledge", in general.
+
+Features can be dense (many non-zero numbers (images, audio etc.)) or sparse (many zero numbers (many text document representations)).
+
+Many features is not always good - expensive to store/compute + curse of dimensionality (predictive power is \f{O(1/d)}).
+
+Good features : scatter plot which shows how a feature varies with the label variable or histogram. We want high correlation.
+
+Features should be on the same scale: (age vs income for example are in widely different scales). Some algos are independent of this, while others are not. Standardization might be necessary.
+
+Feature selection: correlated with output, non-redundant (features are distinct).
+
+Example of feature selection: forward selection (usually faster, but might miss features), backward selection. Metric: mutual information for example.
+
+= Common Transformation Of Features =
+
+\def{Taking Logarithms Of A Variable} Taking a logarithm of a set of the data for a variable will reduce positive skew - because of the compressive effects of the logarithm on \f{[1,+\infty]}. However, for values in \f{[0,1]} the situations worsens considerably. Also, if the values are negative - no go.
+
+\def{Log Transform} Apply a logarithm to a variable. Reduces skew - makes distributions more normal. If you take the mean of the log data, and then exponentiate it, you end up with the geometric mean. Making mean comparisons on the log data then is equivalent to making geometric mean comparisons on the original set.
+
+\def{Tukey Ladder Of Powers} We have \f{X_\lambda = X^\lambda} if \f{\lambda > 0} or \f{\log{X}} if \f{\lambda = 0} or \f{-(X^\lambda)} if \f{\lambda < 0}. We're supposed to select \f{\lambda} such that link between \f{X_\lambda} and \f{Y} is as close to linear as possible. One objective to measure is \f{r} - select \f{\lambda} such that \f{r} is maximized. We can swap \f{X} and \f{Y} depending on what is the "right" domain, though. If normality is what you be looking for, the \f{r} against normally distributed data (sorted pairs) can be computed - or visually by using the q-q plot.
+
+\def{Box-Cox Transform} We have \f{X_\lambda = (X^\lambda - 1) / \lambda}. Calculus-voodoo says that as \f{\lambda \rightarrow 0} we get \f{X_\lambda \rightarrow \log{X}}. The form is similar to Tukey's ladder of powers and gives theoretical justification (somewhat) for the assumption that \f{\lambda = 0} yields \f{\log}. Also, it does automatic sign conservation. \f{1 \Rightarrow 0} always by this transform. Selecting the best \f{\lambda} is done again, by trying to optimize against \f{r}. If normality is what you be looking for, the \f{r} against normally distributed data (sorted pairs) can be computed - or visually by using the q-q plot.
+
+= Space =
+
+Structure can be:
+* structured - every element has the same form. Can basically treat it as a fixed-sized tuple - and data as a matrix.
+* unstructured - every element has different form.
+Most methods are designed to work with structured data. There are a couple of approaches for turning non-structured data into structured data:
+* bag-of-words
+* tf-idf
+
+Signal specific feature extraction methods:
+* resizing
+* segmentation of regions of interest
+
+Distances:
+* Euclidean:
+* Correlation: Focuses on the shape of the input profile rather than values. good for signals (images, audio, bag of words). technically treating an observation as a realization of a single variable, rather than as \f{d} separate variables.
+
+Similarities:
+* Jaccary Similarity: Similarity between a space of sets. It is computed as \f{J(x,y) = \abs{x \cup y} / \abs{x \cap y}}. Since the denominator set has more elements than the nominator, this is a number beteween \f{[0,1]}. It has \f{J(x,x) = 1} and \f{J(x,y) = J(y,x)}. Can extend this to bags instead of sets, properly counting the number of times an object appears.
+
+= Types Of Interaction With A Process =
+
+An \def{observational unit}: the person or thing on which measurements are taken. Also called case, subject, experimental unit etc.
+
+An observed value or \def{observation} - this is the data. The actual value of a variable for one of the observational units in a dataset.
+
+Data are values of qualitative (categorical) or quantitative (numerical or ordinal) \def{variables}, belonging to a \def{set of items} or \def{population}. It is a measured characteristic of an observation unit. The set of items is the set of objects you are interested in (set of patients in a clinical study, set of visists to a website, set of cars that come of an assembly line). Variables are a masurement of the characteristics of an item (response to a therapy, how long people stay on website, how long does the car work before the first repair). Variables can be qualitative, if they can be discribed by a label (country of origin, sex, given treatement or not etc.) or quantitative numerical, if they can be described by numbers with ordering and field operations (height, duration etc.) or quantitative ordinal, if they have a natural ordering, but no field operations (answers to questionnaires with disagree, strongly disagree etc. or American-style grades (A,B,etc.)). Quantitative variables can be compared. Data comes as \def{raw data} or \def{processed data}. Raw data is data as it is from the source and is often hard to use for analysis. Processed data is a transformed version of raw data. This processing is part of the data analysis process and should be as meticulously recorded as the traditional analysis step. Processing may include merging several raw data sets into one processes set, subsetting a raw set to obtain a smaller processed set or several processed sets, applying transforms to numeric variables. Raw data may have many forms, but processed data usually comes in the form of one or more tables, where each \def{observation} of the variables of an item is a row, and each column stores the values for all observations for a particular variable. Each table stores data about one kind of observation (people/hospitals etc.). The goal is to get \def{tidy data}. We might also want to use column names that are easy to use and informative, row names that are easy to use and informative, remove obvious mistakes, use variables that are internally consistent (use ``M/F'' instead of ``M'', ``Males'' etc.), and add appropriate transformed variables so it doesn't have to be done every time we do an exploratory analysis or other down the pipeline technique. \def{Big data} is data which is usually too large to store on one machine. It's all relative.
+
+Some values may be missing. They may bias the results if they are ingnored. We must consider why they are missing and if the fact that they are missing might bias the results of our work.
+
+We have input variables (predictors, independent variables, features, variables) and output variables (response, dependent variables). We assume a model of whatever process we're modelling as \f{Y = f(X) + \epsilon}. \f{f} is a fixed but unknown function of \f{X_1,X_2,\dots,X_p} while \f{\epsilon} is a random error term, which is independent of \f{X} and has mean \f{0}. \f{f} is the systematic information that \f{X} provides about \f{Y}. We wish to estimate \f{f}, by \f{\hat{f}}.
+
+A \def{independent variable} is a variable which is somehow manipulated or under the control of the experimenter. An \def{dependent variable} is a variable which is measured. In the process we are studiying, dependent variables depend on the independent variables. We can control the independent variables, or we have access to them, and we want to see about their relationship with the dependent variables.
