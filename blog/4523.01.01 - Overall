@@ -1,0 +1,645 @@
+What are the inputs of of our "problem".
+
+Data - Features - Learning Algorithm - Model
+
+Task 1 : data collection
+Task 2 : select some features
+Task 3 : build/train a model
+Task 4 : evaluate the model
+
+The hu-man is part of the loop -- for now.
+
+Can a human do what we're asking the algorithm to do? A good intuition for debugging.
+
+\def{Standard Learning Assumptions} Observations are identically and independently distributed. The distribution is fixed over time. The same distribution is used for training and testing.
+
+\def{Independence Hints} When performing simple random sampling, we can be sure of independece as long as we use less than \f{10\%} of the population. Higher values lead to issues.
+
+\def{SD Hints} In order for \f{s} to be a good estimate of \f{\sigma} we must have \f{N > 50} and the actual distribution mustn't be too skewed. In order for the Normal model to be good, we also have to have independence and not have a very skewed population distribution. The larger the sample size, the more tolerant we are with skew.
+
+\def{Margin Of Error} The value \f{1.96*\sigma_x} which is used to build the confidence interval.
+
+\def{Document Similarity} The problem of finding if two documents are identical or very similar. Documents are lists of symbols (either character lists or word lists) and we're intrested in syntactical similarity, not semantical one (which is a different, harder problem). Applications: plagiarism detection, mirror web page detection, same news source detection, similar users detection (for collaborative filtering), similar items detection (for collaborative filtering).
+
+\def{Shingling} A feature extraction method for list of symbols, which produces a set as a descriptor, which can optionally transformed into a boolean/count vector. Jaccardi Similarity can then be applied.For a document consisting of symbols, a \f{k}-shingle is the set of all substring of length \f{k} in that document. \f{k}-shingling means extracting all \f{k}-shingles from a document and building a descriptor for the document, as the set of all shingles extracted. We have an universe \f{U} of all possible \f{k} shingles, and the descriptor is a subset of this. We can attach a bit-vector for the descriptor, as is standard representation. If we use bags, the bit-vector turns into a ferequency-vector. If symbols are chars: replace "\s+" with " " or "", depending on what makes sense. \f{k} should be picked such that the probability of any given shingle appearing in a document is low. For words \f{k=1} or \f{k=2} is usually sufficient, while for characters \f{k \in \hcrange{5}{10}} is allright. Hashing singles: instead of storing the found shingles in the document descriptor, we hash the shingle and store the result of the hash. We have a set of hash buckets instead of a list of shingles. More compact, easier to process, but better than using a smaller shingle size, because more of the domain is uses (\f{4} shingle of letter has roughl \f{200k} shingles, while \f{9} shingle mapped has \f{27^9} which, when mapped to a \f{4} byte integer fully covers the \f{2^32} space, with a good hash function). Shingles for news articles: stop word followed by next two words - a more selective criterion than substrings. The stop words are not removed, as you would expect. One can extract at most \f{n - k + 1} shingles from a document of size \f{n}.
+
+
+Statistical Functionals: A statistical functional is a function which depends on the CDF of a random variable. Usually of the form \f{T(CDF)}. A linear statistical functional has the form \f{T(CDF) = \int r(x) dCDF(x)}. They have nice properties.
+* Mean: \f{\mu_X = \int x dCDF(x)}. This is linear.
+* Variance: \f{\sigma^2_X = \int (x - \mu)^2 dF(x)}. This is linear.
+* Skweness: \f{K = \mean{X - \mu}^3 / \sigma^3}. This is nonlinear.
+* Median: \f{CDF^{-1}(1/2)}. This is nonlinear.
+
+Given the population, we might compute different statistics on it. Given a sample from the population, we first want to compute for a population statistic, an equivalent sample statistic, which has some desired properties (in the large sample case it tends to the population statistic). We then want confidence regions for the statistic, under the usual setup. Or we want to know if the data support the fact that a statistic has a value or values in a certain region etc. When testing a model, we apply the tests to see if the data support the whole model. When learning, we first compute the parameters, by some sample statistic, and then we can test if they are indeed different from some "neutral" value like \f{0}. We can test if certain features are of interest. We can test if certain observations are of interest (they contribute too much to a model).
+
+If we have the whole population, then there is no need for inference. Whatever we can compute, we can compute directly, no need to give confidence intervals or other measures, or state scores of how good our estimates are etc. There are also no assumptions we must make about the distribution of our data or of errors, in order to get those things. We just compute. Assumptions only apear when we don't have the whole population, or can't work with the whole and must sample nonetheless.
+
+\def{Machine Learning} Computational methods using experience to improve performance. It is both algorithm (CS) and Data driven (statistics, probability etc.). Makes use of optimization.
+
+The steps in a data analysis are:
+* Define the question. A scientific or buisniess question that we want to answer with data. Do not work on a data analysis without a solid question to answer.
+* Define the ideal dataset. What would our data look like, if time/money/physics wasn't a problem. This depends on the goal. Descriptive - whole population, exploratory - random sample or population with many variables measured so you can explore relationships, interential - the right population, randomly sampled so that you can infere, predictive - a training set and a test set form the same population, causal - data from a randomized study, mechanistic - data about all components of the system and how they work togehter.
+* Determine what data you can access. Typically not the ideal dataset. Data can be free on the web, or you can buy it. If it does not exist, you need to generate it - an experiment.
+* Obtain the data. Try to obtain the raw data. Reference the source. Maybe send an email. Data from the internet should be record url + time of access.
+* Clean the data. If it is already pre-processed, make sure you understand how. Understand the source of the data (cenus, semple, convenience sample). Do reformatting, subsampling, mergin etc. - record these steps. IF the data is not good enough, quit or change the data. 
+* Exploratory data analysis. Get a feeling for how the data you gathered looks like + quirks of it. Look at summaries of the data, check for missing data, create exploratory plots, perform clustering etc.
+* Statistical prediction/modeling. Answer the question we're interested in. Should be informed by the results of the exploratory analysis. Exact methods depend on the question though. Transformations/processing should be accounted. Should report measures of uncertainty.
+* Interpret results. Tell in plain language what the statistics mean. Use appropriate language. Descriptive - words like describes. Inference - infers/correlates with/associated with. Prediction - predicts. Causal analysis - leads to/causes. Give an explanation for what's happening in plain English. Interpret coefficients for the predictive models and interpret the measures of uncertainty.
+* Challange results. Explain potential failings so that others can make decisions etc. All steps : question (too specific, too general?), data source (right data, right sample?), processing (transformations correctly or problematic variables), analysis (did we do it right), conclusions (did we conclude too much, not enough?), measures of uncertainty (point out other sources of uncertainty), terms to include in models, potential alternative analyses.
+* Synthesize/write up results. Tell a story about using the data. Not necesarily all steps. Lead with the question (start with what we want to answer and how to go about). Summarize the analyses into a story - start, steps, stop. Order analyses according to the story, not chronologically. Include ``pretty'' figures (bix axes, labels etc).
+* Create reproducible code.
+
+To clean the data we do summarization and data munging. The goal is to get do tidy data.
+
+Summarization is usually the first step in an analysis. Useful things: dimensions of data, names of variables, correct types for each variable, quantiles for each variable, the R ``summary'' function, unique values for each variables (useful for qualitative variables), counts for each unique value (useful for qualitative variables), contingency table of one variable vs another (how many times does a variable appear when another appears), subsets of variables with certain properties (go wild here), row sums, row means, column sums, column means etc. You should look for problemns: missing values, values outside of expected ranges, values in the wrong units, mislabled variables/columns, variables in the wrong class.
+
+Munging is usually done after summarization, that is, after we've got the first feel of the data, but it can be done in some cases, before, or, more likely, mixed with summarization. It might consist of fixing variable names or character vectors (all lowercase/uppercase, remove ``weird characters'' and leave only alphanumerics and space), building intervals for quantitative variables and splitting data into appereance in these range and making them qualitative (we can use quantiles for the intervals), creating new variables, merging data sets, sorting by a particular variable, reshaping data sets, dealing with missing data, tranforming variables (\f{\log_{10}(X + 1)} is very popular), check and remove inconsistent values etc. \textbf{All these steps must be recorded, possibly in a R script}. \textbf{\f{90\%} of the effort will often be spent here}.
+
+We have some real world process that we wish to understand or predict. For this purpose we build a \def{model}. The process exists and it produces \def{outcomes}, which we can observe. If we consider each outcome as being a member of a set \f{\Omega}, one particular type of model we can build is a \def{probabilistical model}, which is just the probability distribution \f{p} over \f{\Omega}, which tells us how ``probable'' each outcome is.
+
+[talk more about the setting of probabilistical modelling here]
+
+Let \f{\mathcal{X} = \{ (x^{(i)},y^{(i)}) \given i \in \hcrange{1}{N} \}} be a training set of pairs of \def{inputs} and \def{labels}. The probabilistical model consists of \f{p}, from which we consider \f{\mathcal{X}} to be a sample of IID observations. \f{p} has the form \f{p(x,y)} more precisely.
+
+In all cases, except for spaces with low-dimension for \f{x}, estimating both \f{p(y \given x)} and \f{p(x,y)} is intractable. Assumptions about the form of these two are made, in order to simplify the task of infering the model. For generative models, \f{p(x,y)} is often assumed to have a sparse dependency model between the components of \f{x} and \f{y}. \def{Graphical Models} are used to model such problems. For conditional models, generative models can be used, but often simple forms for \f{p(y \given x)} are assumed such as assuming there is a linear relationship between \f{y} and \f{x} or \f{Y = \Theta^T X + \mu} where \f{\mu} is a RVar with mean zero and independent from \f{X}. In this case we'll have \f{p(y \given x) = F[\Theta](x,y)} and our task is to estimate \f{\Theta} for a fixed \f{F}.
+
+The study of Machine Learning / Statistics is, for the most part, the study of general properties of these models and of the inference or learning processes as well as special properties of particular form of models and best practices for applications of these tools in real life.
+
+Collective Intelligence: the combining of behaviour, preferences or ideas of a group of people to create novel insights. Building new conslusions from independent contributions is really what collective intelligence is all about.
+
+Machine learning is a subfield of Artificial Intelligence (AI) concerned with algorithms that allow computers to learn. The common setup is that an algorithm is given a set of data and infers information about the properties of the data - which in turn allows it make predictions about other, unseen, data. This is the setup of most statistical problems, and, indeed, there is a large overlap between ML and Stats, so much so, infact, that the fields have almost converged. Learning is possible because nonrandom data of the kind we see in "nature" contains patterns, and these patterns allow the machine to generalize. This generalization is made by fitting a model to the data, which determines the important aspects of it and discards anything it considers extraneous.
+
+The two problems that plague machine learning models are the duals of  not fitting enough of the data or fitting too much of the data, that is, the bias vs. variance tradeoff.
+
+There is supervised and unsupervied learning. In the former, there is an inputs and we desire an output, and, in order to obtain a good mapping, we also have a training set of known good mappings. In the latter, we wish to find structure withing a set of data. No one pice of data is the answer. 
+
+Examples of application: spam detection in emails, spam detection on website comments or in any place where an web application allows the user to contribute, dividing emails into important/not-important (Priority Inbox a la gmail) or work/non-work etc, filtering entries from an RSS feed into different categories. For the example of spam detection, early based classifiers were based on rules: wether certain words or word combinations were present, use of the Caps Lock key, particular HTML colors, inconsistent message headers etc. The problem with this approach, was that spammers learned all the rules and stopped sending messages which would not pass them. Such a system is a classifier, but is a classifier built by hand. A better approach would be to build one which learns from a corpus of spam and non-spam messages, and, furthermore, which continually learns from these, as they arrive, and are flagged as such by users. This way, whatever the spammers do, the system can addapt to. This method also handles the case where spam differs from where it is found: spam in one place is not spam in another place.
+
+The \def{Central Dogma} of Statistics: we have a \def{population} \f{F} (a set of objects we are interested in) and a paramter \f{\Theta} which depends on \f{F} of the form \f{\Theta = t(F)}. If we randomly sample the population to form \f{\hat{F}_1, \hat{F}_2, \dots, \hat{F}_n \subseteq F} then we can estimate \f{\Theta} as \f{\hat{\Theta}_i = t(\hat{F}_i)}. Each \f{\hat{\Theta}_i} will not be equal to \f{\Theta}, but, on average all of them will be close to \f{\Theta}.
+
+\label{note:ZerosAreToBeAvoided} \textbf{Note:} In general, when estimating the PDF for a random process, \f{0}s should be avoided.
+
+Uses of ML: online advertising (predicting intent and interest), gauging consumer sentiment and predictive behaviour, detecting adverse events and predicting their impact, intelligent question answering such as in Watson, categorizing and recognizing places, faces, people etc, personalizes genomic medicine (in the future), building more intelligent public services, security, big data analytics (non-web companies explotiing more efficient technology developed by web companies for their web-intelligence tasks, fusing social intelligence and business intelligence - sales and marketing, intelligent supply chains, digital, mobile, data-driven biz models and processes).
+
+\def{Bias Variance Decompositions} Consider the usual case of mean-squared error and approximation of \f{Y} by a function of \f{X} as \f{Y = f(X) + \epsilon} where \f{E[\epsilon] = 0}. We have: \f{V[Y] = V[f(X)] + V[\epsilon]}. The variance of \f{Y} is partly explained by the variance of \f{f(X)} and partly explained by the noise/error component. We have: \f{MSE_f(Y,X) = E[(Y - f(X))^2] = E[(Y - E[Y] + E[Y] - f(X))^2] = (E[f(X)] - Y)^2 + V[f(X)]} - the mean squared error is partly due to the systematic bias of the approximation model and partly due to variance of the estimator itself.
+
+For a general prediction problem, we have the inputs/features/predictors/independent variables \f{X \in \mathbb{X}}, which are \f{d}-tuples drawn from a certain set and the outputs/dependent variable \f{Y \in \mathbb{Y}}. Both are modeled by random variables, and they are characterized, jointly, by \f{P(X,Y)} - the probability density function (we're making many assumptions here though, but they are reasonable). Assume we have a model of the dependence between \f{X} and \f{Y} which is \f{Y = f(X) + \epsilon}, where \f{E[\epsilon] = 0} and it is a noise term. The goal is to evaluate the performance of this model in approximating the dependence and, furthermore, use this as guide to choosing a good model, in general. We define the loss function \f{L(y,y')} which we use to measures the performancde of a model in the average sense. A criterion for measuring \f{f} is then \f{EPE(f) = E_(X,Y)[L(Y,f(X))] = \int_\hctimes{\mathbb{X}}{\mathbb{Y}} L(Y,f(X)) P(X,Y)}. To choose a good \f{f} according to this criterion we then have to use \f{f^\star = \arg\min_f \int_\hctimes{\mathbb{X}}{\mathbb{Y}} L(Y,f(X)) P(X,Y)}. We can rewrite the expression as \f{\int_\hctimes{\mathbb{X}}{\mathbb{Y}} L(Y,f(X)) P(Y \given X) P(X) = \int_\mathbb{X} \int_\mathbb{Y} L(Y,f(X)) P(Y \given X) P(X) = E_X E_{Y \given X} [L(Y, f(X)) \given X]}. This expression is basically a "sum" over \f{X} of a term which only depends on the current value of \f{X}. Furthermore, given that loss functions are positive, to minimize the sum, it sufficies to minimize each term independently. Therefore, to find \f{f^\star}, we find each of its values independently, and we have: \f{f^\star(x) = \arg\min_{f(x)} E_{Y \given X} [L(Y, f(x)) \given X = x]}. Still a win - technically find \f{f} by looking at each element independently. Can't go much further though.
+
+For regression problems, a common loss is the squared loss \f{L_{sq}(y,y') = (y - y')^2}. Using this we have, \f{f^\star(x) = \arg\min_{f(x)} E_{Y \given X} [(Y - f(x))^2 \given X = x] = \arg\min_{f(x)} E_{Y \given X} [Y^2 \given X = x] - 2f(x)E_{Y \given X} + E_{Y \given X} f(x)^2 = \arg\min_{f(x)} \int_{\mathbb{Y}} (Y^2 - 2f(x)Y) P(Y \given X = x)}. This has a minimum when the integral on the right, differentiated, is \f{0}. Swapping, we get \f{\int_{\mathbb{Y}} 2Y - 2f(x) P(Y \given X = x) = 0} or \f{2 \int_{\mathbb{Y}} Y P(Y \given X = x) = 2f(x)} or \f{f(x) = E_{Y \given X} [Y \given X = x]}. So the best estimator for this is actually the mean over \f{Y} at a given value of \f{X}. This is known as the regression function. Good because it has nice analytical properties, good modelling properties (penaizing larger deviances more than smaller ones). Means can suffer from outlier issues etc, therefore not so robust.
+
+For regression problems, another loss is the absolute loss \f{L_{abs}(y,y') = \abs{y - y'}}. This leads to \f{f^\star(x) = \median{Y \given X = x}}. This is another measure of centrality, but there are discontinuities, and it is harder to compute, in general. But the estimator is more robust.
+
+For classification problems, the loss function can be expressed as a matrix \f{G \in \matrixset_{\mathbb{Y}}(C, C)}, which has zeros on the first diagonal (but which might not be symmetrical). Pointwise we then have \f{f^\star(x) = \arg\min_{c \in \mathbb{Y}} \sum_{C \in \mathbb{Y}} G[C, c] P(C \given X = x)}.
+
+For classification problems, a common loss is the \f{0-1} loss, which has \f{G_{0-1} = ones(C,C) - I_C}. We have \f{f^\star(x) = \arg\min_{c \in \mathbb{Y}} (1 - P(c \given X = x)) = \arg\max_{c \in \min{Y}} P(c \given X = x)}. The sum transforms into the sum of probabilities for the cases \f{C \neq c}. A classifier which tries to choose the maximum probability class, given an input is the Bayes classifier.
+
+The error rate for the Bayes classifier is called the Bayes rate, and is technically the best we can do.
+
+Reasoning can be:
+* deductive: formal logic. start with a set of known premises and find conclusions which are 'inescapable' or always true given the premises. formulate hypotheses about relationships and models and test their validity.
+* inductive: informal or everyday reasoning. based on examples of past behavior and reasonable assumptions, the conclusions are probable, likely etc. discover new relationships and insights from the data.
+
+Data science provides improved decision making at the end of the day. Organizations which make use of it will thrive, much like when people started using simple statistics, while these that don't will not. There is an opportunity cost involved (what happens if the competitor makes use of data before us?) and the possibility of enhanced processes.
+
+Fundamentally, every customer interaction, every internal interaction, every process, whether technical or business etc produces data. By applying the tools of data science to it, insights can be gained and improvements made. Data is then one more thing to be aware of, yo collect and analyze in the organization's processes.
+
+We have our model, and we want to know certain things about it, from the data. We can look at parameters or any statistic. We might wish to compute a value for it, or a confidence interval, or a full posterior distribution. We might wish to know the variability of the statistic which computes the parameters. Or we might wish to estimate a distributon. Or see if a distribution is similar to another, or is from a well known family. We might wish to compare two models of the data, by way of seeing if a common statistic (test statistic) is more likely under one or another model. Or we might compare one model with any other model. This is hypothesis testing.
+
+Models: descriptors of the process. Can be seen as compressions of the whole, complex process. This is what scientists do. This is what every living being does, in their own limited way.
+
+The steps of a data science endeavor:
+* acquire data:  heavily project and organization specific. general guidelines: look at the data already available and unused or insufficiently used. remove format constraints - not only structured databases. seek the data you don't already have, but focus on the one with highest ROI. integrate external data sources as much as possible.
+* prepare data: transform the acquired data into a form suitable for analysis. Maybe store it all in the "Data Lake", a central repository of all an organization's data, accessible for all query and analysis purposes.
+* analyze the data: the lion's share of work. Depending on the maturity of the data science team in the organization they might be called upon to describe (how are customers distributed with regards to zip code?), discover (are there groups of customers which act similarly?), predict (what would a given customer most likely buy?) or advise (target a certain group for a product) based on the data. In the BAH graph, as maturity increases, capabilities are added and the effort spent on acquire, prepare and the four types of analysis is reduced. [Maybe see the graph].
+* act on the data: again this is heavily dependent in the organization and project, but this is the user interface of the resulting data product. general guidelines: must be understandable without heavy context of the analysis. make the principal patterns and exceptions visible. if quantitative values are used then they must be coded with easy interpretation in mind. must answer a real business question.
+
+An organization build data products using the four steps above consistently, but it evolves according to the maturity model. You can reap benefits at each stage and it makes sense to do something like this, but the end should be to reach the advise step - the most powerful interface.
+
+Disclaimer: as it currently is, data science requires a dedicated team and time to build the necessary products and experiment and improve them. There are no off-the-shelf solutions and no easy way outs. The benefits outweigh the initial costs.[hopefully] The way BOH sees it, data science is applied holistically to an organization, not just to specific areas. [Nobody expects from the Inquisition]
+
+Organization of data science teams:
+* centralized: one team which solves all data science needs for all business units.
+* deployed: one central team which sends small teams for longer periods of time to business units.
+* diffused: each business unit has its own data science team.
+
+Some guidelines for building a data product:
+* be willing to fail.
+* experiment and iterate often. Learn from failure.
+* go for the simplest solution that will work, given the problem scale, known a priori work etc.
+* morale: keep the final goal in mind, but be willing to suffer through many failures and attempts.
+* keep the presentation tight: it should convey the message clearly and it should follow, frankly, good design principles. It should provide the actionable information directly, else we're back to BI.
+- no analysis is ever complete. You just run out of resources or tools to use. Try to understand what could be done to improve the current situation.
+- try to document as much of the building process and assumptions as possible, even if through pen and paper.
+
+From the technical side data science is one part domain knowledge, one part computer science for building the systems that power the data product and one part mathematics/statistics for building the theoretical models for understanding the data.
+
+Data science is the Art of turning data into actions. This is accomplished through the creation of data products, which provide actionable information without exposing the decision makers to the underlying data or analytics. Examples of data products: weather forecasts, movie recommendations, financial forecasts, targeted advertising etc.
+
+
+Tradeoffs when designing a data product:
+* speed: the latency/timeliness constraints for the end users.
+* analytic complexity: how hard, in terms of resources (time, machines, storage, complexity class etc.) are the algorithms being implemented?
+* accuracy and precision: computing exact or approximate solutions? Do we have a measure of confidence in a result?
+* data size: how many observations do we need to get good results?
+* data complexity: how many dimensions does the data have, linkage, correlations, various classification and regression specific complexity measures, intrinsic dimension of the data manifold.
+* external and political constraints: personally identifiable information and personal health information come to mind, as well as special regulations which control how to use certain kinds of data.
+* these are all interdependent aspects which must be considered when building a data product.
+ 
+
+\def{Setup} Random Process described by Random Variables. We extract outcomes from it in the form of cases/observations. Probability of an event is (1) the number of times that event would occur relative to the number of trials, as the number of trials goes to infinity or (2) a subjective measure of the experimenters confidence in the occurance of a certain event. The Law of Large Numbers gives a formal justification for the tendency of the ratio to stabilize to the actual probability. Some processes can be modelled as random, even though they are deterministic. We just don't understand them well enough. The part we can't explain is described by probability.
+
+= Prediction =
+
+To build a prediction experiment:
+* Find the right data. Determine wether you have the right data (variables + count). Often, more data leads to a better model. You have to know when to quit: maybe the data can't just say what we're interested in. Sometimes beating a random flip coin is huge, while othertimes, the bar is set really high. You have to know the benchmark. You need to start with the raw data - so you know what processing affects the samples and to know of inter-sample processing.
+* Define error rate. Critical choice.
+* Split data into training, testing and validation (optional). We don't want to overfit - we don't want to tune the predictor too much to the data we have at hand to prevent overfitting.
+* On the training set, pick features.
+* On the training set, pick prediction function.
+* On the training set cross-validate.
+* If no validation - apply \f{\hctimes{1}{}} to test set. Do not tune or estimate paramters from the test set.
+* If validaation - apply to test set and refine. Minor corrections.
+* If validation - applye \f{\hctimes{1}{}} to validation set.
+
+You only get one shot to measure the performance of your predictors on the test data.
+
+Even when the decision function gives us an answer, there might be problems where we have to take more factors into consideration. Consider the problem of spam classification. We want to be really really sure that a message is spam, before we send it to the trash. Otherwise we end up with the user having to constantly sift the trash for important messages. Therefore, for this problem we want a high degree of confidence in our result before we take action. Consider the problem of cancer detection. If there is a chance of there being a cancer we want to report it. In general it is better to be safe than sorry. On the other hand you don't want to induce unnecessary suffering to patients, and biopsies and waiting fur results can be pretty nerve-wreching. Therefore you need a lower, but not so low, confidence in the result before flagging an action.
+
+In general, for binary classification, a \def{positive} means that you have identified something interesting and \def{negative} means that you have rejected something not interesting. A \def{true positive} is something correctly identified. A \def{true negative} is something correctly rejected. A \def{false positive} or \def{type I error} is something incorectly identified. A \def{false negative} or \def{type II error} is something incorectly rejected. [draw table from week \f{6} first lecture). We can define \def{sensitivity} or \def{recall} as the number of true positives over the real number of positives (which is equal to the true positives plus the false negatives). It tells us, for a procedure, the percent/probability of it being a positive and we identifying it as such. We can define \def{specificity} as the number of true negatives over the real number of negatives (which is equal to the number of true negatives plus the false positives). It tells us, for a procedure, the percent/probability of it being a negative and we identifing it as such. The \def{positive predictive value} is the number of true positives relative to the number of identified positives (which is equal to the sum of the true positives and the false positives). It tells us the percent/probability of identifing a positive and it actually being a real positive (for many instances with small number of positives (like in medical research) this might be a very low value). The \def{negative predictive value} is the number of true negatives relative to the number of identified negatives (which is equal to the sum of the true negatives and the false negatives). It tells us the percent/probability of identifying a positive and it actually being a real positive. These latter two are of most interest to a patient/user of the system.
+
+Other common error measures: mean square error (continuous data, sensitive to outliers), median absolute deviation (continuous data, often more robust), sensitivity (if you want few false negatives), specificity (if you want few false positives), accuracy (weights false positives and negatives equally), concordance (you have several predictiors and want to know how well they agree).
+
+Key issues: accuracy, overfitting, interpretability (want a predictive function which is easily understandable by a human), computational speed (you want do do stuff fast).
+
+Cross-validation: used to estimate generalization error and avoid overfitting. Don't want a too close tune on the training dataset. Accuracy on the training set is ``optimistic''. A better estimate comes from an independent set (the test set accuracy). We can't use this when we build/refine the model, or it becomes part of the training set. So we do cross-validation, which takes the training set, and split it into subtraining/subtest sets. You build a model on the subtraining set and evalute it on the subtest set. Repeat and average the estimated errors. Now, we can pick which variables to include in a model (do a cross-validation for each variable sets we want to include), pick the type of prediction function to use (to a cross-validation for each prediction function), pick some parameters of the prediction function, or compare different predictors. The subsamples can be selected randomly from the training sample. Sometimes you get repeated elements, or elements which don't appear in the training/test samples. Another approach is k-fold. We split the data into \f{k} sets, and do \f{k-1} iterations, at each using one of the pieces for testing and the others for training. Every observation will appear in \f{k-2} training saples and in \f{1} testing samples. An extreme example is leave-one-out where \f{k=N}. This is actually less biased as you generate each possible observation as the test set. However, you have more variability. With lower \f{k}, we have more bias possibly but less variability in the error as it is an average over the sample. 
+
+The training and test sets must come from the same population! Sampling should be designed to mimic real patterns (sampling time chunks for time series). The cross-validation estimates of the error have variance, and it is difficult to estimate how much.
+
+The test set must be used only once!
+
+= Classification =
+
+A form of supervised learning is classification. In this problem, there are a number of classes. We are given an observation and asked to say to which class the observation belongs to. We are given access to a sample, where each observation also has attached a class, and we are supposed to learn the method of association from this. Each observation is, of course, described by a set of features, or explanatory variables, while the label is the response variable. A data matrix with observation as rows and variables as columns is a natural way to represent the sample. Let \f{X_1,X_2,\dots,X_d} represent the features and \f{C_1,C_2,\dots,C_k} represent the \f{k} possible labels/classes an observation can be attached to. Classification then deals with the problem of finding an estimator \f{h(x) \colon D \rightarrow C}, where \f{C = \{C_1,C_2,\dots,C_k\}} and where \f{D} is the \f{d}-dimensional space of all observations.
+
+Ideally, each observation would have just one class attached to it, so the most information we could use to describe a classification problem would be the probability of an observation \f{p \colon D \rightarrow [0,1]} and the classification function \f{h \colon D -> C}. However, in practice, this is not always the case. It might be that, sometimes a point is assigned to more than one class, usually because of some variability in the underlying process we are trying to model. To fully describe this we need a joint probability distribution on \f{D} and \f{C}. We'll name it \f{p \colon \hctimes{D}{C} \rightarrow [0,1]}, and \f{p(x,c) = \text{ probability of observation } x \text{ with label } c}. Assuming we have this, we can factorize it as  \f{p(x,c) = p(x \given c)p(c)}. This formulation comes from the definition of conditional probability and has an intuitive interpretation: the probability density of seeing observation \f{x} and label \f{c} is the probability density of seeing label \f{c} multiplied by the density of seeing observation \f{x} and knowing that \f{c} was already observed. Even though we don't have assigned for each point, \f{x}, a single label, but rather a distribution of labels \f{p(c \given x)}, we'd still wish, for practicala purposes, to have a function between \f{D} and \f{C}. One way to build this classifier function estimator \f{\hat{h}} is to define it as \f{\hat{h}[p](x) = \arg\max_c p(c \given x)}. That is, we choose from the distribution of labels assigned to each point, the one of maximum probability density to be the one "assigned" to the point. Notice we use \f{p(c \given x)} here only for comparison purposes. Using Bayes theorem, we can express \f{p(c \given x)} in terms of \f{p(x \given c)} and \f{p(c)} and \f{p(x)}. We have \f{p(c \given x) = p(x \given c) p(c) / p(x)}. The estimator becomes \f{  \hat{h}[p](x) = \arg \max_c p(x \given c) p(c) / p(x)}. But, p(x) is constant wrt to the maximiazation problem, being the same regardless of \f{c}. Therefore, the problem can be reposed as \f{\hat{h}[p](x) = \arg \max_c p(x \given c) p(c)}. Now, what does this formulation buy us exactly? Well, it is easier to esimate \f{p(c)} and \f{p(x \given c)} from the data table, than \f{p(c \given x)}. In fact, \f{p(C = C_i) = \text{ number of observations that have label } C_i \text{ in the data table raported to the total number of observations }, N}. Also \f{p(x \given C = C_i)} can be estimated by looking only at the subset of the sample which has class \f{C_i}.
+
+Well, the last statement is a bit of a misdirection. Estimating the distribution of a sample is a hard thing, and usually works well for at most \f{3}-dimensional data (\f{d=3} or \f{3} features which describe our set). For higher dimensions we can assume the data is normally distributed \f{p(x \given C = C_i) = \mathcal{N}[\mu_i,\Sigma_i](x)}, or that it is a mixture of gaussians \f{p(x \given C = C_i) = \sum_{j=1}^p w_j \mathcal{N}[\mu_{ij},\Sigma_{ij}](x)}, or that it is one of a handful of other studied multi-dimensional or mixture of multi-dimensional distributions. There are, of course, several problems with this approach. First of all, we may not have enough data to reliably estimate all the required parametes (they are \f{pd^2 + 2pd} for Gaussian mixture). Even if we do have all the data, we might face an even bigger problem: the data is not accurately modeled by such a distribution. Other methods for density estimation, like Graphical Models can, of course, be used, some even estimating the full \f{p(x,c)}.
+
+We can naturally extend the classifier estimator to \f{\hat{h}[p](x) \colon D \rightarrow \hctimes{C}{[0,1]^k}} and \f{\hat{h}[p](x) = (\arg\max_c p(x \given c) p(c), p(x \given C = C_1) p(C_1),p(x \given C = C_2) p(C_2), \dots , p(x \given C = C_k) p(C_k))}. What this new definition does is return, besides the class, the confidence scores for all classes. These are probabilities, in the interval \f{[0,1]} and their sum is 1. These are perfect then for "confidence" values, which are values that the human observer can interpret as the strength of the classifiers belief in its decision.
+
+Now, the way this works is we set thresholds for a decision. That is, if the threshold is \f{\alpha}, the classifier may have returned a class of \f{C_3}, but if the probability of it, or, more generally, the confidence for it is lower than \f{\alpha}, the overall system should go for ``undecided'' instead of \f{C_3}. Thresholds can be absolute, or they can be relative and additive to the other confidences (the confidence of the winner must be at least \f{\alpha} higher than the confidence of each other class) or relative and multiplicative to the other confidences (the confidence of the winner must be at least \f{\alpha} times higher than the confidence of each other class).
+
+
+= Estimation Techniques For Parametric Models =
+
+== The Method Of Moments ==
+
+A parameteric estimator for the parameters in a moldel. Estimators are not optimal, but are easy to compute. Useful as starting values for other methods, which require iterative numerical routines. If the model has \f{k} parameters \f{\theta = (\theta_1,\dots,\theta_k)}, then, we consider the first \f{k} moments \f{\alpha_j = \mean{\theta}{X^j}}, which "usually" evaluates to  \f{\alpha_j = A_{j1}\theta_1 + \cdots + A_{jk}\theta_k}.We then build the linear system \f{A\theta = \hat{\alpha}}, where \f{\hat{\alpha}} is the vector of estimated moments.
+
+Bernoulli:
+* Has one parameter \f{p}, so we have \f{\alpha_1 = \mean{p}{X} = p} and \f{\hat{alpha}_1 = 1/n \sum_{i=1}^n X_i}.
+* We get \f{\hat{p}_n = 1/n \sum_{i=1}^n X_i}, which is the intuitive answer we were expecting.
+
+Normal:
+* Has two parameters \f{\mu} and \f{\sigma^2}, so we have \f{\alpha_1 = \mean{\mu,\sigma^2}{X} = \mu} and \f{\alpha_2 = \mean{\mu,\sigma^2}{X^2} = \mu^2 + \sigma^2}.
+* We get \f{\hat{\mu}_n = 1/n \sum_{i=1}^n X_i} and \f{\hat{\sigma^2} = 1/n \sum_{i=1}^n (X_i - \hat{\mu}_n)^2}, which is the intuitive answer we were expecting, even though the estimator for the variance is slightly biased.
+
+Estimator properties:
+* The estimate \f{\hat{\theta}_n} exists with probability tending to \f{1}.
+* The estimate is consistent: \f{\limprob{\hat{\theta}_n}{\theta}}.
+* Asymptotically normal to: \f{\limdist{\hat{\theta}_n}{\mathcal{N}[\theta, 1/\sqrt{n} \Sigma]}}, where \f{\Sigma = g \mean{\theta}{YY^T}g^T}, \f{g_j = \partial \alpha_j^{-1}(\theta)/ \partial \theta} and \f{Y_j = X^j}.
+* We can use the last form to compute standard errors and confidence intervals.
+
+We model the typical ML task of classification/regression as that of sending a message (the value of a feature - \f{F}) over a noisy channel (the machine learning algorithm) and receiving the ``corrupted'' message (the output/response - \f{B}).
+
+The mutual information between \f{F} and \f{B} is defined as \f{I(F,B) = \sum_{f,b} p(f,b) \log( p(f,b) / (p(f)p(b)) )}. If the feature and response are independent, then \f{p(f,b) = p(f)p(b)} and \f{I(F,B) = 0}. It is hopeless to try to predict the values of the response from the feature.
+
+One can use Mutual Information as an estimate of how good a feature is for prediction. But, it is costly to compute exhaustivley. We use proxies (IDF, AdaBoost) for this sometimes.
+
+Machine Learning: the systematic study of algorithms and systems that improve their knowledge or performance with 'experience'.
+
+ML system overview:
+* domain - set which describes the phenomenon we are interested in.
+* feature - a kind of measurement that can be easily performed on any instance in the domain. function from the domain to a 'standard set' (booleans, lables, ordinals, numbers (count numbers (bounded and unbounded) or real) etc.) - used to extract 'meaning' from the domain instance.
+* data - the result of applying the features to the domain in a standard order - usually a list/tuple of fixed length.
+* model - a description of the domain - simplified, compressed, useful computationally (query it in order to solve our problem). The model can be 'learned' from data.
+* task - a problem which can be solved by employing the model, (ie, the query of the model is used to solve the task).
+* learning problem - the problem of estimating/learning the model from the data.
+* learning algorithm - an algorithm which solves a learning problem. It has as its input some data, and produces a model.
+
+Building an ML system requires defining a proper task and how it fits in the larger picture, choosing proper features, a proper model, gathering and processing data, and choosing a proper learning algorithm. In big "lines". The details are a little bit more complicated. We should not go back to the domain objects once we have a feature representation of them.
+
+ML tasks:
+* Supervised: one or more data features are 'distinguished' - they are the 'output', others are 'input' - models describe how outputs depend on inputs.
+* Classification: output feature has discrete domain (with no extra structure) - we have classes of inputs. model says how inputs is mapped to one class.
+* Binary Classification: core task of ML - just two classes (1/0, +1/-1, spam/ham, pos/neg, accept/reject etc.)
+* Multiclass Classification: natural extension of binary case - more than one class.
+* Regression: output feature has real domain - model says what number is atached to each class.
+* Unsupervised: models describe the actual structure (in varying degrees of accuracy) of the data.
+* Clustering: 'group' observations into groups based on 'similarity'. Learn either a predictive cluster function or a partition of the dataset (subtle difference - the last one is generalizable to new instances).
+* Association Rules: model tells us if certain observations appear together in situations.
+* Outlier Detection: model tells us if a certain observation is common or uncommon.
+* Structure Learning: model tells us the structure or an approximation to the structure of the data.
+* Density Estimation: model tells us the actual probability of an observation.
+* Semi-Supervied: like supervised, but not all observations have values for the output feature (hard/expensive? to obtain).
+
+Models might also be:
+* Predictive: describe dependencies of one set of features on another set. Meshes well with supervised. Unsupervised example: predictive clustering. Applies to the whole domain, not just the dataset.
+* Descriptive: describes dependencies between all features. Meshes well with unsupervised. Supervised: subgroup discovery (find a region of the dataset which has a weird distribution wrt the output variable), or using a rich descriptive model just for prediction. The task is to actually learn the model - task output is the same as learning algorithm output - the two problems coincide. Actually produces 'new data'. Task and learning problem are the same. But no training data - only data. No labels/ground truth. Applicable only to data, no generalization. Unsupervised: association rule discovery.
+
+Models might also be:
+* Geometric: model is made up of geometric 'shapes' in the feature space - planes, spheres/ellipses (most common), higher order surfaces etc. which separate (classfication) or indicate regions of certain values (regression) or describe the structure of the space.
+* Probablistic: data are realizations of a random process. For supervised, with \f{X} vector of inputs and \f{Y} of outpus, we wish to estimate \f{P(X, Y)} (generative) or \f{P(Y \given X)} (discriminative). For unsupervised, we wish to estimate \f{P(X)} or P(X, Y) (generative) or \f{P(Y \given X)} (predictive). Keeping in mind that we can have \f{4} total combinations. Actually estimating \f{P} in any of these cases is very hard (exponential number of parameters), so we need to make extra assumptions.
+
+Such models might also be:
+* Discriminative: aims to characterize the dependency of outputs to inputs (meshes well to predictive models).
+* Generative: aims to characterize the process of data generation (meshes well with descriptive models).
+* Logical: use 'rules' to partition the feature space. Each rule is based on a feature or combination of features. Rules are usually of the form \f{\text{if} \star \text{then} \star} and can be organized into feature trees, based on common prefixes of the if conditions. Partitions are usually rectangular (being based on one feature), and at the leaves, we have segments (instance space segments). These can have an associated class, probability distribution, real value etc. They also induce a similarity measure - observations are similar if they map to the same leaf, otherwise they aren't.
+
+Models might also be:
+* Local: describes only what has been seen of the feature/instance space - usually takes into account local structure.
+* Global: claims to describe the whole of the feature/instance space - disregards local structure - assumes everything is the same.
+
+Models might also be:
+* Parametric: usually global - model is described by a fixed number of 'paramters' - usually real numbers, which are the subject of learning, and whose number are selected beforehand.
+* NonParametric: usually local - model is describe by a variable number of 'parameters' - usually real numbers, which are the subject of learning, and whose number is learned from the data as well.
+
+Models might also be:
+* Grouping: partitions the feature space into regions, where a simple action occurs (majority vote, couting, simple combination of values). Have a fixed 'resolution' - cannot do more than that - many observations grouped in a 'bucket'.
+* Grading: a single model for all the space - a single more complicated action over all the space. Can distinguish (ie produce different results) for arbitrary values.
+
+Desirable properties of learning algorithm:
+* Translation invariance: translating the whole data set does not affect the performance of the resulting model. All are like this (???)
+* Rotation invariance: rotating the data set does not affect the performance of the resulting model.
+* Scaling/variance invariance: scaling different directions of the data does not affect the performance of resulting model.
+* Invertible linear transformation invariance: transforming the data by some invertible linear transformation does not affect the performance of the resulting model.
+* Orthogonal linear transformation invariance: transforming the data by some orthogonal linear transformation does not affect the performance of the resulting model.
+
+Overfitting: increasing performance on a training set, to the detriment of future predictive power. Learning the random variability of data instead of its underlying structure.
+
+Generalisation: the ability of an ML system to learn the underlying structure of data, and thus adapt to unseed observations.
+
+Outliers: examples very removed from the 'underlying structure'. They might influence the resulting model too much. They might be measurement errors (or errors in general) or actual interesting points, so discarding them might not be an option.
+
+Noise: for supervised learning - in classification -- mislabels (Bernoulli model), in regression -- not getting the exact value of the output (Gaussian model).
+
+Performance evaluation in ML: measuring performrance on training set - a bad idea. Usually \f{k}-fold crossvalidation: divide set into \f{k} equal parts. Do \f{k} rounds where you train on \f{k-1} and evaluate on the other part. Report average performance and variance of performance.
+
+Problem of Induction: why is it that induction works IRL? David Hume: because it has worked so far.
+
+No Free Lunch Theorem: over all problems, a ML training algorithms doesn't have an advantage over any other - better off random guessing.
+
+Handling missing values in probabilistic models: conceptually simple treat the case as computing a marginal probability for all the values we observe. Actually doing this is another mather - hard to integrate and hard to estimate \f{P}.
+
+Prior: \f{P(Y)} - the distribution of outputs, regardless, or averaged over all inputs.
+
+Prior odds: for binary classification \f{P(Y=+1)/P(Y=-1)}. How things sit before we observe our data. This can be set as a constant or optimised to get better performance (in the same way the threshold can be varied - see ROC).
+
+Evidence: \f{P(X)} - the probability of the observed data - usually this is a 'constant' - a single number, which can dissapear in many computations. Alternativel \f{P(X) = \int_{\dom{Y}} P(X, Y) dY = \int_{\dom{Y}} P(X \given Y) P(Y)}.
+
+Likelihood function: \f{P(X \given Y)}. This is a function of the domain of \f{Y} and produces one probability distribution over \f{X} for each value in \f{Y}. Alternatively (but less intuitive), for a fixed \f{X} we have all the probabilities different \f{Y}s assign to it - this is not a distribution though. We must multiply by \f{P(Y) / P(X)} in order for this to be a distribution (Bayes' rule). It is the one that gives the 'feel' of a probabilistic model.
+
+The likelihood ratio: for binary classification: \f{P(X \given Y=+1) / P(X \given Y=-1) > 1} means we are more likely to see \f{X} coming from the positives than the negative. The prior is ignored / assumed to be uniform.
+
+Posterior: \f{P(Y \given X)}. This is a function that maps between inputs and the probability distribution inputs have under them. Alternatively (and less intuitive), for a fixed \f{Y} we have all the probabilities differen \f{X}s assign to it - this is not a distribution though. We must multply by \f{P(X) / P(Y)} in order for this to be a distribution (Bayes' rule).
+
+Posterior odds: for binary classification: \f{P(Y=+1 \given X) / P(Y=-1 \given X) = P(X \given Y=+1) / P(X \given Y=-1) P(Y=+1) / P(Y=-1) > 1} means that we are more likely to see \f{X} coming from the positive than the negatives. These are the producs of the likelihood ratio and the prior odds.
+
+Decision rule: a method of predicting \f{Y} given \f{X} and \f{P(Y \given X)}.
+
+The Maximum A Posteriori (MAP) decision rule works like this: \f{\hat{y}_{\text{MAP}} = \arg\max_{Y} P(Y \given X) = \arg\max_{Y} (P(X \given Y)P(Y) / P(X)) = \arg\max_{Y} P(X \given Y)P(Y)}.
+
+The Maximum Likelihood (ML) decision rule works like this: \f{\hat{y}_{\text{ML}} = \arg\max_{Y} P(X \given Y)}. It ignores the prior distribution / assumes it is 'uniform' (if that has a meaning for \f{\dom{Y}}).
+
+The set of likelihood function (a set of distributions - one for each value of \f{Y}) is a generative model.
+
+Marginal likelihood: a likelihood function obtained by marginalizing, for each distribution present, the same variables: \f{P(X' \given Y = y) = \int_{\dom{X \setminus X'}} P(X', X \setminus X' = \alpha \given Y = y) d\alpha}.
+
+Feature list: a feature tree where only one branch (canonically the left one) has a subtree, while the right one has a instance space segment with associated output. Can be coded as a series of \f{\text{if} \star \text{then} \star \text{else}} statements. Can be viewed as a list, in a simple mode.
+
+The univariate model: a very simple model build from a single feature. It is the case when we look at a single feature. A case much encountered in statistics. We only have the distribution of this feature to go about.
+
+Setup for supervised learning:
+* The set of all instances is called \f{\overline{\mathbb{X}}}.
+* We have \f{d} inputs and \f{l} output features. We have \f{d+l} total features.
+* The input features are then \f{\mathbb{F}^i_1, \dots, \mathbb{F}^i_d} and the output features are then \f{\mathbb{F}^o_1, \dots, \mathbb{F}^o_l}.
+* The input set is \f{\mathbb{X} = \hctimes{\mathbb{F}^i_1}{\hctimes{\dots}{\mathbb{F}^i_d}}}.
+* The output set is \f{\mathbb{O} = \hctimes{\mathbb{F}^o_1}{\hctimes{\dots}{\mathbb{F}^o_l}}}.
+* The set of all instances is then \f{\overline{\mathbb{X}} = \hctimes{\mathbb{X}}{\mathbb{O}}}.
+* We also have a label set \f{\mathbb{L}}, which is some sort of derived quanity from the output set, and which might be different from it. For example, labels might be classes, while output might be confidence in each class (or one-hot-encoding etc). Usually, we have access to the labels and not the output corresponding to each input.
+* We have a training set of instances \f{\mathbb{T}_r = \{ (x_i, l(x_i)) \given i \in \hcrange{1}{N_r}\}} used by the training algorithm and a test set of instances \f{\mathbb{T}_t = \{ (x_i, l(x_i)) \given i \in \hcrange{1}{N_t}\}} used to evaluate performance.
+* Our goal is to build \f{\hat{l}} - the approximation to \f{l} (which we know only at the points in the training set, for our purposes). The model will then be either directly the approximation of \f{l}, or the general form which captures the relationships between inputs and outputs, and from which \f{l} can be derived. The model should produce the full output-set if possible.
+
+Setup for classification:
+* The label set is a discrete set \f{\mathbb{L} = \{ c_1, c_2, \dots, c_k \}} with \f{k \geq 2} and is known as the set of classes. Each \f{c_i} is a label for a class.
+
+Setup for binary classification:
+* The classes are usually \f{+1} (the positives) or \f{-1} (the negatives), or \f{1} and \f{0} or \f{\text{spam}} and \f{\text{ham}} etc.
+
+Performance evaluation of binary classifiers:
+* Looking at labels: Output and label space coincide.
+* Labeling error: when a positive receives a negative label or a negative receives a positive label. True positive: a positive test observation which is predicted to be positive. True negative: a negative test observation which is predicted to be negative. False positive: a negative test observation which is predicted to be positive. False negative: a positive test observation which is predicted to be negative. Contingency tables or confusion matrix: a \f{\hctimes{2}{2}} matrix with rows representing actual counts and columns predicted counts on a test dataset. Cell \f{(1,1)} - number of true positives, \f{(1,2)} - number of false negative, \f{(2,1)} - number of false positive, \f{(2,2)} - number of true negatives. Extra rows -- predicted marginals, extra columns -- actual marginals. \f{(3,3)} is total number of observations.
+* Accuracy: total number of correctly predicted test observations over total number of observations - \f{acc = 1/\abs{mathbb{T}_t} \sum_{x \in \mathbb{T}_t} \mathbb{I}[\hat{l}(x) = l(x)]} - estimates probability of correct prediction. Sum of descending diagonal in the contigency table over total number of observations.
+* Error rate: total number of incorrectly predicted test observations over total number of observations - \f{err = 1 - acc} - estimates probability of incorrect prediction. Sum of ascending diagonal in the contigency table over total number of observations.
+* True positive rate/sensitivity/recall: total number of correctly classified positives over total number of positives - \f{tpr = \sum_{x \in \mathbb{T}_t} \mathbb{I}[\hat{l}(x) = l(x) = +1] / \sum_{x \in \mathbb{T}_t} \mathbb{I}[l(x) = +1]} - estimates probability of correct prediction, given that the observation is positive. Sum of true positives over all actual positives. Is the accuracy for just the positive class.
+* False negative rate: total number of incorrectly classified positives over total number of positives - \f{fnr = 1 - tpr} - estimates  probabiliy of incorrect prediction, given that the observation is positive. Sum of false negatives over all actual positives. Is the error rate for just the positive class.
+* True negative rate/specificity/negative recall: total number of correctly classified negatives over total number of negatives - \f{tnr = \sum_{x \in \mathbb{T}_t} \mathbb{I}[\hat{l}(x) = l(x) = -1] / \sum_{x \in \mathbb{T}_t} \mathbb{I}[l(x) = -1]} - estimates probability of correct prediction, given that the observation is negative. Sum of true negatives over all actual negatives. Is the accuracy for just the negative class.
+* False positive rate: total number of incorrectly classified negatives over total number of negatives - \f{fpr = 1 - tnr} - estimates  probabiliy of incorrect prediction, given that the observation is negative. Sum of false positives over all actual negatives. Is the error rate for just the negative class.
+* Accuracy is the weighted average of per-class accuracy. In the probabilistic interpretation it is clearly the marginal \f{p(\hat{l}(x) = l(x)) = p(\hat{l}(x) = l(x) \given l(x) = +1)p(l(x) = +1) + p(\hat{l}(x) = l(x) \given l(x) = -1)p(l(x) = -1)}. The same thing happens for error rate. In order to achieve good overal accuracy - concentrate on the majority - usually not the interesting class - so trade-offs occur.
+* Average recall: the average of tpr and fpr - without class weighting.
+* Precision: total number of true positives over total number of predicted positives - \f{prec = \sum_{x \in \mathbb{T}_t} \mathbb{I}[\hat{l}(x) = l(x) = +1] / \sum_{x \in \mathbb{T}_t} \mathbb{I}[\hat{l}(x) = +1]} - estimates probability of actual observation is positive, given that its label is positive. Sum of true positives over all predicted positives. Is the accuracy for the predicted positive class.
+* You can define similar things for false positives, false negatives and true negatives.
+* Bayes's rule works in the probabilistic settings for them.
+* Coverage plot: true positive rate and false positive rate are usually the most important things you look after - maximize the first and minimize the other. This plot plots number of negatives on x-axis and number of positives on y-axis. A given classifier is represented by a point of a certain (number fp, number tp) pair. A classifier dominates another one if it has lower number fp and higher number tp. A classifier is accuracy-equivalent to another if the line connecting them has slope \f{1} (a increase of \f{1} in number fp (decrease in number tn) means an increase of \f{1} in number tp). A choice is made then depending on what's more important (higher tpr or lower fpr). This is the tool to use if you also want to keep class relative sizes in the equation.
+* ROC curve: a Coverage plot where we normalize the axes by dividing the x-axis by number neg and the y-axis by number pos. A classifier is then represented by a point of a certain (fpr, tpr) pair. A classifier domaintes another one if it has lower fpr and higher tpr. A classifier is average recall equivalent to another if the line connecting them has slope \f{1}. A choice is made then depending on what's more important (higher tpr or lower fpr). Useful across datasets to see how classifiers behave. Such a line is parallel to the first diagonal. 
+* For both of these methods, getting closer to \f{(0, pos)} or \f{(0,1)} is ideal.
+* F-measure: the harmonic mean of precision and recall.
+ * Looking at scores: Output is a a 'ranking' (some number produced by the classifer) for each class as well as labels. This is not a property of the data, but rather of the classifier / learning algorithm with the data.
+
+We make use of the margin of a binary classifier - reward large positive margins and penalise large negative margines.
+
+A loss function maps a margin from \f{\mathbb{R}} to \f{[0,+\infty)}. The loss should be large for negative margins. Ideally it should be small for positive margins (since we don't want to emphasize that much the fact that we got them right), but it can be large for positive margins as well. We also have \f{L(0) = 1} - loss for being on the decision boundry is \f{0} and \f{L(z) \geq 1} for \f{x < 0} and \f{0 \leq L(z) < 1} for \f{z > 0}. The average loss is an estimator of the loss expectation computed on the test dataset.
+
+Loss functions:
+* \f{0-1} loss: \f{L(z) = 0} if \f{z > 0} and \f{L(z) = 1} if \f{z \leq 0}. Basically \f{1} if we have a misclassification. Average loss is then the error rate. Does not distinguish scoring classifiers, as long as they make the same predictions.
+* Hinge loss: \f{L(z) = 0} if \f{z > 1} and \f{L(z) = 1 - z \geq 1} if \f{z \leq 0}. Increases linearly as the misclassification is graver. Is convex. Still need to have a slightly positive margin (more than \f{1}) in order to have \f{0} loss - around the margin you get noise.
+* Squared loss: \f{L(z) = (1 - z)^2} if \f{z \leq 1} and \f{L(z) = 0} if \f{z > 0}. Increases quadratically as the misclassification is graver. Is convex.
+* Logistic loss: \f{L(z) = \log_2{1 + \exp{-z}}}. Hard penalization of bad misclassification. Is convex.
+* Exponential loss: \f{L(z) = \exp{-z}}. Even harder penalization of bad misclassification. Is convex.
+* If we care about the total order induced by the ranking, and not necessarily the actual scores: A ranking error is when a positive receives a smaller score than a negative. We can have \f{number pos \start number neg} such errors. Ranking error: average number of ranking errors which occur (divide by number pos times number neg). We count equalities with \f{1/2}.  Ranking accuracy: \f{1 - ranking error}. We count equalities with \f{1/2}. We can build a Coverage plot or ROC curve for this situation as well: put Positives on x-axis and Negatives on y-axis, sorted by score. For each intersection point (all \f{number pos} times \f{number neg} of them) we have either - a correct ranking  (lower-right corner), a ranking error (upper-right corner), and a tie (between them). For grouping model there will actually be ties, while for grading models, not. We can also build a performance curve, depending on how we select the threshold rank in our classifier. The area under this curve is equal to the number of correctly ranked observations or equal to the ranking accuracy (for the ROC version - called AUC - area under curve in this case).
+
+In order to select the actual classifier, we use the fact that, on a coverage plot, lines of equal accuracy are on a slope \f{1} line. We start at \f{(0,1)} with such a line and move it farther away from this point until we intersect our curve - the intersection point are the best accuracy classifiers. Again, selecting them is a matter of priorities. Similar procedure for the ROC curve, but you have to multiply this by the reciprocal of the class ratio \f{1/clr = Neg/Pos}.
+
+For all we can multiply by \f{1/c} where \f{c = c_{FN} / c_{FP}} - the ratio of costs for false negatives and false positives - which controls which is more important for us.
+
+The operating condition is described by the cost ratio and class ratio - description of which classes are more important and which classes are more prevalent so we can correct for them.
+
+Sometimes better to use average recall isolines from the ROC plot, since that assures similar performance on both classes.
+* Looking at probabilities: Output is the probability \f{p(l(x) = +1 \given X \tilde x)} as well as labels. We refer here to similarity rather than equality. The other prob is \f{1} minus this one, so no point in estimating it (and it works this way for \f{k}). This is technically a property of the data, but we don't have access to it. A feature tree defines such a similarity relationship. We do not have access to the true probabilities for training (and we can't estimate them realiably due to the spareness of the set). We use one-hot encoding map the class from \f{-1} to \f{[0,1]} and \f{+1} to \f{[1, 0]} probabilities. We can use squared error over all classes for an instance as a performance measure and the mean squared error over all observations for the classifier. For feature tree/decision trees: estimating probability distribution as leaf from ratios of classes at that leaf is optimal in this MSE way. After some mild manipulations, for grouping models, for a group of \f{N}, observations which all get the same probabilities, we have \f{MSE = \sum_{i=1}^N 1/2 ((\hat{p}(l(x) = +1) - p(l(x) = +1))^2 + (\hat{p}(l(x) = -1) - p(l(x) = -))^2) = N (\hat{p}(l(x) = +1) - \overline{p})^2 + N \overline{p} (1 - \overline{p})}, where \f{\overline{p}} is the empirically measured probability of positives. The first term is the calibration loss (measures error wrt empirical probability) - can be made \f{0} by proper selection of the assigned probability \f{\hat{p}(l(x) = +1)}, and we get well-calibrated models. The second term is refinement loss - a property of the dataset and the classifier trained on it.
+
+Performance evaluation of multiclass classifiers:
+* Looking at labels: Accuracy: defined as for binary case. Error: defined as for binary case. True class \f{i}: extension of true positives for \f{k} classes. False class non-\f{i}: extension of false negative for \f{k} classes. Contingency table or confusion matrix: a \f{\hctimes{k}{k}} table, generalization of binary case. We can compute all rates and recalls, but now generalized to \f{k} classes. We can make one-vs-one or one-vs-all outlook. In any case, for the whole dataset, it needs to be weighted. one-vs-one might not be symmetric (would you expect tpr/fpr or precision/negative precision to be equal in binary?).
+* Looking at scores: When we reduce to binary classifiers, we can compute average AUC over all binary classifiers (taking care to properly weight classes).  One rule for selection of the best class is to use the one with highest-score. Might want to tune it with data - learn \f{w_i} weights and choose \f{c = \arg\max_i w_i s_i(x)}. We can set \f{w_1 = 1}, and then select \f{w_2} to separate class \f{2} from class \f{1}, \f{w_3} to separate class \f{3} from \f{1} and \f{2} etc.
+* Looking at probabilities:
+
+Performance evaluation of regressors: Noise becomes much more apparent - in the predicted variable. Want to capture the general trend or shape of the function. Overfitting is a problem - to avoid it, the number of parameters estimated from the data must be considerably less than the number of data point. We use loss functions on the residuals - typically the square error loss. This is mathematically convenient and is justified by the assumption that the observed function values are the true values contaminated by additive, normally distributed noise. It is sensitive to outliers. Bias-variance dillema: low complexity model suffers less from variability due to random variations in the training data, but may introduce a systematic bias that is impossible to overcome; high complexity model can fit anything - including noise. [Image of four darts boards]. There is even the bias-variance decomposition of the expected loss: \f{\mathbb{E}[(f(x) - \hat{f}(x))^2] = (\mathbb{E}[f(x) - \hat{f}(x)])^2 + \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2]}. The first term is a bias term - systematic departure of our prediction from the mean, while the second term is the variance of our predictor on the dataset - the two sources of errors.
+
+Performance evaluation of clustering: Use coherence and a suitable (Euclidean) distance metric. Define a center of mass - or exemplar (need to be vector space) for a cluster. Clusters should be formed such that the within-cluster-scatter - a measure of the average intra-cluster distance to the exemplar is minimized, while the overalll-cluster-scatter is maximized. Trivial solution: select \f{K = N} - zero within-cluster-scatter - overfitting. Nontrivial solution: fix \f{K} (educated guess) and find best partition - \f{NP}-hard. Usually approximated through heuristics or relaxing into a soft version with degrees of membership).
+
+For predictive clustering:
+* Centroids: for each class a 'central' point, resulting in Voronoi diagram with straight line bounderies - encodes a  hard clustering Per-cluster probability density with non-linear bounderies where the probs are equal - encodes a soft clustering. Can use withing cluster scatter on a holdout set to eval performance.
+
+For descriptive clustering:
+* Partition matrix: an \f{\hctimes{N}{K}} binary matrix with exactly \f{1} in each row and at least \f{1} in each column (to avoid empty clusters) - encodes a hard clustering. Row-normalized partition matrix clustering: an \f{\hctimes{N}{K}} matrix with rows that sum to \f{1} - encodes a soft clustering. Can use withing cluster scatter on the whole set to eval performance. If we know that some pairs are similar (must-link) while others not (must-not-link) we can use a contingency table and all the stuff from binary classification. Accuracy is known as the Rand index. Because there are many more must-not-link than must-link, using the F-measure is a good idea.
+
+One way to transform a multiclass classification task into a binary one is to use the one-versus-rest encoding. We generate \f{k} binary sub-tasks. For problem \f{i} we set class \f{i} as positive and all other classes as negative. We learn to separate class \f{i} from classes \f{\hcrange{1}{i-1},\hcrange{i+1}{k}}. Sometimes we learn in a fixed order, so classifier \f{i} separates \f{i} from \f{\hcrange{i+1}{k}}. We only need \f{k-1} classifier here.
+
+One way to transform a multiclass classification task into a binary one is to use the one-versus-one encoding. We generate \f{k(k-1)} binary sub-tasks. For class \f{i} we generate \f{k-1} subtasks of trying to classify class \f{i} agains each of \f{\hcrage{1}{i-1}:\hcrange{i+1}{k}}. We can consider them symmeteric, so we only generate \f{k(k-1)/2} subtasks.
+
+Any decomposition of a \f{k} class classification task into \f{l} binary tasks can be encoded in a \f{\hctimes{k}{l}} matrix, called the output code matrix, with entries \f{+1,0,-1}. Each line corresponds to a class and each column to a subtask. If \f{(i,j)} is \f{+1} means that in subtask \f{j}, problem \f{i} is considered a positive, is \f{-1} is considered a negative, is \f{0} is not used. A row, corresponding to class \f{i}, then contains the 'best-case' results from all \f{l} classifiers regarding an instance from that class. Classification involves using the \f{l} classifiers and producing an \f{l} trit code-word. The row which closest matches this code-word gives the winning class, using the distance metric \f{d(w,c) = \sum_{i=1}^l (1 - w_ic_i)/2} (a modified Hamming distance). Intuitively we want the class for which the classifiers provide the most similar results. If we have ties, we might add more classification tasks (there are \f{2^k - k} such tasks) - increase complexity for really weird cases. Another alternative is to use voting. When classifier \f{j} produces a \f{+1} result, we add \f{1} to any class which has a \f{+1} in its column, when it produces a \f{-1} result, we add \f{1} to any class which has a \f{-1} in its column. The class with the most votes wins. We can express the number of votes as \f{v_j = \sum_{i=1}^l (1 + w_j c_{ji}) /2 - (l - q) / 2}. The first term counts the number of votes (when the \f{w_j} and \f{c_{ji}} match, we get a \f{1}, if they don't match we get \f{0}, and if one of them is a zero we get \f{1/2}), while the second term substracts \f{l - q} times \f{1/2} for every zero we encounter (because these are overcounted), where \f{q} is the number of binary classifiers class \f{j} is part of. We get \f{v_j = -d_j + (l+q)/2} - the vote and the distance are opposites (minimizing distance maximizes votes) and a constant.
+
+We can generalize to loss functions the previous discussion by using the margin+loss-function setup we have for scoring classifiers. The distance is \f{d(s,c_j) = \sum_i L(s_i c_{ji})}. Called loss-based decoding. All binary classifiers must be on the same scale. We can form scores as: Turn distances to scores in a manner similar to the voting method. Works if we have calibrated binary classifiers. Use output as features for a classifier which handles multiple classes intrinsically. Use coverage counts: the number of examples of each class that are classified as positive by a binary classifier. This can be turned into a \f{\hctimes{k}{l}} matrix \f{A}. Given a code-word with \f{1} for positive and \f{0} for negative, we perform \f{Aw} to obtain coverage scores - use number of examples classified as that class by classifier \f{i} as a weight when classifying as \f{i}. Splits space into \f{2^l} regions - should pick a large \f{l}.
+
+When estimating probabilities (in any situation), one can use the intuition \f{\hat{p} = \#\{number occurance\} / \{number experiments\} = n_o / n_e} or we can smooth it a little bit. We can use Laplace correction \f{\hat{p} = (n_o + 1) / (n_e + k)} with \f{k=2} (attach Dirrchlet prior on our estimate) to avoid cases of no-counts (especially in very rare events but which do happen). We basically add extra counts. This is for uniform stuff. For non-uniform we can use \f{\hat{p} = (n_o + m\pi_i) / (n_e + m)} - the \f{m}-estimate, with \f{m} counts of probability \f{\pi_i} each.
+
+[Write stuff about linearity here] Linear functions have the form \f{f(x) = ax} or, more generally \f{f(x) = a^Tx}. Linear approximation \f{f(x) \approxto f(x_0) + df(x)/dx (x_0) (x - x_0)}.
+
+\def{Data science} is a vast set of tools for understanding \ref{process}{processes}. We will consider it an umbrella term for a number of disciplines, such as statistics, data mining, machine learning, business intelligence, collective intelligence etc. When combined with particular domain knowledge, data science is known as either biostatistics, natural language processing, signal processing, econometrics, statistical process control etc. It depends, directly or indirectly, on probability theory, linear algebra, mathematical optimization, multivariable calculus, algorithm analysis, data structures etc.
+
+A \def{process} is a natural/artificial/social phenomenon. We study processes and seek knowledge of them. We express this knowledge in terms of a \def{model} and statements about it. Both the model and the statements are mathematical and probabilistical in nature.
+
+The only way to interact with a processes is to perform a \def{query} on it. The result of a query is called an \def{observation} and it is the description of the process at the moment in time the query was made. The set of all queries is called the \def{population}. Typically we perform a series of \def{queries} in succession, which represent a subset of the population, and which result in a \def{sample}. All of the samples we gather form the \def{data}.
+
+We start with the process and a model for it. Data science provides tools for data collection, that is, which queries to pose to the model, and data analysis and iterpretation, that is, what statements can we make about the model, based on the data we have gathered.
+
+Processes can evolve in time, for the duration of our interaction with it, in which case they are called \def{dynamic} or not, in which case they are called \def{stationary}. A given query can impact future queries, in which case the process is called \def{dependent query} or not, in which case the process is called \def{independent query}.
+
+The result of the \f{i}th query depends on the dynamics and query type of the process. Depending on whether the process is stationary or dynamic, observations can be \def{identically distributed} or not. Depending on whether the process is independent query/dependent query, observations can be \def{independent} or not. A very common situation is for the process to be stationary and indepdent query, in which case we say the observations in the sample are \def{Independent and Identically Distributed} (IID).
+
+Example applications of data science: speech recognition, speech synthesis, face recognition, credit checking, spam detection, automatic translation, entity recognition, handwritten text understanding, sentiment analysis, disease detection, product/music recommendations, collaborative filtering, web-page ranking, weather prediction, stock market prediction, intrusion analysis etc.
+
+Examples of processes: the interaction of a ball with Earth's gravitational field, the spread of a disease among a population of individuals, a human face, proper English sentences etc.
+
+The Goals of Tools in Data Analysis:
+* Must be efficient, accurate and general.
+* Can deal with large-scale problem.
+* Make accurate predictions on unseen examples.
+* Handle a variety of different learning problems.
+
+Data analyses could be sorted, in order of difficulty:
+\def{Descriptive} Describe a set of data. First time of analysis performed. Commonly applied to census data. Descriptions can usually not be generalized without making statistical modeling and cannot be used to make predictions without predictive modeling.
+\def{Exploratory} Find relationships you didn't know about. Can be performed on census data or a sample. Useful for future studies. Are not the final say. Cannot be used for generalization or prediction, for the same reasons.
+\def{Inferential} Use a small sample of data to say something about a bigger population. Most done and most taught. You have to estimate the quantity you care about and your uncertinty about the estimate. Depends on population and sampling scheme.
+\def{Predictive} Use data on some objects to predict values on another object. If \f{X} predicts \f{Y} it does not mean that \f{X} causes \f{Y} (many many counter examples). Accurate prediction depends heavily on measuring the right variables. There are many prediction models, but more data + simple model is usually enough. Predicting the future is hard.
+\def{Causal} What happens to one variable when you force another variable to change. Randomized studies are required to identify causation, although, if you want to use assumptions and complicated models, you can use non-randomized studies as well. Causal relationships are usually identified as average effets, but may not apply to every individual. Causal models are ``gold standard'' for data analysis.
+\def{Mechanistic} Exact changes in variables that lead to changes in other variables for individual objects - if we change the value of one variable, then we want to predict exactly how another variable will change. Very very hard. Usually modeled by deterministic equations (differential equations). The only random component is the measurement error. Parameters might be inffered with data analysis if they are not known.
+
+= Models =
+
+A model is a mathematical description of a process. Except for very simple cases, a model is an approximation of the process, in the sense that it will not capture every detail of the process. Rather, the aim is to capture the essential qualities of the process. Put more prosaically, wa aim to capture as much as is needed in order to meet our goals. There is the famous statement: "all models are false, but some are useful". In a sense, the only true model of the process is the process itself. Anything else we will build is an approximation.
+
+The model consists of two components. The first one is the description of the population, that is, the set of all possible observations. This is the static/domain description. The second one is the description of the interactions that occur. This is the dynamic description.
+
+Some practical desiderata for data science methods:
+* Efficiency in space and time at the time they are used. For supervised methods this means that the model occupies small space and that performing a prediction is fast.
+* Efficiency in training. The ability to handle large-scale problems. The algorithm must basically be linear.
+
+\def{Prior knowledge} are the assumptions one makes about the process, which are ultimately baked into the model. Choosing a static form, choosing a particular dynamic form, chosing forms for parameter priors etc. all factor into this.
+
+\def{Prior Knowledge} The assumptions one makes about the problem. Every model assumes something. They differ in how much they assume. First assumption - what features you use.
+
+The goal is to use imperfect information (our ``data'') to infer facts, make predictions and make decisions. Descriptive statistics handles summarising data with numbers or pictures. Inferential statistics handles making conclusions or decisions based on data.
+
+A model is a set of distribution functions. A parametric model is one which can be described by a finite number of numbers, usually given as a vector and usually in a way which does not directly represent the distribution function. We denote the parameters as \f{\theta} and their domain as \f{\Theta}. If we are only interested in some parameters, then they are called the parameters of interest, while the others are called the nuisance parameters. The problem of finding the distribution function then reduces to the one of finding the parameters. A nonparameteric model is one which cannot be described by a finite set of numbers, such as the set of all CDFs etc.
+
+A \def{generative model} for our data is one which fully estimates \f{p(x,y)}. Knowing this, we can use \f{p} to generate new input-label pairs. One usually breaks this down into \f{p(x,y) = p(y)p(x \given y)} by the Chain Rule of Probability. We thus have two estimation problems - one for \f{p(y)} and another for \f{p(x \given y)} - which could be a different estimation problem for each value \f{y} may take. We can also use \f{p} to generate labels for a known input, by using \f{p(y \given x) = p(y)p(x \given y) / p(x) = p(y) p(x \given y) / \sum_{\overline{x}} p(y) p(\overline{x} \given y)} by the Bayes Rule. For most prediction applications we are only interested in one ``best'' label, and the Maximum Aposteriori Estimate for it is \f{\hat{y}_{\text{MAP}} = \arg\max_{y} p(y \given x) = \arg\max_{y} p(y)p(x \given y)}. We have dropped the \f{1/p(x)} term as it did not depend on \f{p}. A \def{conditional model} for our data is one which only estimates \f{p(y \given x)}. This is only useful for prediction, and the MAP is useful here as well. Estimating \f{p(y \given x)} is in many cases much simpler than \f{p(x,y)}.
+
+== Dynamic Component ==
+
+Our variables are \def{Random Variable}. We write about them with capital letters \f{X,Y} etc. Randomness is hard to define. A variable may be random because we haven't measured it ``completely'' (coin flip) or because is represents a \def{sample} drawn from a population using a random mechanism or because it is trully random (such as one might find in physics). If we are talking about a specific value we have observed, then that isn't a random variable, and we write about it with lower case letters \f{x, y} etc. We write \f{X = x} or \f{X = 1} to indicate that we have observed a specific value \f{x} or \f{1} for \f{X}. Every RVar has an associated \def{distribution}, denoted by, \f{Pr(X)}, which gives the probability or probability density of a certain value \f{x} of \f{X} appearing, denoted by \f{Pr(X = x)}. Distributions are usually defined by a set of fixed values called \def{parameters}. For our purposes, these are fixed properties of the population. We write \f{X \sim \mathcal{N}[\mu,\sigma]} to denote that \f{X} has the \f{\mathcal{N}[\mu,\sigma]} distribution, for example.
+
+Examples of models:
+* probablistic.
+* functional with error.
+* functional.
+
+Models:
+* parametric
+* nonparametric
+
+Modes:
+* online/offline
+* active/passive
+* induction/transduction
+* missing data
+
+Transduction Scenario: A learning algorithm has labeled training data, and makes predictions about seen training data. Eg. computational biology - a network of proteins, each vertex is a protein. No proteins are added. Just need to predict what other proteins do (for which we don't know what they do). In general we have the all the test data we want, but it might be so much, it acts as a "unseen" sample.
+
+The core of data science lies in the types of questions we can ask of a model. The question dictates what form the model has to a certain degree, as well as the model dictating what sorts of questions we can ask:
+* supervised: There is a distinguished output variable. The goal is to predict the output variable based on the other (input) variables.
+
+* unsupervised: Learn relationships and the structure of the data.
+
+Forms of supervised learning:
+* testing
+* prediction: build just the model of the output given the input.
+* inference: quantify the relationship between outputs and inputs.
+* outlier detection / novelty detection
+* ranking
+
+Forms of prediction:
+* classification/decision: binary, multiclass, structured.
+* ranking.
+* regression.
+
+Forms of unsupervised learning:
+* density estimation
+* manifold estimation
+* clustering
+* nearest neighbors
+
+Goals of estimating \f{f} for prediction:
+* we'll use \f{\hat{Y} = \f{\hat{f}(X)}} - we ignore the error term, since it averages to zero. Our goal is to simply see what the output would be for a given input. Don't care what \f{\hat{f}} looks like, as long as it gives good predictions of \f{Y}.
+* error can be measured by \f{E[(Y - \hat{Y})^2]} - the squared loss, which can in turn be estimated by \f{1/N \sum_{i=1}^N[(y_i - \hat{f}(x_i))^2]}. We can break it down into reducible error (caused by us choosing a certain \f{\hat{f}} - we can improve on this by choosing a better \f{\hat{f}}) and irreducible error (caused by the stochasticity of the process / our lack of information about it - we can't improve on this).
+* There is the classical bias/variance decomposition or reducible/irreducible decompositon: \f{E[(Y-\hat{Y})^2] = (f(X) - \hat{f}(X))^2 + \Var{\epsilon}}, the first part is the reducible part, while the second is the irreducible one. A natural form.
+* The irreducible error provides an upper bound on the accuracy of any method.
+
+Goals of estimating \f{f} for inference:
+* want to understand the relationship between \f{X} and \f{Y} - how \f{Y} changes as a function of \f{X}. Can't ignore the form of \f{\hat{f}}.
+* typical questions are: which predictors are associated with the response? only a small subset of them may be trully influential or  what is the relationship between the response and each input? positive/negative/linear/non-linear or  how linear is the relationship? linear models are easy to interpret and easy to work with, but they might not capture the full behaviour.
+* linear models allow for relatively simple and interpretable inference, but may yield not so accurate results. Highly non-linear models may yield good results, but their interpreation might leave something to be desired.
+
+== Learning ==
+
+Learning: propose a model, with a number of parameters, see what values for them make them most likely to be based on the data.
+
+Learning Is About Generalization. It is different from memorisation. Complex rules can be poor predictors. Counter-intuitive - complex models which perfectly capture the training data are not always good.
+
+General approach for learning: We have observed \f{N} data points, called the training data, this is \f{X_t = \set{(x_1,y_1),\dots,(x_n,y_N)}}.
+
+A learning method is a function which builds an estimate of \f{f} starting from \f{X_t}. It is a function returing a function, then. \f{LM(X_t) \rightarrow \hat{f}_{LM}}.
+
+For Parametric methods:
+* two distinct phases: model selection and model fitting.
+* model selection means selecting a functional form / shape for \f{f}. Examples include: linear, neural networks etc. Usually described by a set of parameters \f{\Theta \in \mathbb{R}^m}. Instead of having to estimate a function at each value in the domain, we simply have to find the right \f{m} parameters.
+* model fitting or training means actually finding the \f{m} parameters. This boils to estimating the \f{m} parametrs such that \f{Y \approxeq f[\Theta](X)}. This again boils down to somehow minimizing the expected (or estimated therefor) of the error done by the model on the training data.
+* Most common approach to model fitting is (possibly regularized) least squares.
+* plus: easy to fit, easier to interpret.
+* minus: most relationships are not actually as described by the model.
+* We want to choose flexible models which can fit many different forms of functions. This means having more parameters, in general. This is bad, since we can then have the problem of overfitting the training data, which basically means following the error term and treating it as \f{f}, instead of looking only at \f{f}.
+
+Nonparameteric methods:
+* no assumptions about the form of \f{f}. Just bring \f{\hat{f}} close to \f{f}.
+* plus: a closer form to the function.
+* minus: needs more data, less interpretable.
+* In general, as the flexibility of a method increases, its interpretability decreases.
+* Why select anything less flexibile: interpretation/inference might be very hard. Simple methods have easier interpretation (as well as the statistical tools to perform said inference). Even when prediction is the goal, less flexible models might be prefered, since they have higher resistance to overfitting.
+
+== Selection ==
+
+Selecting: use the data to find the appropriate model.
+
+= Estimators =
+
+A statistics is a number or value, in some particular context. We need to  understand which data was collected, how was it collected, on whom was it collected and for what purpose.
+
+A \def{statistic} is a value calculated from our observed data. Typically, statistics are \def{estimates} of the parameters of the population. We want these statistics to be appropriate estimates of the population parameters. We want to be able to generalize what we see in the data to the population.
+
+An \def{estimator} is a statistic which computes some sort of parameter for a population's distribution.
+
+Nice properties of estimators: biasedness, asymptotic ubiasedness, variability.
+
+An estimate of the number of independent pieces of information on which the estimate is baded. In general, the degrees of freedom for an estimate is equal to the number of values (basically \f{Nd} here) minus the number of parameters estimated en route to the estimate in question.
+
+Classical example: sample variance is \f{s^2 = \sum_{i=1}^N (x_i - \hat{u})^2 / (N-1)}. We start with \f{N} independent pieces of information - the observations. Then we need to compute the deviances. But, we first compute the mean. Since in the deviance computation, we include the mean, every observation affects a deviance. Therefore the deviances are not independent between them. Therefore we don't have \f{N} degrees of freedom. We have \f{N-1}.
+
+A property of point estimates. Determines whether the estimator statistic tends to systematically under or over estimate the estimator (in numeric terms). More precisely, a statistic is biased if the long-term average value of the statistic is not the parameter it is estimating. The mean / expected value of the sampling distribution is not not equal to the parameter. A given computed sample value might be under or over, but there is no "systematic" problem.
+
+A property of point estimates. Determines whether the estimator statistic tends to vary from one sample to another (again, for numeric values). More precisely, we use the standard error / standard deviance of the sampling distribution for the statistic as a measure of variability.
+
+The smaller the standard error, the more efficient the statistic (less observations needed to obtain a good estimate of the true parameter).
+
+== Sampling distribution ==
+
+Central concept of inference. Consider the fact. If \f{X} is a RVar then \f{Y = f(X)} is a RVar as well.
+
+The central setup of statistics is that we have a population \f{D} from which we sample \f{N} observations. Sampling can be seen as having \f{N} iid RVars with distribution \f{D} and sampling is obtaining a simple \f{N}-dimensional observation from that \f{(x_1,\dots,x_N)}.
+
+A statistic \f{S} is a function applied to \f{(x_1,\dots,x_N)}. But we can also view it as a function \f{S(X_1,\dots,X_N)} - that is, a RVar itself, a function of RVars. Computing the statistic is like drawing from \f{S(X_1,\dots,X_N)}.
+
+The sampling distribution is the distribution of \f{S(X_1,\dots,X_N)}. It generally depends on the distribution of the population and \f{N} and other assumptions. It is a theoretical concept and it is used to *infer* how good our estimate is (close to the true value) etc. For example, if we compute a statistic, and assume a sampling distribution, we can then infer how far away from the true value our computed value would be, given a sample size.
+
+Interpretations:
+* It is the distribution of \f{S} over \f{D^N}, derived from the probability over \f{D^N} (which factorizes from the one of \f{D}) and transformed according to \f{S}.
+* If we were to repeatadly take a sample and compute \f{S} for each one, then the distribution of the \f{S}s would be the sampling distribution. Rather, the empirical PDF/CDF/histogram/relative frequency distribution we compute will tend to the sampling distribution as the number of sample taking tends to infinity.
+
+Finally, anything we compute from a sample has a sampling distribution. Does not mean it makes sense to compute it. The histogram we compute to estimate the sampling distribution in the second interpretation, also has a sampling distribution etc.
+
+Standard error: The standard deviation of the sampling distribution. How spread out do we expect values of the statistic to be.
+
+Usually varies ip with \f{N}. Intuitively, larger samples make for more precise estimates of the population statistic.
+
+The standard deviation associated with an estimate is called the standard error. It describes the typical error or uncertainty associated with the estimate.
+
+== Point estimation ==
+
+\def{A point estimate} is a statistic which computes a single value as an estimator for some population parameter. It does not reveal the uncertinty associated with the estimate - no sense of how far the sample mean may be from the population mean.
+
+Providing a single "best guess" for a quantity of interest \f{T}, which can be a parameter in a parameteric model, a whole function, a prediction for some input etc.
+
+An estimator is the function which produces the estimate, given the sample. We denote it by \f{\hat{T}} or \f{\hat{T}_n} and we have \f{\hat{T}_n = f(X_1,\dots,X_n)} and it is a random variable, with its own distribution, called the sampling distribution of the estimator. The standard deviation of this distrbution is called the standard error, and is denoted by \f{\se{\hat{T}_n} = \sqrt{\var{\hat{T}_n}}}. This is usually estimated as well.
+
+The bias of an estimator is \f{\bias{\hat{T}_n} = \mean{T}{\hat{T}_n} - T}. An estimator is unbiased if the bias is zero, that is, the mean of the sampling distribution is equal to the actual value of the estimated quantity.
+
+An estimator is consistent if \f{\limprob{\hat{T}}{n}{T}}. The quality of a point estimate can sometimes by assessed by the mean squared error, or MSE defined as \f{MSE_\hat{\T} = \mean{T}{(\hat{T}_n - T)^2}}.
+
+Bias Variance Decomposition of MSE:
+* explains the error for an estimator by reducing it to a bias component (some systematic problem in the way the estimator works) and the variance component (the randomness of the sampling procedure and whatever amplification of this the estimating procedure adds).
+* \f{MSE_\hat{\T} = \bias^2{\hat{T}} + \se^2{\hat{T}}}. Proof Idea: just expand the MSE expression and add and substract \f{\mean^2{\hat{T}_n}}.
+* If we have \f{\lim{\bias{\hat{T}_n}}{0}} and \f{\lim{\se{\hat{T}_n}}{0}} then \f{\hat{T}_n} is consistent. Proof Idea: we have that \f{\lim{\mean{\hat{T}}{(\hat{T} - T)^2}}{0}} which means that \f{\liml2{\hat{T}_n}{T}} and therefore, \f{\limprob{\hat{T}_n}{T}}.
+An estimator is asymptotically Normal if \f{\limdist{(\hat{T}_n - T)/se{\hat{T}_n}} {\mathcal{N}[0,1]}}.
+
+== Interval Estimate ==
+
+\def{An interval estimate} A statistic which computes an interval as an estimator for some population parameter, whose domain has to admit intervals - be ordinal or ratio scales.
+
+=== Confidence Interval ===
+
+Sometimes we have point estimates for a certain parameter of interest. Otherwise, we might want to know an interval where the value might be. The \f{\alpha \in [0,1]} confidence interval is one such estimate for a parameter. The way we compute this depends on the actual parameter we're estimating and what distributions we're assuming, and, in general, we'll have different computing methods for different situations. In the worst case, we might simulate/bootstrap. However, the computing method is defined, so that the result it produces, will \f{\alpha * 100 \%} of the time contain the true value of our parameter, or, more precisely, if we repeat the experiment \f{N} times, \f{\alpha N} of those times, the interval will be such that the true value is contained in it. This is similar to a point estimate. If we repeat the experiment \f{N} times, we'll get \f{N} different point estimates, and sometimes they'll be close and sometimes they'll be far. This is a very precise definition. It does not say that the interval we compute contains the actual value of the parameter with \f{95\%} probability. In fact, the real value is either in the interval or not, there's no probabilistic aspect to this. Usually, the \f{95\%} or \f{99\%} interval are selected. The larger \f{\alpha} is the larger the interval becomes (with \f{\alpha = 100\%} we might very well have to have the whole domain as the interval) and the smaller \f{\alpha} is the smaller the interval becomes (we get a more precise reading of the location of the parameter for this sample, but we accept the possibility that the real value is more likely outside our interval).
+
+Another especially important consideration of confidence intervals is that they only try to capture the population parameter. Our intervals say nothing about the confidence of capturing individual observations, a proportion of the observations, or about capturing point estimates. Confidence intervals only attempt to capture population parameters.
+
+A form of interval estimate, which will contain the population parameter a certain percentage of samples. Select a confidence level of \f{q}, which is usually \f{95\%} or \f{99\%}. The confidence interval building procedure will return two values \f{\alpha_1} and \f{\alpha_2} such that, if we repeated the sampling procedure multiple times, the built intervals will contain the population parameter (which is just one) \f{q} percent of the time. This is very different from saying that the population parameter is in the interval \f{q} percent of the time. It is or it isn't, in an precise way, for every computed interval, but it is as a "long term" behaviour that this interval interests us.
+
+Technically, the procedre is very broad. For a given estimator, consider the sampling distribution and estimate it from the sample (which usually includes estimating the mean and variance of a normal distribution). Then, select a subset of the domain \f{Q} such that \f{P_S(X \in Q) = q/100}.
+
+The standard procedure slects two points symmetric about the mean of the (usually normal distribution) such that we actually obtain an interval \f{[\alpha_1,\alpha_2]}. Advantages: intervals are symmetric about the point estimate (assuming the estimator is unbiased) and contiguos.
+
+A larger \f{q} determines a larger interval. For \f{q = 100} we get the full domain (or at least the subset of the domain to which the sampling distribution attributes non-null density).
+
+Providing a "set", usually given as an interval, for a quantity of interest \f{T}, which can be a parameter in a parametric model, a whole function, a prediction for some input etc., such that, in the limit, the parameter will be in a computed set with a given probability \f{1 - \alpha}, called the coverage, and which is usually \f{0.95} or \f{0.99}.
+
+We now have a series of function which produce \f{\hat{C}^T_n = f(X_1,\dots,X_n)}, and which is again a random variable, with its own distribution, and which has \f{\prob{T}(T \in \hat{C}^T_n) \leq 1 - \alpha} for all \f{T \in \mathbb{T}}. In the case of a single dimension, we have confidence intervals, while in multidimensional cases we have confidence spheres or elipses etc.
+
+The parameter is fixed, but the estimator of the confidence set is variable, just like with the point estimates.
+
+Interpretation: if I repeat the experiment \f{K} times, then in \f{(1 - \alpha)N} of the cases we'll have the computed confidence interval contain the actual quantity. More generally, when estimating \f{K} different quantities, we'll have the same effect for \f{(1 - \alpha)N} estimators.
+
+== Frequentist and Baeysian ==
+
+Frequentist, Bayesian
+
+Loss functions
+
+Bias-variance decomposition
+
+== Prediction ==
+
+Bias-Variance-Variance decomposition
+
+Validation error, cross-validation, [all the different ways to evaluate performance]
+
+== Approaches To Estimation ==
+
+Dervied from natural properties, maximum likelihood, maximum aposteriori, loss function minimization
+

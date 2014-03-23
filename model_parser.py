@@ -626,7 +626,8 @@ def _Tokenize(text):
         # Reached some form of newline.
 
         if text[c_pos] != '\n':
-            print text[c_pos-100:c_pos+100]
+            print c_line
+            print text[c_pos:c_pos+100]
             raise errors.Error('A')
 
         c_pos = c_pos + 1

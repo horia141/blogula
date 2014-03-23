@@ -420,3 +420,11 @@ Might be higher if making a Type II error is costly - don't need much of a convi
 = In Some Cases One Can Test For Independence =
 
 If we have some sort of time-series data and we want to show that some events are independent, we might find out what distribution is expected in case of independence (say the Geometric one etc. - many simple cases assume such independencies), and then setup a one-way table with the actual data and do a hypothesis test using the GoF tools.
+
+= Statistical Significance Versus Practical Significance =
+
+When the sample size becomes larger, point estimates become more precise and any real differences in the mean and null value become easier to detect and recognize. Even a very small difference would likely be detected if we took a large enough sample. Sometimes researchers will take such large samples that even the slightest difference is detected. While we still say that difference is statistically significant, it might not be practically significant.
+
+= When Looking At A Confidence Interval =
+
+It's witdh is the most important element, since it gives us a quantified view at the uncertantiy with the estimate. Other statements are either false or too technical.
