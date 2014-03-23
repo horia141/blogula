@@ -229,6 +229,7 @@ def _ParsePostText(post_text):
     (new_t_pos, root_section) = _ParseSection(tokens, 0, 0, False)
 
     if new_t_pos < len(tokens):
+        print tokens[new_t_pos-20:new_t_pos+20]
         raise errors.Error('M')
 
     return (series, tags, root_section)
@@ -286,6 +287,7 @@ def _ParseSection(tokens, c_pos, level, has_title):
             raise errors.Error('X')
 
         if tokens[new_pos].token_type != 'section-marker':
+            print tokens[new_pos-20:new_pos+20]
             raise errors.Error('Q')
 
         if tokens[new_pos].content != ('=' * level):
@@ -388,6 +390,7 @@ def _ParseList(tokens, c_pos):
         return (new_pos + 1, model.List(header_text, items))
     else:
         # Raise here for the list as well.
+        print tokens[new_pos-20:new_pos+20]
         raise errors.Error('Q')
 
 def _ParseFormula(tokens, c_pos):
