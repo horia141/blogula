@@ -626,6 +626,7 @@ def _Tokenize(text):
         # Reached some form of newline.
 
         if text[c_pos] != '\n':
+            print text[c_pos-100:c_pos+100]
             raise errors.Error('A')
 
         c_pos = c_pos + 1
@@ -675,6 +676,7 @@ def _TryBlob(text, c_pos, c_line):
         new_pos = new_pos + 1
 
     if brace_counter > 0:
+        print text[c_pos-100:c_pos+100]
         raise errors.Error('B')
 
     source_pos = SourcePos(c_line, new_line, c_pos, new_pos)
