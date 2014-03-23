@@ -1,0 +1,35 @@
+Positive association: When one variable increases when another one increases.Conversely we have negative association.
+
+When one variable depends on another in a "linear" fashion - the scatter plot looks like a line. Two variables which are in a linear relationship are said to be correlated.
+
+= Pearson's Product-Moment Correlation Coefficient or Pearson's Coefficient =
+
+A measure of the strength of a linear relationship between two variables. If the relation is not linear than this coefficient does not accurately represent the relationship.
+
+The population symbol is \f{\que} while the sample one is \f{r}.
+
+Its domain is \f{[-1,1]}. A value of \f{-1} means perfect negative linear correlation, while a value of \f{1} means perfect positive linear correlation. A value of \f{0} indicates no linear relationship. Noise will cause the coefficient to be slightly less than \f{1} or more than \f{-1} for visually linear data.
+
+[pictures of various data and their r]
+
+The coefficient is symmetric - \f{r(X,Y) = r(Y,X)}.
+
+The coefficient is not affected by linear transformations - \f{r(X,aY + b) = r(X,Y)}. Intuitively, adding \f{b} moves the whole bivariate distribution to the right, while multiplying by \f{a} stretches/shrinks the distribution on the \f{X} axis
+
+The definition is \f{\que = E[(X - \mu_x) (Y - \mu_y)] / \sqrt{E[(X - \mu_x)^2]E[(Y - \mu_y)^2]} = Cov(X,Y) / \sqrt{V[X] V[Y]}} and \f{r = \sum (x - \mu_x) (y - \mu_y) / \sqrt{\sum(x - \mu_x)^2 \sum(y - \mu_y)^2}}.
+
+Interpretation:
+* We substract the means in order that the resulting RVar / sample is centered. If \f{\hat{X}} and \f{\hat{Y}} are the variables centered then \f{r = E[\hat{X}\hat{Y}] / \sqrt{E[\hat{X}^2]E[\hat{Y}^2]}}. Dividing by the variance makes the variance of each variable \f{1} so we can compare across different variance variables, since \f{E[\hat{X}\hat{Y}] / \sqrt{E[\hat{X}^2]E[\hat{Y}^2]} = E[(\hat{X} / S[\hat{X}]) (\hat{Y} / S[\hat{Y}])]}. In effect, the slope of the link \f{Y = \alpha X + \beta + \epsilon} does not count, but how different \f{\alpha} is from \f{0} and how big \f{\epsilon} is.
+* If we have no correlation, then a positive \f{x} is just as likely to be paired with a positive \f{y} or a negative \f{y}. We would expect the numerator to be a small value. If there is positive correlation, positive \f{x} are coupled with positive \f{y} and negative with negative. The sum is positive, so \f{r} is positive. With negative correlation positive \f{x} is coupled with negative \f{y} and viceversa, thus \f{r} is negative.
+* If we treat \f{X} and \f{Y} as members of the inner product space of random variables with induced norm then \f{\que = \inner{X,Y} / \sqrt{\norm{X}\norm{Y}} = \cos(X,Y)} - the cosine of the angle between the two random variables. The sample data for \f{X} and \f{Y} are finite dimensional vectors, and in their case \f{r = \inner{X,Y} / \sqrt{\norm{X}\norm{Y}} = \cos(X,Y)} on the \f{N}-dimensional inner product space of \f{N}-tuples. This is also known as cosine similarity in document retrieval.
+* The sampling distribution for this statistic has a limited domain, a mode around the actual value and pronounced tails in the direction it can move more. Compute \f{z} from \f{r} as \f{z = 0.5 \ln{(1+r)/(1-r)}}. This has a normal distribution with mean \f{0.5 \ln{(1+\rho)/(1-\rho)}} and SD \f{1/\sqrt{N-3}}.
+
+The confidence interval is computed as follows. Compute \f{r}. Then transform \f{r} to \f{z'}. The sampling distribution of \f{z'} does not depend on any variance, but only on \f{N}. Therefore, the confidence interval can be computed around \f{z'} throgh normal means, and then we can return to the \f{r} domain with both values.
+
+We can use a hypothesis test to test \f{r \neq 0} with the \f{t = r\sqrt{N-2}/\sqrt{1-r^2}}, which is a \f{t} distribution with \f{N-2} degrees of freedom.
+
+Like the slope that links the two variables together in standardized space.
+
+Well Known Examples Of Correlation Not Accurately Describing Very Strong Relationships.
+
+We have \f{V[X \pm Y] = V[X] + V[Y] \pm 2Cov(X,Y)}, in general. We can rewrite this as \f{V[X \pm Y] = V[X] + V[Y] \pm 2\que S[X]S[Y]}.
