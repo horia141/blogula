@@ -1,0 +1,50 @@
+= A Very Simple Model =
+
+Many statistical situations deal with means and variances. The model for this situations might be \f{Y = M + \epsilon} where \f{M} is a fixed but unknown mean and \f{\epsilon} is a zero-centered, usually normal noise term.
+
+= Difference Between Means =
+
+Statistics is often interested in differences between means. Mean of a subset of a sample (say, the control) minus mean of another subset (the experiment).
+
+The statistic to compute it is, obviously \f{M_{12} = M_1 - M_2} where \f{M_1} and \f{M_2} are the means from the first population and the second populations, respectively, which can be estimated as in the mean.
+
+The sampling distribution then has mean \f{E[M_{12}] = E[M_1] - E[M_2] = M_1 - M_2} (what we expected). The variance is \f{V[M_{12}] = \sigma_1^2 / N_! + \sigma_2^2 / N_2} (cf variance sum rule). For equal variance and sample size we have \f{SD[M_{12}] = \sqrt{2\sigma^2/n}}.
+
+If the population variances are known, then confidence intervals can be computed in the classical sense: \f{\alpha_{1,2} = (M_1 - M_2) \pm Z_q (\sigma_{1-2})}. When the two variances are now known, then we have issues. In order to build a confidence interval, certain assumptions are needed: the two populations have the same variance, they are normally distributed and each value is sampled independently. While one can kinda break the first two assumptions, the third is crucial.
+
+If the two samples have the same number of elements: estimate \f{s_1} and \f{s_2}. Then, compute the average of these two as \f{(s_1 + s_2) / 2} and consider this the better estimate of the population mean. Then, the estimate of the population difference between means variance is \f{s_{1-2} = \sqrt{2s^2 / N}}. We then have \f{\alpha_{1,2} = (M_1 - M_2) \pm t_q s_{1-2}}, where \f{t_q} is the value necessary to make the symmetrical interval around \f{0} in the Student t distribution with \f{n - 1 + n - 1 = 2n - 2} degrees of freedom contain \f{q} of the probability mass. If the two samples have different number of elements, we compute \f{SSE = [\sum(x^1 - m_1)^2 + \sum(x^2 - m_2)^2] / (n_1 + n_2 - 2)} as an estimate of the populations variance. Then we have \f{s_{1-2} = \sqrt{2SSE / n_h(n_1,n_2)}}.
+
+= Proportion =
+
+Statistics is often interested in the proportion an event happens relative to when it does not happen. That is, the "probability" of that event happening.
+
+The statistic is then \f{p_E = \abs{E occurs} / \abs{D}}. The estimator is simply \f{p_E = \sum_{i=1}^N (x_i is E) / N}. It is a sort of mean, therefore the properties will be somewhat similar to that of the mean. \f{x_i is E} can only take value \f{0} or \f{1} though.
+
+The sampling distribution is binomial \f{1/n Bin[p,n]}. The mean of this distribution is \f{1/n E[Bin[p,nn]] = 1/n pn = p} - what we wanted and \f{SD[1/n Bin[p,n]] = p(1-p)/\sqrt{n}}. This is approximatively normal for large \f{N} and \f{p} not close to \f{0} or \f{1} (cannonical assumptions for approximating a binomial by a normal;).
+
+A confidence interval can be obtained as well for this, but the normal approximation is used for it, and we get a \f{t} type interal as well, to which we add \f{\pm 0.5/N} because of the approximation to the binomial (and we thus get wider intervals).
+
+== Skew For Proportions ==
+
+When the number of \f{0}s or \f{1}s is very small relative to the sample size we have a very skewed Bernoulli distribution.
+
+Minimum counts should be \f{10}, but it depends on the sample size ofcourse. Otherwise specified \f{np \le 10} and \f{n(1-p) \le 10}. The success-failure condition.
+
+For hypothesis tests, we use the null value to verif the success-failure condition.
+
+= Finding A Sample Size For A Certain Margin Of Error For Proportions =
+
+Same as for \ref{Finding A Sample Size For A Certain Margin Of Error For Means}, but if we don't have a good approx, we can use \f{p = 0.5}, since this provides the largest margins in confidence interval computations, so, it will need the largest sample to attain a certain level (which will make all other choices better).
+
+= The Pooled Estimate =
+
+When doing tests of the form \f{H_0: p_1 = p_2}, we can use the pooled estimate \f{\hat{p} = n_1 / (n_1 + n_2) \hat{p}_1 + n_2 / (n_1 + n_2) \hat{p}_2} for SD/SError computations and in any confidence interval and hypothesis tests, instead of common knowledge or \f{0.5}.
+
+= Mean-To-Variance Ratio =
+
+A statistic of the form \f{\mu / \sigma}, where \f{\mu} and \f{\sigma} are computed using the typical processes.
+
+The distribution of \f{\mu/\sigma} with \f{\sigma} known follows the Normal distribution of the mean. When \f{\sigma} is not known and has to be estimated, then the distribution is Student t with \f{df = N-1} degrees of freedom. It makes sense, when we compute one statistic, it can have a larger value because we happened to be larger or smaller, or because the computed \f{s} was smaller. Thus, the probability of actually being above the interval would be over-estimated if we just used the Normal distribution. We needs to use the Student t one which has fatter tails, larger variance and less probability mass in the interal we care for.
+
+Used to ask questions like, what is the probability that a mean computed from a sample of size \f{N} is \f{l s} standard deviations from the population mean. Here \f{s} is computed from the sample. We are interested in \f{P(\abs{m / s} \leq l)}.
+
