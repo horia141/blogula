@@ -229,7 +229,7 @@ def _ParsePostText(post_text):
     (new_t_pos, root_section) = _ParseSection(tokens, 0, 0, False)
 
     if new_t_pos < len(tokens):
-        print tokens[new_t_pos-20:new_t_pos+20]
+        print tokens[new_t_pos-30:new_t_pos+30]
         raise errors.Error('M')
 
     return (series, tags, root_section)
@@ -676,7 +676,8 @@ def _TryBlob(text, c_pos, c_line):
         new_pos = new_pos + 1
 
     if brace_counter > 0:
-        print text[c_pos-100:c_pos+100]
+        print text[c_pos:c_pos+150]
+        print text[new_pos-150:new_pos+150]
         raise errors.Error('B')
 
     source_pos = SourcePos(c_line, new_line, c_pos, new_pos)
