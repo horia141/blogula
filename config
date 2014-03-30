@@ -1,5 +1,3 @@
-BlogInfoPath: blog/Info
-BlogPostsDir: blog
 Templates:
   HomePagePath: templates/homepage.html
   PostPagePath: templates/postpage.html
@@ -7,7 +5,3 @@ Templates:
   FoundationDir: templates/foundation
   BlogulaCSSPath: templates/blogula.css
   ImgDir: templates/img
-Output:
-  BaseDir: out
-  HomePagePath: index.html
-  PostsDir: blog

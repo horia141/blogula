@@ -82,7 +82,8 @@ class Text(object):
 
 class Info(object):
     def __init__(self, title, url, author, email, avatar_path, description, 
-                 series, nr_of_posts_in_feed):
+                 series, nr_of_posts_in_feed, posts_dir, output_dir,
+                 output_homepage_path, output_posts_dir):
         assert isinstance(title, Text)
         assert isinstance(url, str)
         assert isinstance(author, str)
@@ -93,6 +94,10 @@ class Info(object):
         assert all(isinstance(s, Text) for s in series)
         assert isinstance(nr_of_posts_in_feed, int)
         assert nr_of_posts_in_feed > 0
+        assert isinstance(posts_dir, str)
+        assert isinstance(output_dir, str)
+        assert isinstance(output_homepage_path, str)
+        assert isinstance(output_posts_dir, str)        
 
         self._title = title
         self._url = url
@@ -102,6 +107,10 @@ class Info(object):
         self._description = description
         self._series = series
         self._nr_of_posts_in_feed = nr_of_posts_in_feed
+        self._posts_dir = posts_dir
+        self._output_dir = output_dir
+        self._output_homepage_path = output_homepage_path
+        self._output_posts_dir = output_posts_dir
 
     @property
     def title(self):
@@ -134,6 +143,22 @@ class Info(object):
     @property
     def nr_of_posts_in_feed(self):
         return self._nr_of_posts_in_feed
+
+    @property
+    def posts_dir(self):
+        return self._posts_dir
+
+    @property
+    def output_dir(self):
+        return self._output_dir
+
+    @property
+    def output_homepage_path(self):
+        return self._output_homepage_path
+
+    @property
+    def output_posts_dir(self):
+        return self._output_posts_dir
 
 class Cell(object):
     pass

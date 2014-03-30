@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
+import argparse
 import datetime
 import os
 import re
 import shutil
 import StringIO
+import sys
 import urlparse
 
 import pygments
+import pygments.formatters
 import pygments.lexers
 import yaml
 import Cheetah.Template as template
@@ -19,44 +22,25 @@ import output
 import utils
 
 class Config(object):
-    def __init__(self, blog_info_path, blog_posts_dir, template_homepage_path, template_postpage_path,
-                 template_feedpage_path, template_foundation_dir, template_blogula_css_path, 
-                 template_img_dir, output_base_dir, output_homepage_path, output_posts_dir):
-        assert isinstance(blog_info_path, str)
-        assert isinstance(blog_posts_dir, str)
+    def __init__(self, template_homepage_path, template_postpage_path, template_feedpage_path, 
+                 template_foundation_dir, template_blogula_css_path, template_img_dir):
         assert isinstance(template_homepage_path, str)
         assert isinstance(template_postpage_path, str)
         assert isinstance(template_feedpage_path, str)
         assert isinstance(template_foundation_dir, str)
         assert isinstance(template_blogula_css_path, str)
         assert isinstance(template_img_dir, str)
-        assert isinstance(output_base_dir, str)
-        assert isinstance(output_homepage_path, str)
-        assert isinstance(output_posts_dir, str)
 
-        self._blog_info_path = blog_info_path
-        self._blog_posts_dir = blog_posts_dir
         self._template_homepage_path = template_homepage_path
         self._template_postpage_path = template_postpage_path
         self._template_feedpage_path = template_feedpage_path
         self._template_foundation_dir = template_foundation_dir
         self._template_blogula_css_path = template_blogula_css_path
         self._template_img_dir = template_img_dir
-        self._output_base_dir = output_base_dir
-        self._output_homepage_path = output_homepage_path
-        self._output_posts_dir = output_posts_dir
         self._presentation_title_heading_level = 1
         self._presentation_article_title_heading_level = 2
         self._presentation_article_subtitle_heading_level_min = 3
         self._presentation_article_subtitle_heading_level_max = 6
-
-    @property
-    def blog_info_path(self):
-        return self._blog_info_path
-
-    @property
-    def blog_posts_dir(self):
-        return self._blog_posts_dir
 
     @property
     def template_homepage_path(self):
@@ -81,18 +65,6 @@ class Config(object):
     @property
     def template_img_dir(self):
         return self._template_img_dir
-
-    @property
-    def output_base_dir(self):
-        return self._output_base_dir
-
-    @property
-    def output_homepage_path(self):
-        return self._output_homepage_path
-
-    @property
-    def output_posts_dir(self):
-        return self._output_posts_dir
 
     @property
     def presentation_title_heading_level(self):
@@ -121,9 +93,6 @@ def _ParseConfig(config_path):
     if not isinstance(config_raw, dict):
         raise errors.Error('Invalid config file structure')
 
-    blog_info_path = utils.Extract(config_raw, 'BlogInfoPath', str)
-    blog_posts_dir = utils.Extract(config_raw, 'BlogPostsDir', str)
-
     templates_raw = utils.Extract(config_raw, 'Templates', dict)
 
     template_homepage_path = utils.Extract(templates_raw, 'HomePagePath', str)
@@ -133,25 +102,18 @@ def _ParseConfig(config_path):
     template_blogula_css_path = utils.Extract(templates_raw, 'BlogulaCSSPath', str)
     template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
 
-    output_raw = utils.Extract(config_raw, 'Output', dict)
-
-    output_base_dir = utils.Extract(output_raw, 'BaseDir', str)
-    output_homepage_path = utils.Extract(output_raw, 'HomePagePath', str)
-    output_posts_dir = utils.Extract(output_raw, 'PostsDir', str)
-
-    return Config(blog_info_path=blog_info_path, blog_posts_dir=blog_posts_dir, 
-                  template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
+    return Config(template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
                   template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
-                  template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir, 
-                  output_base_dir=output_base_dir, output_homepage_path=output_homepage_path, 
-                  output_posts_dir=output_posts_dir)
+                  template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir)
 
 class SiteBuilder(object):
-    def __init__(self, config, info, post_db):
+    def __init__(self, info_path, config, info, post_db):
+        assert isinstance(info_path, str)
         assert isinstance(config, Config)
         assert isinstance(info, model.Info)
         assert isinstance(post_db, model.PostDB)
 
+        self._info_path = info_path
         self._config = config
         self._info = info
         self._post_db = post_db
@@ -175,7 +137,7 @@ class SiteBuilder(object):
     def _UrlForPost(self, post):
         return os.path.join(
             '/',
-            self._config.output_posts_dir,
+            self._info.output_posts_dir,
             SiteBuilder._UniformPath(SiteBuilder._EvaluateTextToText(post.title))) + '.html'
 
     def _GenerateHomepage(self):
@@ -301,7 +263,7 @@ class SiteBuilder(object):
 
         # generate home page
         homepage_unit = self._GenerateHomepage()
-        out_dir.Add(self._config.output_homepage_path, homepage_unit)
+        out_dir.Add(self._info.output_homepage_path, homepage_unit)
 
         # generate one page for each article
         posts_dir = output.Dir()
@@ -312,7 +274,7 @@ class SiteBuilder(object):
             posts_dir.Add(SiteBuilder._UniformPath(SiteBuilder._EvaluateTextToText(post.title)) + '.html', postpage_unit)
             extra_image_units.extend(post_extra_image_units)
 
-        out_dir.Add(self._config.output_posts_dir, posts_dir)
+        out_dir.Add(self._info.output_posts_dir, posts_dir)
 
         # generate rss feed
         feed_unit = self._GenerateFeed()
@@ -345,7 +307,7 @@ class SiteBuilder(object):
         ## Copy avatar image
 
         avatar_unit = output.Copy(
-            os.path.join(os.path.dirname(self._config.blog_info_path), self._info.avatar_path))
+            os.path.join(os.path.dirname(self._info_path), self._info.avatar_path))
         image_dir.Add('avatar.jpg', avatar_unit)
 
         ## Copy post extra images
@@ -523,7 +485,7 @@ class SiteBuilder(object):
                     if os.path.isabs(paragraph.cell.path):
                         extra_image_path = paragraph.cell.path
                     else:
-                        extra_image_path = os.path.join(config.blog_posts_dir, paragraph.cell.path)
+                        extra_image_path = os.path.join('/home/horia/Dropbox/Work/Blog', paragraph.cell.path)
 
                     extra_image_units.append((image_basename, output.Copy(extra_image_path)))
                 else:
@@ -538,14 +500,22 @@ class SiteBuilder(object):
 
         return (line_units, extra_image_units)
 
-def main():
-    config = _ParseConfig('config')
-    (info, post_db) = model_parser.ParseInfoAndPostDB(config.blog_info_path, config.blog_posts_dir)
+HELP_DESCRIPTION = 'Blogula - a blog generator'
+HELP_INFO = 'Path to blog information file'
 
-    site_generator = SiteBuilder(config, info, post_db)
+def main(argv):
+    arg_parser = argparse.ArgumentParser(description=HELP_DESCRIPTION)
+    arg_parser.add_argument('-i', '--info_path', metavar='PATH', type=str, help=HELP_INFO, required=True)
+    args = arg_parser.parse_args(argv[1:])
+
+    config = _ParseConfig('config')
+    info = model_parser.ParseInfo(args.info_path)
+    post_db = model_parser.ParsePostDB(info)
+
+    site_generator = SiteBuilder(args.info_path, config, info, post_db)
     out_dir = site_generator.Generate()
 
-    output.WriteLocalOutput(config.output_base_dir, out_dir)
+    output.WriteLocalOutput(info.output_dir, out_dir)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)

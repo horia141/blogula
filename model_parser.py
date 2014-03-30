@@ -1,6 +1,7 @@
 import collections
 import datetime
 import os
+import os.path
 import re
 
 import yaml
@@ -85,13 +86,7 @@ class Token(object):
     def source_pos(self):
         return self._source_pos
 
-def ParseInfoAndPostDB(info_path, blog_posts_dir):
-    info = _ParseInfo(info_path)
-    post_db = _ParsePostDB(info, blog_posts_dir)
-
-    return (info, post_db)
-
-def _ParseInfo(info_path):
+def ParseInfo(info_path):
     info_text = utils.QuickRead(info_path)
 
     try:
@@ -119,21 +114,41 @@ def _ParseInfo(info_path):
     series = frozenset(_ParseSmallText(s) for s in series_raw)
 
     nr_of_posts_in_feed = utils.Extract(info_raw, 'NrOfPostsInFeed', int)
+    posts_dir = utils.Extract(info_raw, 'PostsDir', str)
+
+    if os.path.isabs(posts_dir):
+        posts_dir = os.path.normpath(posts_dir)
+    else:
+        posts_dir = os.path.join(os.path.dirname(info_path), os.path.normpath(posts_dir))
+
+    output_dir = utils.Extract(info_raw, 'OutputDir', str)
+
+    if os.path.isabs(output_dir):
+        output_dir = os.path.normpath(output_dir)
+    else:
+        output_dir = os.path.join(os.path.dirname(info_path), os.path.normpath(output_dir))
+
+    output_raw = utils.Extract(info_raw, 'Output', dict)
+
+    output_homepage_path = utils.Extract(output_raw, 'HomePagePath', str)
+    output_posts_dir = utils.Extract(output_raw, 'PostsDir', str)
 
     return model.Info(title=title, url=url, author=author, email=email, avatar_path=avatar_path,
-                      description=description, series=series, nr_of_posts_in_feed=nr_of_posts_in_feed)
+                      description=description, series=series, nr_of_posts_in_feed=nr_of_posts_in_feed,
+                      posts_dir=posts_dir, output_dir=output_dir, output_homepage_path=output_homepage_path,
+                      output_posts_dir=output_posts_dir)
 
-def _ParsePostDB(info, blog_posts_dir):
+def ParsePostDB(info):
     post_map = collections.OrderedDict()
     post_maps_by_series = dict((s, collections.OrderedDict()) for s in info.series)
     post_list = []
     post_lists_by_series = dict((s, []) for s in info.series)
 
     try:
-        for dirpath, subdirs, post_paths_last in os.walk(blog_posts_dir):
+        for dirpath, subdirs, post_paths_last in os.walk(info.posts_dir):
             for post_path_last in post_paths_last:
                 post_path_full = os.path.join(dirpath, post_path_last)
-                post_path = post_path_full[len(blog_posts_dir):]
+                post_path = post_path_full[len(info.posts_dir):]
 
                 if not _PostValidPath(post_path):
                     continue
