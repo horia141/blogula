@@ -1,0 +1,135 @@
+= Sets =
+
+Set. Member - \f{x \in A}. Non-member - \f{x \not\in A}. Empty-set - \f{\emptyset}.
+
+Cardinality - \f{\abs{A}}. \f{\abs{\emptyset} = 0}. \f{\abs{\{x\}} = 1}. Finite cardinality. Infinite cardinality.
+
+\f{A} subset of \f{B} - \f{A \subseteq B}. \f{A} is included in \f{B}. Set inclusion. \f{A} strict subset of \f{B} - \f{A \subset B}. \f{A} is strictly included in \f{B}. Set strict inclusion. \f{\emptyset \subseteq A}. Set inclusion is reflexive, anti-symmetric and transitive. Set inclusion is a partial order.
+
+Power set of \f{A} - \f{2^A}. \f{\emptyset \in 2^A}. \f{A \in 2^A}.
+
+Intersection of \f{A} and \f{B} - \f{A \cap B}. Intersection is associative and commutative. Union of \f{A} and \f{B} - \f{A \cup B}. Union is associative and commutative. Difference of \f{A} and \f{B} - \f{A \setminus B}. Intersection and union are distributive. Complement of \f{A} relative to \f{\mathbb{U}} - \f{C_{\mathbb{U}}A}.
+
+Universe set - \f{\mathbb{U}}. Complement - \f{\overline{A}}. Interpret set operations as propositional logic statements. DeMorgan rules.
+
+Disjoint sets \f{A} and \f{B} - \f{A \perp B}. \f{A \cup B = (A \setminus B) \cup (B \setminus A) \cup (A \cap B)}. Partition of \f{A}. \f{P_B = \{ p_A \cap B \given p_A \in P_A \}}.
+
+Tuple. Empty-tuple - \f{()}. Pair - \f{(x,y)}. K-tuple - \f{(x_1,x_2,\dots,x_k)}.
+
+Lenth - \f{\abs{T}}. \f{\abs{()} = 0}. \f{\abs{(x_1,x_2,\dots,x_k)} = k}.
+
+Carthesian product of \f{A} and \f{B} - \f{\carthesian{A}{B}}. Carthesian produt is associative. \f{n}th power of \f{A} - \f{A^n}.
+
+If \f{A \subset B} then \f{\abs{A} < \abs{B}}. \f{\abs{2^A} = 2^{\abs{A}}}. \f{\abs{A \cup B} = \abs{A} + \abs{B} - \abs{A \cap B}}. If \f{A \perp B} then \f{\abs{A \cup B} = \abs{A} + \abs{B}}. \f{\abs{\overline{A}} = \abs{\mathbb{U}} - \abs{A}}. \f{\abs{A \times B} = \abs{A} \abs{B}}.
+
+= Relations =
+
+Relation between \f{A} and \f{B}. \f{x} in relation to \f{y} - \f{x\mathcal{R}y}. Binary relations vs general relations. Identity relation - \f{\text{id}_A}.
+
+Domain of \f{\mathcal{R}} - \f{\dom{\mathcal{R}}}. Range of \f{\mathcal{R}} - \f{\ran{\mathcal{R}}}. Field of \f{\mathcal{R}} - \f{\fld{\mathcal{R}}}.
+
+Relation composition of \f{\mathcal{R}} and \f{\mathcal{Q}} - \f{\mathcal{R} \circ \mathcal{Q}}. Composition has \f{\text{id}_A} as right and left identify element, is associative. \f{\dom(\mathcal{R}\circ\mathcal{Q}) = \dom{\mathcal{R}}}. \f{\ran(\mathcal{R}\circ\mathcal{Q}) = \ran{\mathcal{Q}}}.
+
+Reflexive relation. Symmetric relation. Anti-symmetric relation. Transitive relation.
+
+Partial order. Partially ordered set. Linear order or total order. Linear ordered set or chain.
+
+Equivalence relation. If \f{\mathcal{R}} is an equivalence then \f{\mathcal{R}\circ\mathcal{R} = \mathcal{R}}.
+
+Induced parition of \f{A} by equivalence \f{\mathcal{S}} - \f{P[\mathcal{S}]}. Induced equivalence relation on \f{A} by partition \f{P_A} - \f{\mathcal{R}[P]}. \f{P[\mathcal{R}[P_A]] = P_A}. \f{\mathcal{R}[P[\mathcal{R}]] = \mathcal{R}}.
+
+= Functions =
+
+Function between \f{A} and \f{B}. \f{x} argument for \f{f}. \f{y} image of \f{x} through \f{f}. Identity function - \f{\text{id}_A}. Constant function \f{c} - \f{c_A(x) = c}.
+
+Domain of \f{f} - \f{\dom{f}}. Codomain of \f{f} - \f{\cod{f} = B}. Range of \f{} - \f{\ran{f}}.
+
+Function composition of \f{f} and \f{g} - \f{f \circ g}. Composition has \f{\text{id}_A} as right and left identify element, is associative. \f{\dom(f\circ g) = \dom{f}}. \f{\ran(f\circ g) = \ran{q}}.
+
+Injective function. Surjective function. Bijective function.
+
+Inverse of \f{f} - \f{f^{-1}}. Injective implies inverse. Bijective implies unique inverse. If \f{f} and \f{g} are invertible then \f{(f \circ g)^{-1} = g^{-1} \circ f^{-1}}.
+
+Equal cardinality through bijection.
+
+== Operators ==
+
+Operator on \f{A}. Unary operators. Binary operators. Special syntax. Expression on \f{A}.
+
+Associative operator. Commutative operator. Admits an identity element. Each argument admits an inverse element. Distributive operators.
+
+Every placement of parantheses in an expression of an associative operator produce the same result.
+
+= Numbers =
+
+Number. Set of numberrs - \f{\mathbb{T}}. Set of positive numbers - \f{\mathbb{T}^+ \subset \mathbb{T}}. Zero - \f{0 \in \mathbb{T} \setminus \mathbb{T}^+}. One - \f{1 \in \mathbb{T}^+}. Addition - \f{+}. Multiplication - \f{\star}. \f{+} is associative, commutative, admits a neutral element (\f{0}) and has an inverse element. \f{\star} is associative, commutative, admits a neutral element (\f{1}) and it has an inverse element. \f{+} is distributive with to \f{\star}. The Trichotomy law: either \f{x = 0}, or \f{x \in \mathbb{T}^+} or \f{-x \in \mathbb{T}^+}. If \f{x,y \in \mathbb{T}^+} then \f{x + y \in \mathbb{T}^+}. If \f{x,y \in \mathbb{T}^+} then \f{x \star y \in \mathbb{T}^+}.
+
+\f{0} and \f{1} are unique.
+
+Positive number. Non-negative number. Negative number. Non-positive number.
+
+Substraction - \f{-}. Division - \f{/}.
+
+Basic algebraic manipulations on numbers.
+
+Greater than relation - \f{>}. \f{>} is anti-symmetric and transtive. Greater than or equal relation - \f{\geq}. \f{\geq} is a linear order. Smaller than relation - \f{<}. \f{<} is anti-symmetric and transitive. Smaller than or equal relation - \f{\leq}. \f{\leq} is a linear order.
+
+Basic inequalities about numbers.
+
+Absolute value of \f{x} - \f{\abs{x}}. Measures magnited, disregard sign. \f{\abs{xy} = \abs{x} \abs{y}}. \f{xy \leq \abs{x} \abs{y}}. \f{\abs{x + y} \leq \abs{x} + \abs{y}}. \f{\abs{x} \overline{<} y} if and only if \f{-y \overline{<} x \overline{<} y}.
+
+Square of \f{x} - \f{x^2}. Cube of \f{x} - \f{x^3}. \f{n}th power of \f{x} - \f{x^n}. Square root of \f{x} - \f{\sqrt{x}}. Cube root of \f{x} - \f{\sqrt[3]{x}}. \f{n}th root of \f{x} - \f{\sqrt{n}{x}}. Rational power of \f{x} - \f{x^{m/n} = \sqrt[m]{x^n}}. \f{x^n = (-1)^n\abs{x}^n}. \f{(x/y)^n = (x^n)/(y^n)}. \f{(x^n)(x^m) = x^{n+m}}. \f{(x^n)^m = x^{nm}}. If \f{x > 1} then \f{x^2 > x}. If \f{0 < x < 1} then \f{x^2 < x}. If \f{0 \leq x < y} then \f{x^n < y^n}.
+
+Polynomial identities.
+
+Maximum of \f{x} and \f{y} - \f{\max(x,y)}. Minimum of \f{x} and \f{y} - \f{\min(x,y)}.
+
+Upper bound of \f{A}. Bounded above. Supremum of \f{A} - \f{\sup{A}}. Maximum of \f{A} - \f{\max{A}}. Lower bound of \f{A}. Bounded below. Infimum of \f{A} - \f{\inf{A}}. Minimum of \f{A} - \f{\min{A}}. Supremum, infimum, minimum and maximum are unique if theyexist.
+
+If \f{A + B = \{ x + y \given x \in A \text{ and } y \in B \}} then \f{\sup(A + B) = \sup{A} + \sup{B}} and \f{\inf(A + B) = \inf{A} + \inf{B}}.
+
+== Natural Numbers ==
+
+Set of natural numbers - \f{\mathbb{N}}. No inverse for \f{+} and \f{\star}. Archimedean property - \f{\mathbb{N}} is not bounded above.
+
+Principle of induction. Strong induction. Partial induction. Well ordering principle. All are equivalent, but at least one must be assumed.
+
+Summation notation - \f{\sum_{i=1}^n a_i}. Product notation - \f{\Pi_{i=1}^n a_i}. \f{\sum_{i=1}^n (a_i + b_i) = \sum_{i=1}^n a_i + \sum_{i=1}^n b_i}. \f{\Pi_{i=1}^n (a_ib_i) = \Pi_{i=1}^n a_i \Pi_{i=1}^n b_i}. \f{\sum_{i=1}^n \sum_{j=1}^m (a_i b_j) = (\sum_{i=1}^n a_i) (\sum_{j=1}^m b_j)}.
+
+\f{p} is a \def{divisor} of \f{n} - \f{p \given n}. Divisor relation - \f{\given}. \f{\given} partial ordern.
+
+\def{Greatest common divisor} (gcd) of \f{x} and \f{y} - \f{\gcd(x,y)}. \def{Smallest common multiple} (scm) of \f{x} and \f{y} - \f{\scm(x,y)}.
+
+Prime number. Composite number. Factorization. Prime factorization. Every number has a unique prime factorization. There is an infinite number of primes.
+
+Even numbers. Odd numbers. A number is either even or odd.
+
+Remainder class for \f{l} - \f{\mathbb{N}_p^l}. All remainder classes are a partition of \f{\mathbb{N}}. \f{p}-equivalence relation - \f{n \equiv m (mod p)}. \f{\equiv_p} is an equivalence relation. \f{P[\equiv_p] = \mathbb{N}_p} and \f{\mathcal{R}[\mathbb{N}_p] = \equiv_p}.
+
+== Integer Numbers ==
+
+Set of integer numbers - \f{\mathbb{Z}}. No inverse for \f{\star}.
+
+== Rational Numbers ==
+
+Set of rational numbers - \f{\mathbb{Q}}. Not the full set of numbers.
+
+== Irrational Numbers ==
+
+Set of irrational numbers - \f{\mathbb{I}}. \f{sqrt{2}} is irrational.
+
+== Real Numbers ==
+
+Set of real numbers - \f{\mathbb{R} = \mathbb{Q} \cup \mathbb{I}}. If \f{A \subseteq \mathbb{R}}, \f{A \neq \emptyset} and \f{A} is bounded above, then \f{\sup{A}} exists (Does not hold for rationals).
+
+Intervals - \f{(a,b)}, \f{[a,b]}, \f{(a,+\infty)}, \f{(-\infty,b)}, \f{(-\infty,+\infty) = \mathbb{R}}.
+
+Nested interval theorem - If \f{I_1, I_2, \dots} be a sequence of closed intervals such that \f{I_1 \subseteq I_2 \subseteq \dots} then there exists an \f{x} such that for all \f{n} we have \f{x \in I_n}.
+
+\f{A} dense. Between every two numbers at distance greater than \f{1} there is an integer. Between two rational numbers there is an irrational one. \f{\mathbb{Q}} is dense. \f{\mathbb{I}} is dense.
+
+== Relationship Between Sets Of Numbers ==
+
+\f{\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}}. \f{\mathbb{Q} \cap \mathbb{I} = \emptyset} and \f{\mathbb{Q} \cup \mathbb{I} = \mathbb{R}}.
+
+Rules for operations and possible results.
