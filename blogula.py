@@ -258,6 +258,10 @@ class SiteBuilder(object):
         feedpage_text = str(feedpage_template)
         return output.File('application/xml', feedpage_text)
 
+    def _GenerateRobotsTxt(self):
+        content = 'User-agent: *\nDisallow: foundation/\nDisallow: blogula.css\nDisallow: code_highlight.css\n'
+        return output.File('text/plain', content)
+
     def Generate(self):
         out_dir = output.Dir()
 
@@ -316,6 +320,10 @@ class SiteBuilder(object):
             image_dir.Add(basename, unit)
 
         out_dir.Add('img', image_dir)
+
+        # Generate robots.txt file.
+        robots_txt_unit = self._GenerateRobotsTxt()
+        out_dir.Add('robots.txt', robots_txt_unit)
 
         return out_dir
 
