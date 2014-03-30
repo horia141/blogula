@@ -23,13 +23,15 @@ import utils
 
 class Config(object):
     def __init__(self, template_homepage_path, template_postpage_path, template_feedpage_path, 
-                 template_foundation_dir, template_blogula_css_path, template_img_dir):
+                 template_foundation_dir, template_blogula_css_path, template_img_dir,
+                 template_robots_txt_path):
         assert isinstance(template_homepage_path, str)
         assert isinstance(template_postpage_path, str)
         assert isinstance(template_feedpage_path, str)
         assert isinstance(template_foundation_dir, str)
         assert isinstance(template_blogula_css_path, str)
         assert isinstance(template_img_dir, str)
+        assert isinstance(template_robots_txt_path, str)
 
         self._template_homepage_path = template_homepage_path
         self._template_postpage_path = template_postpage_path
@@ -37,6 +39,7 @@ class Config(object):
         self._template_foundation_dir = template_foundation_dir
         self._template_blogula_css_path = template_blogula_css_path
         self._template_img_dir = template_img_dir
+        self._template_robots_txt_path = template_robots_txt_path
         self._presentation_title_heading_level = 1
         self._presentation_article_title_heading_level = 2
         self._presentation_article_subtitle_heading_level_min = 3
@@ -65,6 +68,10 @@ class Config(object):
     @property
     def template_img_dir(self):
         return self._template_img_dir
+
+    @property
+    def template_robots_txt_path(self):
+        return self._template_robots_txt_path
 
     @property
     def presentation_title_heading_level(self):
@@ -101,10 +108,12 @@ def _ParseConfig(config_path):
     template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
     template_blogula_css_path = utils.Extract(templates_raw, 'BlogulaCSSPath', str)
     template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
+    template_robots_txt_path = utils.Extract(templates_raw, 'RobotsTxtPath', str)
 
     return Config(template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
                   template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
-                  template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir)
+                  template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir,
+                  template_robots_txt_path=template_robots_txt_path)
 
 class SiteBuilder(object):
     def __init__(self, info_path, config, info, post_db):
@@ -259,8 +268,11 @@ class SiteBuilder(object):
         return output.File('application/xml', feedpage_text)
 
     def _GenerateRobotsTxt(self):
-        content = 'User-agent: *\nDisallow: foundation/\nDisallow: blogula.css\nDisallow: code_highlight.css\n'
-        return output.File('text/plain', content)
+        robots_txt_template_text = utils.QuickRead(self._config.template_robots_txt_path)
+        robots_txt_template = template.Template(robots_txt_template_text)
+        robots_txt_text = str(robots_txt_template)
+
+        return output.File('text/plain', robots_txt_text)
 
     def Generate(self):
         out_dir = output.Dir()

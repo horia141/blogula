@@ -5,3 +5,4 @@ Templates:
   FoundationDir: templates/foundation
   BlogulaCSSPath: templates/blogula.css
   ImgDir: templates/img
+  RobotsTxtPath: templates/robots.txt
