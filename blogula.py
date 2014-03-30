@@ -181,7 +181,7 @@ class SiteBuilder(object):
         return output.File('text/html', homepage_text)
 
     def _GeneratePostpage(self, post):
-        (line_units, extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(self._config, post.root_section, 0)
+        (line_units, extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(self._info_path, self._config, post.root_section, 0)
         postpage_template_text = utils.QuickRead(self._config.template_postpage_path)
         postpage_template = template.Template(postpage_template_text)
 
@@ -434,7 +434,7 @@ class SiteBuilder(object):
         return html_str
 
     @staticmethod
-    def _LinearizeSectionToLineUnits(config, section, level):
+    def _LinearizeSectionToLineUnits(info_path, config, section, level):
         line_units = []
         extra_image_units = []
 
@@ -505,7 +505,7 @@ class SiteBuilder(object):
                     if os.path.isabs(paragraph.cell.path):
                         extra_image_path = paragraph.cell.path
                     else:
-                        extra_image_path = os.path.join('/home/horia/Dropbox/Work/Blog', paragraph.cell.path)
+                        extra_image_path = os.path.join(os.path.dirname(info_path), paragraph.cell.path)
 
                     extra_image_units.append((image_basename, output.Copy(extra_image_path)))
                 else:
@@ -514,7 +514,7 @@ class SiteBuilder(object):
                 raise errors.Error('Q')
 
         for subsection in section.subsections:
-            (sub_line_units, sub_extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(config, subsection, level+1)
+            (sub_line_units, sub_extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(info_path, config, subsection, level+1)
             line_units.extend(sub_line_units)
             extra_image_units.extend(sub_extra_image_units)
 
