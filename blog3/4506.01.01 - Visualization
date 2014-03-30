@@ -1,0 +1,118 @@
+We use graphs to understand data properties, find patterns in data, suggest modeling strategies, debug analyses and communicate results. We have explorataory and expository graphs. The first are for personal understanding while the later for communicatiing to the world. As a rule of thumb, when comparing values, use common scales, when possible, use position comparisons, then length, and very rarely angles (no piecharts). Keep things simple (No 3D barcharts, area/volume comparisons etc.).
+
+Boxplots - used for understanding and comparing quantitative variables. A hint of the distribution of the data. The think line in the middle of the plot is the median, also the \f{25\%} and \f{75\%} percentile, the minimum and maximum. You can get a hint of the symmetry of the distribution and outliers. Using more than one box-plot per graph is a good way to compare distributions. If we use ``varwidth'' (boxplot command parameter) we can make the width of the box proportional to the number of individuals in that group.
+
+Modified Boxplots - used for understanding and comparing quantitative variables. A hint of the distribution of the data. The think line in the middle of the plot is the median, also the \f{25\%} and \f{75\%} percentile, 1.5times the \f{75\%} percentile (upper innerfence), and 1.5times lower than the \f{25\%} percentile (lower innerfence). Points outside these would also be shown. You can get a hint of the symmetry of the distribution and outliers. Using more than one box-plot per graph is a good way to compare distributions. If we use ``varwidth'' (boxplot command parameter) we can make the width of the box proportional to the number of individuals in that group.
+
+[with housing data from DA course]
+
+[image of boxplot]
+
+[image of modified boxplot]
+
+[image of several boxplots]
+
+[image of several boxplots with different individuals]
+
+Barplots - used to compare quantiative variables. The height of the bar is proportional to the magnitude of each variable (directly proportional). Useful for comparing counts for qualitative variables.
+
+[image of barplot]
+
+Histograms - used for understanding quantitative variable. A plot of how many values in the dataset we see in different intervals. Intervals should be of the same size and should partition the domain of the variable. More information about the shape of the distribution than a bar-plot. A uncertainty principle for domain vs range values. We divide the domain (or at least range) of the data into \emph{bins} - a partition of the domain. The \emph{cutpoints} are the value that define the beginning and the end of the binds. The tails are the first and last bins of the histograms.
+
+[image of histograms]
+
+Density plots - used for understanding and comparing quantitiative variables. A smoothes plot of a histogram, but it tries to actually build an estimate of the PDF of the RVar. May have some errors on the boundaries, for domains which are not on \f{\mathcal{R}} (think age or weight or height). One can have several densities on the same graph.
+
+[image of density plot]
+
+[image of several density plots]
+
+Scatterplots - used for understanding dependencies between two variables. Plots pairs of \f{(x,y)} on the \f{\mathcal{R}^2} plane. Not a Carthesian product, but a pairing. The sample for each variables must have the same number of observations. One can use a third variable for displaying points in different colors (the variable should be integer or made with ``cut'' to be qualitative) or sizes depending on the values of the third variable (and avoid using a third axis). These are the most popular plots in Statistics. Go wild with them in terms of annotations etc. When there are too many points, one can sample randomly from \f{(X,Y)} and plot only a part. Or one can use a ``smooth scatter'', which shows places with lots of points in darker color, and outliers as hard dots. Another tool is hexplots.
+
+[image of scatter plot]
+
+[image of scatter plot with smaller points]
+
+[image of scatter plot with different colorings for second varibale]
+
+[image of scatter plot with different sizes for third variable]
+
+[smooth scatter]
+
+[hexplots]
+
+[jittered plot]
+
+The QQ-plot - used for understanding dependencies between two variables. Plots pairs of quantiles of \f{(X,Y)}, estimated from the sample on the \f{\mathcal{R}^2} plane. If the two distributions are the same, they should be on the \f{f(x) = x} line.
+
+[plot of identical distributions]
+
+[plot of different distributions]
+
+The matplot or spagetti - used for viewing several variables at a time. For time-series etc.
+
+[plot of matplot]
+
+A heatmap - used for viewing several variables. The heatmap has higher values colored with white. 
+
+[plot of heatmap]
+
+Maps - for certain situations where you want a map of the world.
+
+[plot of map of the world]
+
+For expository graphs, the goal is to communicate information. Information density (having more data) is generally good. Color/sized are used for both aestetic reasons. Axis, labels, legends, titles, captions, subcaptions etc. must be OK. Using multiple panels in a graph is good as well, to group graphs which are logically linked together. Captions should be such that someone could be able to understand the graph without looking through the text. \textbf{Be careful with color-blindness - vischeck.com}.
+
+For qualitative variables, a bar chart can be used to present the counts in each category. We can also use the relative frequencies (dividing the counts by the total count). One can use a pie chart, where the slice angle is proportional to the frequencies.
+
+[plot of bar chart]
+
+[plot of relative frequencies]
+
+[plot of pie charts]
+
+For two categorical variables we can use side-by-side bar plots or stacked bar plots for visualisation. Difficult to judge if there are differences etc. Better to use conditional distributions computed from the contingency tables.
+
+[side-by-side bar plot]
+
+[stacked bar plot]
+
+\subsection{Contingency Table}
+
+A table which maps the frequencies or counts of one categorical variable wrt another categorical variable. We can compute the marginal distributions and the conditioned distributions from these tables.
+
+\subsection{Interaction between a Quantiative and a Qualitative Variable}
+
+Use parallel box plots and five number summary for each class.
+
+\textbf{Simpson's Paradox}: conditional distributions withing subgroups can differ from conditional distributions for combined observations. Watch out for lurking variables.
+
+\subsection{Interaction between two Quantiative Variables}
+
+Use correlation. If \f{y_i = x_i} or, generally, \f{y_i = ax_i + b} with \f{a > 0} we have correlation \f{1}. If \f{y_i = ax_i + b} with \f{a < 0} then correlation is \f{-1}. Correlation will always be between \f{-1} and \f{+1}. If it is positive, they tend to both increase together. If negative, one tends to increse when the other decreases. Only captures LINEAR aspects of the relationship (like a line of best fit).
+
+The lie factor. The reatio of the size of the effect shown by a graph and the size of the effect shown by the data. Reasonable values are between \f{0.95} and \f{1} - anything else causes unacceptable distortion.
+
+Pie Chart. A way to visualize the frequency table of a typically nominal, but in general discrete variable. Uses a circle and circle segments/slices proportional to the frequency / probability of each element. [picture of pie chart] "The only worse design than a pie chart is several of them" - Edward Tufte.
+
+Bar Chart. A way to visualize the frequency table of a typically nominal, but in general discrete variable. Uses several bars / rectangles, one associated to each element in the domain, and with height (or one dimension) proportional to the frequency / probability of each element. [picture of bar chart] A bar chart can be used to visualize frequencies from multiple variables with the same domain. Use groups of bars / rectangles. [picture of a bar chart with multiple elements] The dependent variable can be another quantity, not necessarily the frequency.
+
+Common errors with bar charts. Modifying both the width and the height proportional to the frequency / probability - people will naturally interpret the area as being proportional to the frequency / probability, hence they will assume different effects - big lie factor. Using anything but \f{0} as the baseline for the frequency / probability axis (happens very often).
+
+Line Graph. Derived from a Bar Chart, for ordered data (at least), not qualitative. Take the middle point of the high edge of each rectangle and join it wit the same point for the next rectangle, obtaining a continuous graph. 
+
+Stem and Leaf Plot. A way to visualize numeric data (ordinal, interval or ratio). Basically split the data after the first \f{k-1} digits and thus form rows, each row containing, in sorted order, all digits necessary to complete the numbers starting with the particular digits in the first column. [a picture is worth a thousand words] We can have "back-to-back" stem and leaf displays.
+
+Histogram. A way to visualize numeric data frequency / relative frequencies. Use bins to group data - each bin contains the number of observations with that value. For integral data, the boundries of the bins are better chosen at \f{0.5} locations, so each observation falls into a single bin - such observations are called fence sitters. The height of each bin is proportional to the count in that bin. [a picture is worth a thousand words again] The choice of the first bin and the number of bins is an important factor.
+
+Rules of thumb for historagms:
+* Sturges' rule: choose number of bins as close as possible to \f{1 + \log_2{N}}.
+* Rice's rule: choose number of bins as close as possible to \f{2\sqrt{3}{N}}.
+* Experiment for each dataset, as to maximize the information conveyed.
+
+Can display different distributions into a merged histogram.
+
+Frequency polygon. Derived from a histogram. Drop the bars, and join the middle point of the higher edge of each rectangle, with the same point for the next rectangle, obtaining a continuous graph (add two extra bars of zero height at each end to connect with \f{0}). [picture of frequency polygon] Also, can display more than one datasets. [picture of multiple frequency polygons]
+
+Box plots. A way to visualize numeric data. Find out \f{25, 50, 75}th percentiles. There is only one axis, so draw a box starting from the 25th percentile and up the 75th percentile. Then, draw a middle line at the 50th percentile. Gives a rough impression of the data. [picture here] \def{Upper Hinge} {\f{75}th percentile} \def{Lower Hinge} {\f{25}th percentile} \def{H-Spread} {Upper Hinge - Lower Hinge} \def{Step} {\f{1.5 \star} H-Spread} \def{Upper Inner Fence} {Upper Hinge + Step} \def{Upper Outer Fence} {Upper Hinge + \f{2}Step} \def{Upper Adjacent} {Largest value smaller than Upper Inner Fence} \def{Lower Inner Fence} {Lower Hinge + Step} \def{Lower Outer Fence} {Lower Hinge + \f{2}Step} \def{Lower Adjacent} {Smallest value larger than Lower Inner Fence} \def{Outside Value} {Value between inner fence and outer fence} \def{Far Out Value} {Value after the outer fance} Draw "wishers" from Upper Hinger to Upper Adjacent and similar for lower. [picture here] Use \f{\circle} for points outside values and \f{\star} for far out values. [picture here] Mark means by a \f{+}. [picture here] Many distributions can be polotted and compare this way. [picture here] Half the data is between the hinges. One can identify skews, median/mean mismatches etc. Sometimes the width of the rectangle is proportional to the number of items in the dataset.

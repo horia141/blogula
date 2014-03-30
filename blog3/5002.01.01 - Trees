@@ -1,0 +1,285 @@
+A \def{tree} is a connected, acyclic and undirected graph.
+
+The relation between number of edges and number of nodes \f{\abs{E} = \abs{V} - 1}.
+
+It is maximally acyclic - adding one more edge - a cycle is formed.
+
+It is minimally connected - removing one more edge - it becomes unconnected.
+
+A forest is a set of trees.
+
+Useful convention: when we have an operator which is applied \f{0} times, then the result of the expression is the identity for that operator.
+
+Rooted Tree:
+* a tree for which a designated node called the root exists.
+* each* node has a parent, the first node on the path to the root.
+* each node has several children, the other adjacent nodes, which are not parents.
+* each* node has siblings, the children of its parent except itself.
+* the root has no parents or siblings, of course.
+* nodes with no children are called leafes, while nodes with at least one children are called interior nodes. The nodes are partitioned into those which are leafes and those which are interior nodes. Theorem: If a tree has \f{n \geq 2} nodes, then it has at least one leaf and at least one interior node (therefore we have a proper partition).
+* the hypothetical nodes which would be the children of leafes are called external nodes. The other are internal nodes (not used in every tree formalism - not to be confused with interior nodes).
+* a path in a sequence \f{m_1, \dots, m_k} such that \f{m_1} is the parent of \f{m_2}, \f{m_2} of \f{m_3} etc and \f{m_{k-1}} of \f{m_k}. The length of this path is \f{k-1}. One node paths have zero length.
+* an ancestor of a node \f{r} is a node on the path \f{m_1, m_2, \dots, m_k, r}. \f{r} is its own ancestor. If the path is of length \f{1} or more we talk about proper ancestors.
+* a descendent of a node \f{r} is a child of the node, or a child of the child etc - a node on any path \f{r, m_1, \dots, m_k}. \f{r} is its own descendant. If the path is of length \f{1} or more we talk about proper descendents.
+* the root is an ancestor of every node and every node is a descendat from the root.
+* a subtree at a node is the subgraph obtained by cutting from the tree the edge between the node and its parent, and removing all nodes and associated edges which cannot be reached from the node. It is basically treating the node and all its descendents as a separate tree.
+* the depth of a node is the length of the path from it to the root. The depth of the root is \f{0}.
+* the height of a node is the maximum of the lengths of the paths from it to its descendants. The height of a leaf is \f{0}. (recursive definition also useful in computing it).
+* the height of a tree is the height of the root.
+* from every node we can reach the root.
+* we can partition a tree into sets of nodes of equal depth. The root is in the first set, its children in the second, its children children in the third etc. we can also partition a tree into sets of equal height. The leaves are in the first set, but not all their parents in the second set (only those of height \f{1}) etc.
+* a recursive definition of trees: a tree could consist of a single single node, which is also the root or, if \f{r} is a node and \f{T_1, \dots, T_k} are trees with roots \f{c_1,\dots,c_k}, then we can form a new tree by linking \f{r} with each of \f{c_1,\dots,c_k} in turn, with an edge, and considering \f{r} to be the root of the new tree. The two are equivelent: use strong induction on the number of nodes in one way (when \f{n=1} a single node tree corresponds to the base case of a recusrisve tree, when \f{n>1} a \f{n} node tree has a root and several children, which are all trees of size smaller than \f{n-1}, then, because of strong induction, they all have associated recursive trees, and we can build a recursive tree by using the new node as root and them as children) and on the number of rounds used to build the recursive tree in the other way (when \f{n=1} a single node tree corresponds to the single node tree of the standard definition, when \f{n>1} we have build the node by \f{n} applications of the recursive rule. The current root is \f{r} and there are \f{T_1,\dots,T_k} trees of smaller size. These have standard trees attached, and we extract them and build the standard definition tree from the root).
+* degree of a node: number of children. different from arity (max number of children). Sum of degrees is equal to the number of edges and is \f{n-1}. Proof by structural induction (get \f{k + \sum (n_i - 1) = k + \sum{n_i} - k = n - 1}).
+
+\f{k}-Arity Tree:
+* a rooted tree in which each node has at most \f{k} children.
+* the number of nodes in a tree with \f{l} complete levels is \f{1 + k + k^2 + k^3 + ... + k^l = (k^{l+1} + 1) / (k - 1)}.
+* if we have \f{n} nodes then the smallest height tree we can produce has height \f{\ceil{\log_k{n}}}.
+* if it has \f{n} internal nodes, then it has \f{n+1} external nodes - induction.
+
+Ordered Tree:
+* a rooted tree in which the children of any node \f{n} have an order attached to them \f{\forall i \in \hcrange{1}{l_n} \colon c_i < c_{i+1}}. Furthermore, if we have \f{c_i < c_j} then all of \f{c_i}'s descendents are smaller than all of \f{c_j}s descendents.
+* the order allows us to draw such trees in a deterministic manner, by placing all children below their parents, and in a sequence given by the order.
+* given any two nodes \f{x} and \f{y} neither of which is the ancestor of the other, we have that either \f{x < y} or \f{y < x}. There is a node \f{z} where the paths to the root converge for both \f{x} and \f{y} and \f{m} and \f{n} are the nodes just before this covergence, children on \f{z}. If \f{m < n} then \f{x < y} (since all descendents of \f{m} are smaller than all descendents of \f{n}), otherwise \f{y < x}. We can thus say that given two distinct nodes \f{x} and \f{y} we can have \f{x} is a proper descendent of \f{y} xor \f{x} is a proper ancestor or \f{y} xor \f{x < y} xor \f{y < x}.
+*  As a consequence, all leaves can be ordered. Furthermore, all nodes in one of the partition classes of height-partitioning can be ordered. Similarly, all nodes in a depth partition can be ordered in this manner (more straight forward).
+
+Labeled Tree:
+* a tree in which a label or value is associated with each node of the tree - the information associated with a given node (can be numbers (simple) or documents (complex) etc.). The label is different from the name (identification of a node in a tree). The name is unique and un-changable, whilst the label is (by algorithms etc).
+
+Partially Ordered Tree:
+* a rooted and labeled tree in which each node has has an associated priority in its label. A node has priority at least as high (or at least as low - but this is consistent) as its children. The root then has highest priority.
+* good implementation for priority queue. When we insert we add a new node on the last level (as far left as possible) and bubble it up. When we delete-max we remove the root and replace it with the rightmost element on the last level and then bubble it down.
+
+A \f{k}-ary and ordered tree is balanced if the root has all \f{k} children, and each of these children has its \f{k} children, all until the next-to-last level, where some nodes might not have their children (therefore the last level is incomplete), and the nodes appear in the 'left' of the last level. This implies that such a tree has height \f{\log_k{n}} (because it has roughly \f{k^{d+1}} nodes).
+
+\def{Trees} are a very common way to organize data. They are a collection of \def{nodes} and \def{edges}. Each node has one or more edges, one of which is especially designated as the \def{parent} edge and links the tree to its \def{parent} node, while the others are \def{child} edges and link the tree to its \def{children} nodes. A hierarchical structure thus becomes apparent. A single node has no parent edge, and it is called the \def{root} of the tree. Nodes with no child edges are called \def{leaf} nodes. Nodes with both parent and child edges are called \def{internal} nodes.
+
+Attached to each node is some information. As with all data management problems this is usually in the form of a key and some extra data (which is, again, not included). Keys can be held in all nodes or only in leaf nodes, depending on the problem.
+
+A tree is a special type of graph. More precisely, it is an acyclic and connected undirected graph. The following theorem characterizes some graph properties of a tree:
+
+T [Trees as Graphs]
+Given a tree \f{T} with \f{N} nodes, the following statements are equivalent:
+1. \f{T} is acyclic and connected.
+2. \f{T} contains no cycles and has \f{N-1} edges.
+3. \f{T} is connected and has \f{N-1} edges.
+4. \f{T} is connected, and every edge is a cut-edge (removing it breaks the connectivity of the graph).
+5. Any two vertices of \f{T} are connected by exactly one path.
+6. \f{T} contains no cycles, and for any new edge \f{e}, the graph \f{T+e} contains exactly one cycle.
+
+A tree can also be seen as a recursive data structure. A tree is either \f{\textbf{NIL}} or consists of the key and a number of child trees. This gives an intuition for many tree processing problems.
+
+Each node can be characterized by a distance to the root, equal to the number of edges between the node and the root. The minimum distance is \f{0} and appears between the root and itself, while the maximum allowed distance is \f{N-1}. This distance defines a partition of the nodes into \def{levels} of equal distance from the root. The \textbf{height} of the tree is the maximum distance from the root of any node, and it occurs on a leaf node on the last level (otherwise, an even larger height could be defined by considering one of the children).
+
+A special class of trees are \textbf{\f{m}-ary} trees, which are trees with at most \f{m} children. Of these, the most common are \textbf{binary} trees (\f{2}-ary trees). One child of a binary tree is called the \textbf{left} node/subtree, while the other child is called the \textbf{right} node/subtree.
+
+T [The Height of \f{m}-ary Trees]
+Given a \f{m}-ary tree \f{T} we have:
+1. If \f{T} has \f{N} nodes than its height is at least \f{\log_m{N}}.
+2. If \f{T} has height \f{h} then it has at most \f{m^h} nodes.
+
+A node in an \f{m}-ary tree is \textbf{complete} if it has \f{m} children. Otherwise it is \def{incomplete}. An \f{m}-ary tree is \textbf{complete} if every non-leaf node is complete. It is \textbf{partially complete} if only the nodes on levels \f{0} through \f{h-2} are complete, while level \f{h-1} has incomplete nodes.
+
+T [Nodes in a Complete Tree]
+Given an \f{m}-ary tree \f{T} with \f{N} nodes, the following statements are equivalent.
+1. \f{T} is complete.
+2. \f{T} has exactly \f{N=m^h} nodes.
+3. \f{T} has height exactly \f{h=\log_m{N}}.
+4. Every path from the root to a leaf has equal length.
+Given an \f{m}-ary tree \f{T} with \f{N} nodes, the following statements are equivalent.
+1. \f{T} is partially complete.
+2. \f{T} has between \f{m^{h-1} \leq N \leq m^h} nodes.
+3. \f{T} has height \f{h = \lceil\log_m{N}\rceil} but \f{h \ne \log_m{N}}.
+4. There are only two values the length of every path from the root to a leaf node may take, and these differ by \f{1}.
+
+In general, in programs, trees are represented by linked structures. A general tree stores its children as a linked list of nodes. It is, ofcourse, a member of such a list. A parent pointer is also useful for most processing tasks, and the code reduction and clarity it allows justifies the space consumption.
+
+struct Node
+  Key  info
+  Node parent
+  Node n\_sibling
+  Node p\_sibling
+  Node f\_child
+
+For \f{m}-ary trees, a simpler linked representation is:
+
+struct Node
+  Key      info
+  Node     parent
+  Node[m]  children
+
+While for binary trees, this degenerates to:
+
+struct Node
+  Key  info
+  Node parent
+  Node left
+  Node right
+
+struct Tree
+  Node Root
+
+In programs, \f{m}-ary trees are represented in either an array form or a linked form. The array form has the same limitations and advantages as for lists. The root node has position \f{0} in the array form. Given a node \f{i}, its \f{j}th child can be accessed at position \f{mi + j}. It's parent is at position \f{\lfloor i / m \rfloor}. This is the fixed representation (there is also one with dynamic placement of nodes and indices and which uses a table - maybe in extended version we'll talk about that). This can be applied to any type of \f{m}-ary tree, but it wastes a lof of space. It is only useful for complete or almost complete trees, where there are very few gaps. The structure for this one would be:
+
+struct Tree
+  Key[N] keys
+
+* Heaps. Insertion. Deletion. FindMax. BuildHeap. HeapSort. Time and space complexity in best/average/worst cases. Heaps as priority queus.
+
+\def{Heaps} are data structures which work with comparable keys and which allow building of fast priority queues as well as fast sorting. A heap is a binary tree which respects the \def{heap property}: given a node \f{x}, its children have keys greater than its own. This implies that as we go farther from the root, the keys become larger. There is no relation between the left and right children, however. The definition given here is that of a min-heap. Max-heaps are defined in a symmetrical manner, therefore we will focus only on the former case.
+
+Heaps support the standard operations of Insert, Delete, Search and add the efficient ExtractMin and BuildHeap methods. We constrain the tree to be partially complete, and, furthermore, the leftmost nodes from the next-to-last level should have children. Insert and Delete should maintain this property. Given all these, heaps are better implemented with arrays rather than with linked nodes.
+
+struct Heap
+  Key[N]   keys
+  Integer  size
+
+Fast: Insert places a node at the last+1 element in the keys array. It then swaps this element with its parent, repeatedly, until the heap property is satisfied. It then increments the size. Time complexity O(logN), space complexity O(1) on average/worst.
+
+Fast: Delete swaps the last element with the element \f{i} to be deleted. It then decrements the size. Since a heap property violation might occur, because the last element might be larger than the children in the position where it was placed, a repeated swap downwards, with the child of lower key is done, until the heap property is satisfied. Time complexity is O(logN), space complexity is O(1) on average/worst.
+
+Fast: Search proceeds in a linear fashion, as there is no special structure to exploit. Time complexity is O(N), space complexity is O(1) on average/worst.
+
+Fast: SearchMin finds the smallest key element in O(1) time, but must then remove it via the Delete operation. Time complexity is O(logN), space complexity is O(1) on average/worst.
+
+Fast: BuildHeap starts with an array of keys and produces a heap. We copy/reuse the space for the original array to the heap key array. It starts with an empty heap and a counter \f{k} set to 0. At time \f{k}, in the indices \f{0} to \f{k-1} the elements are such that they form a valid heap, while from \f{k} to \f{N-1} they are in their original order from the input between \f{k} and \f{N-1}. We insert element \f{k} into the heap.
+
+Graphs are represented by adjacency matrices (which are symmetric for undirected graphs). This required \f{\Theta(\abs{V}^2)} space. This is OK if \f{\abs{E} \approx \abs{V}^2}. Graphs can be represented by adjacency lists. For each node, we have a list of neighbors in undireted graphs, and a list of ``successors'' in directed graphs. This requires \f{\Theta(\abs{V} + \abs{E})} space.
+
+A walks is a sequence of nodes joined by paths. A walk is a path if the nodes are distinct. The length of the paths is the number of edges.
+
+The distance between two nodes is the length of the shortest path connecting the two nodes. The maximum length of a path is \f{\abs{V} - 1}. Otherwise we have repetitions. There are \f{\abs{V}!} directed paths of length \f{\abs{V}-1} in a graph. Let \f{s} be a node. \f{V_i \subseteq V} is the set of vertices that have distance \f{i} from \f{s}. \f{V_0 = \{s\}}.
+
+\begin{theorem}[NoName]
+  For \f{i = \hcrange{1}{n-1}} the set \f{V_i} is equal to the set of vertices \f{v \in V\setminus (V_0 \cup \dots \cup V_{i-1})} such that there exists an arc \f{(u,v) \in A} with \f{u \in V_{i-1}}.
+\end{theorem}
+
+\begin{proof}[NoName]
+Let \f{Q} be the set of vertices we're talking about. We want to prove \f{V_i = Q}. We first prove \f{V_i \subseteq Q}. Let \f{x \in V_i}. We want to prove that \f{x \in Q} as well. Now, if \f{x \in V_i}, this means that \f{d(s,x) = i}. Therefore, we have that the shortest path from \f{s} to \f{x} has \f{i} edges. Now, let this path be \f{s p_1 p_2 \dots p_{i-1} x}. We have that \f{(p_{i-1},x) \in A}, because we're talking about a path. Now, if \f{d(p_{i-1},x) = i - 1}. Otherwise, if there was a shorter path, we could use that to build our path to \f{x}, which is shorter, therefore we have a contradiction. Furthermore, since \f{d(p_{i-1},x) = i-1} we have that \f{p_{i-1} \in V_{i-1}}, which is what we wanted. Therefore, \f{x} is in \f{Q}. Now, we prove \f{Q \subseteq V_i}. Let \f{x \in Q}. This means, \f{x \in V\setminus (V_0 \cup \dots \cup V_{i-1})} and there is an arc \f{(u,x) \in A} with \f{u \in V_{i-1}}. We must prove that \f{x \in V_i} as well. But, this means proving \f{d(s,x) = i}. But, if \f{d(s,x) < i}, then \f{x} would belong to one of \f{V_0 \dots V_{i-1}}, which is not the case, by construction. But, since \f{u \in V_{i-1}} we have that \f{d(s,u) = i-1}. We can then build a path of length \f{i} by considering the path from \f{s} to \f{u} and adding the edge \f{(u,x)}. It makes no sense to search for longer paths, as this will define the distance. Therefore \f{d(s,x) = i} and we have our man.
+\end{proof}
+
+The breadth first algoritgm. Run-time is \f{O(\abs{A} + \abs{V})}.
+
+Directed trees. A connected graph with \f{\abs{V} - 1} edges and a root node. The BFS algorithm produces a shortest path tree (encoded in \f{D} and \f{\pi}) [proof].
+
+Representation of Trees: trees are represented by a node structure, which contains the linkage information to its parent and its children. If the tree is labeled, there is some label information, some children information and some parent information.
+* Label information:
+  * Node can holds its own parent information.
+  * Node holds label information for its children, associated with edge information.
+* Children edges:
+  * Array of pointers: a node has an array of pointers to its children. constant access to any child; space wasted - overall \f{kn}; either complex growing/shrinking logic or fixed branching factor. Has \f{1 + (k-1)n} null pointers (structural induction, base is easy, induction we have \f{(k - b) + \sum{1 + n_i (k-1)} = (k - b) + b + (k-1) (n-1)} null pointers overall) and \f{n-1} non-null pointers.
+  * List of siblings: a node has a pointer to its sibling (to the left of it) or NULL (if last sibling) or root. It also has a pointer to its leftmost child. Linear access to any child; space wasted dependent on number of siblings - overall \f{2n}; Easy variable branching. Has \f{n+1} null pointers (structural induction, base has \f{2} null pointers in single node, induction has \f{\sum{1 + n_i} - (k-1) + 1 = k + (n-1) - (k-1) + 1 = n + 1} - we subtract \f{k-1} null pointers because all the children of the current node have their next sibling pointer non-nullified when considering the bigger tree) and \f{n-1} non-null pointers. Just like array of pointers.
+* Both edge storing methods have the same number of non-null pointers - \f{n-1} - equal to the number of edges in an \f{n}-node tree and (the sum of degrees) - the exact amount of information we need - no more edges to add extra informatin.
+* Optionally we can include a parent pointer in each node, for bi-directional traversals.
+* Info in edges goes only with array of pointers, in which case it is \f{2kn} space overhead.
+
+Lowest common ancestor of two nodes \f{x} and \f{y}: the node \f{z} which is an ancestor of both \f{x} and \f{y} and which has no proper descendant which is an ancestor of both \f{x} and \f{y}. If we have a node structure with a parent pointer, we start from \f{x} and go to the root, building a path along the way, and start from \f{y} and go to the root, building a path along the way. We then compare the paths from the root backwards until we reach two different nodes. The node before that (there must always be one, since the root appears in all paths) is the common ancestor. No previous node can be, otherwise we'd have cycles - no-no in a tree.
+
+Tree traversal: starting at the root, visit each node in the tree at least once and perform some computation on each node (label) exactly once. Most traversals are recursive:
+  * the traversal modes are:
+    * breadth first - visit all nodes of depth \f{0}, then all of depth \f{1} etc. Use a queue to store to-be-visited nodes. No bitmap needed, since we never go back up.
+    * depth first - visit as much as possible down. Use a stack to store to-be-visited nodes. Or simply use the call stack. Or no stack at all if we also keep the parent pointer.
+  * order of operations for depth first can be:
+    * if we have some processing that we want to do to each node, traversal can be done in pre, post and in-order, meaning that the processing is done to the current node, before it is done on the children, after it is done on the children, or between it is done on the children (meaninfgul for binary trees).
+  * each node has a unique index assigned to it by a traversal.
+  * if we do a depth first traversal we can in \f{O(1)} compute size (return traversal index in post-order), depth (return traversal index minus traversal index of parent in in-order) and whether two nodes are in the ancestor relationship (one node will have a pre-order).
+
+Computing the height of a tree: if the node is a leaf (all children nodes are null), return null. Otherwise, compute the height of all children and return \f{1} plus the maximum of their height. It is a post-order traversal of the tree. The time complexity is \f{O(n)} while the space complexity is \f{O(h)} (where \f{h} is the height and it can be \f{n} in bad cases) or \f{O(1)} in an iterative case with parent pointers to follow.
+
+Left right pair: a pair of nodes \f{(x,y)} such that \f{x} appear 'to the left' of \f{y} in a binary tree. An algorithm for finding out the number of such pairs does a post-order traversal of the tree. At each node we aim to compute the number of left-right pairs and the total number of nodes in that tree. For a leaf we produce \f{(0,1)}. For an interior node, we produce \f{(p_l, n_l)} and \f{(p_r, n_r)}. The new number of left-right pairs for this node is \f{n_l}, therefore the total number so far is \f{p_l + n_l}. On the other hand the new total number of nodes is \f{n_l + n_r + 1}. We return \f{(p_l + n_l, n_l + n_r + 1)}.
+
+All traversal algorithms have complexity \f{O(T_{op} n)} where \f{T_{op}} is the complexity of the per-node operation. They have space complexity \f{O(1)} or \f{O(h)}.
+
+Binary Tree:
+  * a \f{k}-ary tree for which \f{k=2} which is also ordered.
+  * for each node, one child is designated as the left child, while the other is the right child. When drawing, this is used to place nodes relative to each other. This is an important distinction from a tree which might have at most two nodes, but with no designated left-right child. It holds for \f{k}-ary trees in general.
+  * for any node \f{k} we can partition the tree into those nodes which are larger than \f{k} (all right children of \f{k}, all descendents of ancestors of \f{k} where we're entering the ancestor through the left (including that ancestor)) and nodes which are smaller than \f{k} (all left children of \f{k}, all descendents of ancestors of \f{k} where we're entering the ancestor through the right (including that ancestor)).
+  * we allow empty trees. A recursive definition would be: a binary tree is an empty tree or a tree formed from a node \f{r} and another left and right binary trees.
+  * natural representation of a node is: label, left-pointer, right-pointer, parent (optional).
+  * a full node is one with both left and right non-empty subtrees. The number of such nodes is equal to the number of leaves minus \f{1} (structural induction).
+
+= Binary Search Trees =
+
+A binary tree which has a comparable object associated with each node and where all the keys in the subtree of the left child have values smaller than the node which has values smaller than all the nodes in the right subtree.
+
+It is useful for implementing smaps, ssets, and priority queues, when the inputs are guaranteed to be uniformly distributed, as we get \f{O(\log{n})} complexity for the basic operations. Think that the root is probably larger than half the nodes and smaller than the other half - therefore we reduce in half the number of nodes to visit in the operations we'll see. If the inputs are presented in a bad order - almost sorted, then complexity skyrockets to linear. Intuitively, consider even a worst case where \f{3/4} of nodes at each level are in one branch. Then, we get that \f{(3/4)^kn \leq 1} holds (\f{k} is number of steps to get to a leaf node in case of really-bad splits). Then we have \f{k \log_2 {3/4} + \log{n} \leq 0} or \f{k \geq (-1/\log_2 {3/4}) \log{n} = \alpha \log{n}} (where \f{\alpha > 0}). Therefore \f{k = \Omega(\log{n})}.
+
+It is a building point for more sophisticated 'balancing' trees.
+
+The overall overhead is \f{3n+O(1)} or \f{2n+O(1)} if no parent pointer is kept.
+
+Not cache-friendly.
+
+== Operations on a binary search tree ==
+
+All such operations can either be implemented as recursive algorithms or as iterative algorithms, with using an extra data structure instead of the implicit call stack.
+
+All operations must maintain the binary search tree constraint - otherwise we gain nothing.
+
+Find a key - start at the root. If the key of the current node is equal to \f{x}, we've found our node. If it is larger, repeat the procedure for the left subtree, else for the right. If we reach a leaf and we're not in the first case, the key is not in the tree. Find is proportional to the depth of the searched node \f{\lt} height of tree \f{\lt n}. Proof by structural induction (basis case is tree is empty or element is at root. inductive case means the element is in one of the subtrees or not at all. since the algorithm searches the tree in which the element must be, it finds it or it is not in the tree).
+
+For a given node, the successor will be the smallest element in the right subtree (Obviously true for root. For another node, if it is a left child of a parent, then the parent and it's right subtree are larger than both the node and any node in the right subtree, therefore no win. If it is a right tree, then the node itself is larger than the parent and it's left subtree, so no win again. The same argument holds going another level, regardless of the orientation of the parnet-child relationship.) If there is no right subtree, then we must go up towards the root until we find a ancestor we approach through it's left path. That node is the successor node. If we get to the root, there is no successor, since we only approached through the right, therefore we are the maxmum (For a given node, if it is a left child of its parent, then the parent will be bigger, and any other node will be bigger still, by the same reasoning as before, so this is it. If it is a right child, then the parent will be smaller, and in it's left subtree even smaller. We must go up until we find what we're looking for).
+
+Insert a key - start at the root. Do the same operation as the find operation, but when we don't find the node, insert it as the left or right child of the stop-leaf, as appropriate. insert can leave the height the same or increase it by \f{1}. we always insert a leaf.
+
+Remove a key - start at the root. Do the same operation as the find operation. If the stop-node is a leaf, simply remove it by severing its link to its parent. If it only has a left or right child, replace node in parent with existing child. If has both left and right, we search for and remove the minimum node (see next) in the right subtree (smallest keyed node larger than the current node) or, equally the maximum node (see next) in the left subtree (largest keyed node larger than the current node), and replace the current node with the removed node. remove can leave the height the same or decrease it by \f{1}. we always remove a leaf.
+
+Remove a key alt - make the right subtree of the node be a subtree of the parent of the node (either left or right, as the node was) and make the left subtree the left subtree of the minimum from the right subtree (which has no left node, by definition (otherwise it would be no longer the minimum)). Not a good strategy because paths tend to become long, but interesting.
+
+Find minimum - start at the root/or another node and take the left child until we reach a leaf node - that is the minimum by the BST property. Proof by contradiction - any other path will imply a right, therefore missing on possibly smaller nodes.
+
+Find maximum - same as find minimum, but always take the right.
+
+Rotate right - for a given node \f{A}, its children \f{B} and \f{C} and the children of \f{B}, \f{D} and \f{E}, produces a tree with \f{B} as root, \f{D} and \f{A} as its children and \f{E} and \f{C} as the children of \f{A}. We have rotated the subtree rooted at \f{E} and swapped it directly to \f{A}.
+
+Rotate left - for a given node \f{A}, its children \f{B} and \f{C} and the children of \f{C}, \f{D} and \f{E}, produces a tree with \f{C} as root, \f{A} and \f{E} as its children and \f{B} and \f{D} as the children of \f{E}. We have rotated the subtree rooted at \f{D} and swapped it directly to \f{A}.
+
+Performing a left rotation then a right rotation gives us the original and viceversa. These are constant time operations, useful in balancing.
+
+Other collection operations:
+* merge is done \f{O(mh')} or \f{O(\min(n,m)\log{n+m})} if we're fairly balanced, by inserting the nodes in one tree into the other.
+
+A binary search tree can also implement a priority queue structure (though less efficiently than a heap). Insert is done by the normal BST insert, whereas delete is first a find maximum, then a deletion of the found node (which is simple since the node has at most one child). The time complexity is \f{O(h)}. Balancing, of course, helps.
+
+= Trie =
+
+Let \f{\Sigma} be an alphabet.
+
+A \f{\abs{Sigma}}-ary labeled tree used to implement the Set data model for objects from \f{\Sigma^\star}.
+
+Label is a boolean.
+
+Each edge to a child is also tagged with a symbol from \f{\Sigma}.
+
+Determining if an object is in the trie means starting from the node. If there is an edge labeled with \f{x_0} then take that and repeat the procedure for \f{x_1}. If we reach a node where \f{x_{i}} does not match any edge, the object is not in the trie. If we reach \f{x_l} and the label of the current node is \f{false}, the object is not in the trie. Otherwise it is.
+
+Insertion proceeds along similar lines, only we add the necessary nodes.
+
+Deletion proceeds along similar lines, only we mark the final node as \f{false} if it was true (and can also delete all nodes with a single child until we reach multi-child nodes).
+
+Complexity of all operations is equal to the length of the object in the worst case and the average length over any objects (which might not be that large, considering, English words, for example) in the average case, in terms of data-structure size.
+
+Space complexity is \f{(2\abs{\Sigma} + 1)n} for an-array-of-pointers implementation or \f{4n} (\f{2n + 2\sum_{i=1}^nc_i - 1 = 4n-1}) for leftmost-child-right-sibling representation. The former has fast symbol lookup at step \f{i} (just an array index), but much wasted space, while the later has slower symbol lookup \f{O(\abs{\Sigma})} in the worst case (but usually much less if the conditions which would lead to wasted space in the former case appear), but wasted space proportional to how many edges are actually in use.
+
+= Heap =
+
+We can use a heap to extract the \f{\sqrt{n}} top elements in a list of \f{n} elements. We first build a heap out of them \f{O(n)}. Then we extract-min out of \f{\sqrt{n}} out of them. The running time is \f{O(\sqrt{n}\log{n}) = O(n)}. We must find \f{x_0} and \f{c} such that \f{\sqrt{n}\log{n} < cn} or \f{\log{n} < c\sqrt{n}}. This is equivalent to saying \f{O(\log{n}) = O(\sqrt{n})} which we know holds.
+
+A balanced partially ordered binary tree, hence it has height \f{\log{n}}.
+
+Used to implement an priority queue ADT.
+
+Usually implemented as an array. Element \f{A[0]} is not used. \f{A[1]} is the root, \f{A[2]} is the left child of the root, \f{A[3]} the right child. In general \f{A[2i]} and \f{A[2i+1]} are the left and right children of node \f{i}. First we have level \f{0}, then level \f{1} etc. in the array. Given node \f{i}, node \f{\floor{i/2}} is its parent.
+
+Insertion is done by adding a new element at position \f{A[n]}. The heap property might be violated between \f{n} and \f{\floor{n/2}} (and at no other place) - if so, we swap the elements. We do this (recursively) until we reach the top (not necessary to do so though).
+
+Deletion is done by swapping the last element with the (and decrementing the counter). The heap property might be violated between the root and its children. If we swap with the biggest of the children, the heap property will be mantained, but a new violation might occur  btween the swapped elemente and its new children. We do this (recursively) until we reach the bottom.
+
+The recurrance relation which describes the runtime of both operations is \f{T(1) = O(1)}, \f{T(i) = O(1) + T(i/2)} (in the first case \f{i} measures the position we're at (we start with \f{i=n}), while in the second case it measures the number of elements in a heap with violations (we start with \f{i=n})). We have, of course, \f{T(n) = O(\log{n})}. Informally, each iteration of these two moves us one node closer to the root or one node away from it. Since such trees have high \f{\log{n}}, we gets what we want.
+
+A heap does not need to use an array. A linked structure for binary trees is sufficient (left child, right child, parent), with the same operations of bubble up and down as before, only working with pointers. Does not need to do grow/shrink (altough those are amortized to constant time).
+
+Given an array we can efficiently heapify it. Notice that \f{A[n/2:n]} consists of the last layer of the full heap and it is \f{n/2} small heaps. Next \f{A[n/4:n/2]} consists of the \f{n/4} height \f{1} nodes, and they could pose problems (not be a heap with the last layer), therefore we apply bubble down on them, to solve any problems, and we get good heaps again. This repeats itself until we reach the top. At each new level we start with the previous levels forming valid heaps, therefore we only have a violation at the top. The algorithm just starts with node \f{n/2} and runs to node \f{1}, doing a bubble down from each node. Complexity is then \f{\sum_{i=1}^{\log_2{n/2}} 2^{h-i} i = n\sum_{i=1}^{\log_2{n/n}} i/2^i \leq n \sum_{i=1} i/2^i \leq 2n = O(n)}. See notes on that sum for why it is that way.
+
+Fun fact: probability of a randomly generated sequence of distinct numbers is a heap is \f{(1! 2! \cdots 2^{\log_2{n}-1}! (n - 2^{\log_2{n}} + 1)!)/n!}. Root must contain top element (done with probability \f{1/n}). Level \f{1} must contain remaining top two elements (done with probability \f{2 1/(n-1) 1/(n-2)}). Level \f{2} must contain remaining top four elements (done with probability \f{4! 1/(n-3) 1/(n-4) 1/(n-5) 1/(n-6)}). The \f{4!} is because we can have \f{4!} permutations of the remaining four elements (each has the same probability).
+

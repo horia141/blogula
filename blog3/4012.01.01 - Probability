@@ -1,0 +1,343 @@
+Probability space (more CS oriented): a finite set of points, each of which represents one possible outcome of an experiment. Each point has an associated non-negative number, called its probability, such that the sum of all probabilities is \f{1}.
+
+An event is any subset of the set of outcomes. The probability of an event, \f{P(E)} is the sum of probabilities of the associated outcomes. The probability of an event is between \f{0} and \f{1}, the former case if the event is empty or consisting of \f{0} probability outcomes, and the latter case if the event contains all outcomes, or all outcomes with positive probability.
+* We also have \f{P(E) + P(\overline{E}) = 1}.
+* If \f{E} and \f{F} are two events and \f{E \cup F = \emptyset} then \f{P(E \cup F) = P(E) + P(F)} - sum of disjoint probabilities.
+
+The conditional probability of \f{E} given \f{F}, two events, is the probability of \f{E} occuring, given the fact that \f{F} has occured. We consider the event \f{F} to be the new probability space, and norm all probabilities to it. The probability of \f{E} in \f{F} is \f{E \cap F}, normalized by \f{P(F)}. Thus we have \f{P(E \given F) = P(E \cap F) / P(F)}.
+
+If we condition on \f{\overline{F}} we get \f{P(E \given \overline{F}) = P(E \setminus F) / P(\overline{F})} - the ratio between the part of \f{E} that is not in \f{F} and the whole space excluding \f{F}. [A very nice diagram of this could be useful].
+
+We say that two events \f{E} and \f{F} are independent, if the probability of \f{E} given that \f{F} has occured, is equal to the probability of \f{E} - that is, the knowledge that \f{F} has occured does not improve our knowledge about \f{E}. We say \f{E \perp F} iff \f{P(E \given F) = P(E)}. Intuitively, the ratio between the probability volume of the part of \f{E} that is in \f{F} (\f{E \cap F}) and the probability volume of \f{F} is the same as the ratio between \f{E} and the whole probability volume. We have mutual independence for more events (pairwise independence).
+
+If we have a set of mutually independent experiments \f{X_1,\dots,X_n} then \f{P(X_1 = a_1 \land \dots \land X_n = a_n) = \Prod_{i=1}^n P(X_i = a_i)}.
+
+If we have two events \f{E} and \f{F} then \f{P(E \cup F) = P(E) + P(F) - P(E \cap F)}.
+
+If \f{E} is an event and \f{P} is a \f{k}-partition of the probability space, then we can write \f{P(E) = \sum_{i=1}^k P(E \cap P_i) = \sum_{i=1}^k P(E \given P_i) P(P_i)}.
+
+[Baye's Rule]
+
+Rule of Sums / Union Bound: If \f{E} and \f{F} are two events, then \f{\max(P(E),P(F)) \leq P(E \cup F) \leq P(E) + P(F)}. This works when we condition as well. Intuitively, we have \f{P(E \cup F) = P(E) + P(F)} when the two are disjoint, and there is no element in common. Otherwise we have \f{P(E \cup F) < P(E) + P(F)}. We have \f{\max(P(E),P(F)) = P(E \cup F)} when \f{E \subseteq F} or vice-versa. This generalizes naturally to more events.
+
+Rule of Products: If \f{E} and \f{F} are two events, then \f{P(E) + P(F) - 1 \leq P(E \cap F) \leq \min(P(E),P(F))}. This works when we condition as well. Intuitively, we have \f{P(E \cap F) = \min(P(E),P(F))} when \f{E \subseteq F} or vice-versa. The other part is not so tight. If \f{E} and \f{F} are disjoint, then \f{P(E \cap F) = P(\emptyset) = 0} which is higher than the negative \f{P(E) + P(F) - 1}. This generalizes naturally to more events.
+
+The expected value of \f{f} on a probability space is \f{\mathbb{E}[f] = \int_\Omega p(x)f(x) dx = \int_{\ran{f}} v P(X == v) dx} - the weighted value of the function on each outcome, with weight equal to the probability of that outcome.
+
+\def{Distribution of maximum of IID random variables}. Let \f{X_1,\dots,X_n} be IID random variables and \f{Y = \max{X_1,\dots,X_n}}. Then \f{CDF_Y(y) = \prob{\max{X_1,\dots,X_n} \leq y} = \prob{X_1 \leq y \land X_2 \leq y \land \cdots \land X_n \leq y} = \prob{X_1 \leq y} \prob{X_2 \leq y} \cdots \prob{X_n \leq y} = CDF_{X_1}(y) CDF_{X_2}(y) \cdots CDF_{X_n}(y) = (CDF_X(y))^n}. Then \f{PDF_Y(y) = n (CDF_X(y))^{n-1} PDF_X(y)}, if \f{PDF_X} exists and \f{CDF_X} is differentiable.
+
+\def{The Inner Product Space Of Random Variables}. One can see the set of all random variables as an inner product space, with addition given by \f{X + Y}, scalar multiplication by \f{aX} in their normal application to random variables and the inner product \f{\inner{X}{Y} = \mean[XY]}.
+
+\def{Expected Value is a Convex Combination} in the discrete case, and one could generalize to the continuous case as well, the expected value of a function \f{g(X)} is a convex combination, using \f{\prob(X)} as the weights. More precisely, for \f{x \in \dom{X}} we have the term \f{p(x) g(x)}. When placed in a sum, all these form a convex combination thanks to the properties of \f{\prob}.
+
+= Classical Inequalities =
+
+The inequalities are ordered from simplest to most complex, which also corresponds to loosest to tightest.
+
+Useful tool: let \f{X} be a random variable and \f{g} an increasing function on \f{\dom{X}}. Then \f{P(X \leq a) = P(g(X) \leq g(a))}.
+
+== Markov ==
+
+Let \f{X} be a non-negative random variable, for which \f{\mean{X}} exists, and \f{t > 0}. Then, \f{\prob{X \geq t} \leq \mean{X} / t}.
+
+Intuitively, the probability of being greater than \f{t} is bounded by a constant times the reciprocal of \f{t}, which tends to \f{0} as \f{t}  increases.
+
+Proof Idea: split \f{\mean{X} = \int_0^{+\infty} x p(x) dx} into \f{\int_0^t x p(x) dx + \int_t^{+\infty} x p(x) dx}. The first term is nonnegative, while the latter is greater then or equal to \f{\int_t^{+\infty} t p(x) dx}, which leads to what we want.
+
+== Chebyshev ==
+
+Let \f{X} be a random variable, for which \f{\mean{X}} and \f{\var{X}} exist, and \f{t > 0} a number. Then \f{\prob{\abs{X - \mean{X}} \geq t}\leq \var{X} / t^2}.
+
+In Z scores this becomes \f{\prob{Z_X \geq t} \leq 1 / t^2}. Bernoulli case: let \f{X_1,\dots,X_n \distas Bernoulli[p]} and \f{\epsilon \gt 0}. Then \f{\prob{\abs{1/n \sum_{i=1}^n X_i - p} \geq \epsilon} \leq p(1-p) / ne^2}.
+
+Intuitively, the probability of being farther away in either direction from the mean by more than \f{t} is bounded by a constant times the squared reciprocal of \f{t}, which tends to \f{0} as \f{t} increases.
+
+Proof Idea: notice that \f{\prob{\abs{X} \geq t} = \prob{X^2 \geq t^2}} and use \f{\abs{X - \mean{X}}} in the \ref{Markov's Inequality}
+
+== Hoeffding ==
+
+Let \f{Y_1,\dots,Y_n} be random variables, for which \f{a_i \leq Y_i \leq_i} and \f{\mean{E_i} = 0}, \f{\epsilon > 0} and \f{t > 0}. Then \f{\prob{\sum{Y_i} > \epsilon} \leq e^{-t\epsilon} \prod_{i=1}^n e^{t^2(b_i-a_i)^2/8}}.
+
+Alternative case: let \f{X_1,\dots,X_n} be IID random variables in \f{[0,1]} and \f{\epsilon > 0}. Then \f{\prob{\abs{1/n \sum_{i=1}^n X_i - \mean{X}} > \epsilon} \leq 2e^{-2n\epsilon^2}}. Bernoulli case: let \f{X_1,\dots,X_n \distas Bernoulli[p]} and \f{\epsilon \gt 0}. Then \f{\prob{\abs{1/n \sum_{i=1}^n X_i - p} \geq \epsilon} \leq 2e^{-2n\epsilon^2}}. This is tigther than the Chebyshev equivalent.
+
+Intuitively, the probability of being further away from the actual \f{p} for the Bernoulli model, when estimating by a mean of binary outcomes, is bounded by an exponantially dropping function of both \f{\epsilon} and the sample size. Very tight!
+
+Useful for constructing confidence intervals for the mean of Bernoulli variables estimator.
+
+== Mill ==
+
+Let \f{Z \distas \mathbb{N}[0,1]} and \f{t > 0}. Then \f{\prob{\abs{Z} > t} \leq \sqrt{2/\pi} e^{-t^2/2} / t}.
+
+Proof Idea: notice that \f{\prob{\abs{X} > t} = 2\prob{X > t} = 2(1 - \prob{X \leq t}) = 2(1 - \erf{t})}. Maybe we can bound this?
+
+== Cauchy-Scwartz ==
+
+Let \f{X,Y} be random variables for which \f{\var{X}} and \f{\var{Y}} exist.
+
+Then \f{\mean{XY} \leq \sqrt{\mean{X^2}\mean{Y^2}}}.
+
+Proof Idea: according to \ref{The Inner Product Space Of Random Variables} \f{X} and \f{Y} are two vectors. The classical linear algebra Cauchy-Schwartz inquality holds.
+
+== Jensen ==
+
+Let \f{X} be a random variable and \f{g} a convex function on the domain of that random variable. Then \f{\mean{g(X)} \leq g(\mean{X})}. This goes viceversa for concave variables.
+
+Proof Idea: consider \ref{Expected Value is a Convex Combination} and the fact that \f{g} is convex, thus \f{\alpha g(x) + (1 -\alpha) g(y) \leq g(\alpha x + (1 - \alpha) y)}, and you get your answer. Just need to generalize by induction to all discrete cases.
+
+Proof 2: since \f{g} is convex it lies above any tangent line at a given point \f{x}. Let this point be \f{\mean{X}} and the line through it be \f{a + bx}. Then we have \f{\mean{g(X)} \leq \mean{a + bX} = a + b \mean{X} = g(\mean{X})} since \f{a + bx} and \f{g} are tangent at \f{\mean{X}}.
+
+Quick applications:
+* \f{\mean{X^2} \leq \mean{X}^2}: the mean of a squared random variable is larger than the mean of the random variable, squared.
+* If \f{X > 0} then \f{\mean{1 / X} \leq 1/\mean{X}}: the mean of the reciprocal of a random variable is larger than the reciprocal of the mean of that random variable.
+* If \f{X > 0} then \f{\mean{\log{X}} \leq \log{\mean{X}}}: the mean of the logarithm is smaller than the logarithm of the mean. A very useful result for bounding log-likelihoods.
+
+= Large Sample Theory =
+
+Also known as Limit Theory or Asymptotic Theory. Concerns the limiting behaviour of sequences of random variables. That is, we're interested in how a sequence of random variables converges to another random variable.
+
+Let \f{X_1,X_2,\dots} be a sequence of random variables and \f{X} another random variable.
+
+Types of convergenve:
+* In \def{probability}: \f{\series{X}{n}} converges to \f{X} if for every \f{\epsilon > 0} we have \f{\lim{n}{+\infty}{\prob{\abs{X_n - X} > \epsilon}} = 0}. We write \f{\limprob{\series{X}{n}}{X}}. Intuitively, the probability of having a value with a given deviation from the \f{X} goes down to \f{0} (in an experiment/simulation, the draws would have very low probability of producing a value different from the draw of \f{X} after a while).
+* In \def{distribution}: \f{\lim{n}{+\infty} CDF(X_n) = CDF(X)}. We write \f{\limdist{\series{X}{n}}{X}}. Intuitively, the CDF of the sequence tends to the CDF of X.
+* Almost \def{sure}: \f{\prob{\set{s}{\lim{n}{+\infty}{X_n(s)} = X(s)}} = 1}. We write \f{\limsure{X}{n}{X}}.
+* \def{L_2}: Also called \def{quadratic mean convergence}. \f{\lim{n}{+\infty}{\mean{(X_n - X)^2}} = 0}. We write \f{\liml2{\series{X}{n}}{X}}. Intuitively, the average value of the squared difference between \f{X_n} and \f{X} is \f{0} as \f{n} increases.
+* \def{L_1}: \f{\lim{n}{+\infty}{\mean{(X_n - X)^2}} = 0}. We write \f{\liml1{\series{X}{n}}{X}}. Intuitively, the average value of the absolute difference between \f{X_n} and \f{X} is \f{0} as \f{n} increases.
+
+If \f{\liml2{\series{X}{n}}{X}} then \f{\limprob{\series{X}{n}}{X}}.
+
+Proof Idea: use \ref{Classical Inequalities:Chebyshev}{Chebyshev's inequality} to bound this or \ref{Classical Inequalities:Markov}{Markov's inequality} and look at \f{\prob{\abs{X_n - X} > \epsilon} = \prob{(X_n - X)^2 > \epsilon^2}}.
+
+If \f{\limprob{\seriees{X}{n}}{X}} then \f{\limdist{\series{X}{n}}{X}}. Example of the reverse not being true: \f{X \distas \mathcal{N}[0,1]} and \f{X_n = -X}. Obviously \f{\limdist{\series{X}{n}}{X}}, but intuitively, when one process generates a positive value, the other generates a negative one, so regardless of \f{n} there is a "gap" between the values generated. More formally, \f{prob{\abs{X_n - X} > \epsilon} = \prob{\abs{2X} > \epsilon} = \prob{\abs{X} > \epsilon / 2} \neq 0} in general.
+
+If \f{X} is point mass and \f{\limdist{\series{X}{n}}{X}} then \f{\limprob{\series{X}{n}}{X}}.
+
+If \f{\limas{X}{n}{X}} then \f{\limprob{X}{n}{X}}.
+
+If \f{\liml2{X}{n}{X}} then \f{\liml1{X}{n}{X}}.
+
+If \f{\liml1{X}{n}{X}} then \f{\limprob{X}{n}{X}}.
+
+Other pitfalls: if \f{\limprob{\series{X}{n}}{b}} this does not mean that \f{\lim{n}{+\infty}{\mean{X_n}} = b}. A counterexample is \f{X_n \distas [0 \column 1 - (1/n) n^2 1/n]}. \f{X_n} must be \ref{Asymptotically Uniformly Integrable}.
+
+Conservation of properties under different convergence types:
+* \f{\limprob{X}{n}{X}} and \f{\limprob{Y}{n}{Y}} then \f{\limprob{X+Y}{n}{X+Y}}.
+* \f{\liml2{X}{n}{X}} and \f{\liml2{Y}{n}{Y}} then \f{\liml2{X+Y}{n}{X+Y}}.
+* \f{\limdist{X}{n}{X}} and \f{\limdist{Y}{n}{c}} then \f{\limdist{X+Y}{n}{X+c}}.
+* \f{\limprob{X}{n}{X}} and \f{\limprob{Y}{n}{Y}} then \f{\limprob{XY}{n}{XY}}.
+* \f{\limdist{X}{n}{X}} and \f{\limdist{Y}{n}{c}} then \f{\limdist{XY}{n}{cX}}.
+* \f{\limprob{X}{n}{X}} then \f{\limprob{g(X)}{n}{g(X)}}.
+* \f{\limdist{X}{n}{X}} then \f{\limdist{g(X)}{n}{g(X)}}.
+
+== The Law Of Large Numbers ==
+
+Crowning achievement of probability theory. States that the mean of a number of random variables, under certain conditions, tends to be close to the actual mean.
+
+The \def{Weak Law Of Large Numbers (WLLN)}. Let \f{X_1,\dots,X_n} be IID random variables, \f{\mu = \mean{X_i}} their mean and which is finite and the variance is also finite and \f{\hat{mu}_n = 1/n \sum_{i=1}^n X_i} the "estimated mean". Then \f{\limprob{\hat{mu}}{n}{\mu}}. Intuitively, the distribution of \f{\hat{mu}_n} becomes more concentrated around \f{\mu} as \f{n} gets larger.
+
+Proof Idea: start with \f{\prob{\abs{\hat{mu}_n - \mu} > \epsilon}} and apply \ref{Classical Inequalities:Chebyshev}{Chebyshev's inequality}. This assume the variance exists.
+
+\def{Strong Law Of Large Numbers (SLLN)}. Let \f{X_1,\dots,X_n} be IID random variables, \f{\mu = \mean{X_i}} their mean which is finite and \f{\hat{mu}_n = 1/n \sum_{i=1}^n X_i} the "estimated mean". Then \f{\limas{\hat{mu}}{n}{\mu}}.
+
+== Central Limit Theorem ==
+
+Crowning achievement of probability theory. States that the mean of a number of random variables, under certain conditions, has a normal distribution.
+
+\def{Population Central Limit Theorem} Let \f{X_1,\dots,X_n} be IID random variables, which have a mean \f{\mu} and variance \f{\sigma^2} and \f{\hat{mu}_n = 1/n \sum_{i=1}^n X_i} the "estimated mean". Then \f{\limdist{\sqrt{n}(\hat{mu}_n - \mu) / \sigma}{\mathcal{N}[0,1]}} or \f{\limdist{\hat{mu}}{n}{\mathcal{N}[\mu,\sigma^2/n]}}.
+
+\def{Sample Central Limit Theorem} Let \f{X_1,\dots,X_n} be IID random variables, which have a mean \f{\mu} and variance \f{\sigma^2}, \f{\hat{mu}_n = 1/n \sum_{i=1}^n X_i} the "estimated mean" and \f{\hat{sigma^2}_n. = 1/(n-1) \sum_{i=1}^n (X_i - \f{hat{mu}})^2} the "estimated variance". Then \f{\limdist{\sqrt{n}(\hat{mu}_n - \mu) / \hat{sigma^2}_n}{\mathcal{N}[0,1]}} or \f{\limdist{\hat{mu}}{n}{\mathcal{N}[\mu,\sigma^2/n]}}.
+
+These two theorems hold for the multivariate case as well, but we need to change \f{\sigma} the variance with \f{\Sigma} the covariance matrix.
+
+Intuitively, adding many independent "effects" together generates a normal distribution, which explains how common this distribution appears in science.
+
+We will use it to approximate probability statements about \f{\hat{mu}_n}.
+
+== The Delta Method ==
+
+Allows us to find the distribution of a differentiable function applied to a sequence which converges to a normal distribution, as happens with the \ref{Central Limit Theorem}.
+
+\def{Univariate case} Let \f{Y_1,\dots,Y_n} such that \f{\limdist{Y}{n}{\mathcal{N}[\mu, \sigma^2/n]}} and \f{g} a differentiable function with \f{g'(x) \neq 0} for all \f{x}. Then \f{\limdist{g(Y)}{n}{\mathcal{N}[\mu, (g'(\mu))^2\sigma^2/n]}}.
+
+\def{Multivariate case} Let \f{Y_1,\dots,Y_n} such that \f{\limdist{Y}{n}{\mathcal{N}[\mu, 1/n \Sigma^2]}} and \f{g} a differentiable function with \f{\gradient{g}(x) \neq 0} for all \f{x}. Then \f{\limdist{g(Y)}{n}{\mathcal{N}[\mu, 1/n \gradient{g}(\mu)^T \Sigma^2\gradient{g}(\mu)]}}.
+
+= Common Distributions =
+
+== Discrete ==
+
+=== Bernoulli ===
+
+Model a trial which can have an outcome of either success (something which we wanted to happen happens) or failure (something which we wanted to happen does not happen). We code success as \f{1} and failure as \f{0}. 
+
+The domain is \f{\{0,1\}}.
+
+Parameters: \f{p} - the probability that the trial is a success.
+
+THe PDF is \f{\mathcal{B}[p](1) = p} and \f{\mathcal{B}[p](0) = 1 - p}.
+
+\f{\mean{X} = p} and \f{\sd{X} = \sqrt{p(1-p)}}.
+
+Quick note on estimation: we perform \f{n} trials and obtain \f{k} successes. Then we can estimate \f{p} by \f{\hat{p} = k/n} - the proportion of successes to the number of trials / observations in the experiment / sample.
+
+=== Geometric ===
+
+Model the number of success/failure trials needed for a success to happen, if every trail is identical and independent of each other.
+
+The domain is \f{\mathbb{N}^+}.
+
+Paramters: \f{p} - the probability that a trial is a success.
+
+The PDF is \f{\mathcal{G}[p](n) = (1 - p)^{n-1}p}. That is, the probability of the success occuring on the first trial is simply \f{p} (the probability of a trial being a success), and we stop afterwards. The event that the success occurs on the second trial consists of the first trial failing and the second one succeeding. Since the trials are independent, then the probability is \f{1-p} (failure of first) times \f{p} (success of second). This is generalized in the form of the PDF. The probabilities decrease exponentially fast. The probabilities for each event are geometric progression terms.
+
+\f{\mean{X} = 1/p} and \f{\sd{X} = \sqrt{(1-p)/p^2}}. Intuitively, for trials with probability \f{1} in \f{k} then \f{\mean{X} = k}. We need, on average \f{k} trials, before a success happens.
+
+Decreasing \f{p} increases the mean time to a success and decreases the standard deviation (it becomes less and less probable to have a success earlier than the mean, but also too late than the mean).
+
+=== Binomial ===
+
+Model the number of success/failure trials if we are only allowed to make \f{n} of them, and every trial is identical and independent of each other.
+
+The domain is \f{\hcrange{1}{n}}.
+
+Parameters: \f{n} - the number of trials and \f{p} - the probability that a trial is a sucess.
+
+The PDF is \f{\mathcal{Bin}[n,p](k) = \choose{n}{k} p^k (1-p)^{n-k}}. An event with \f{k} successes and \f{n-k} failures, all of them independent has probability \f{(1-p)^{n-k}}. Combinatorics problem of selecting \f{k} items from a set without replacement and where the order does not matter says that there are \f{\choose{n}{k}} such events. Hence the PDF.
+
+Commonly we have \f{X = X_1 + \dots + X_n} where \f{X_i \distas \mathcal{B}[p]}.
+
+\f{\mean{X} = np} and \f{\sd{x} = \sqrt{np(1-p)}}. The mean is linear thus \f{\mean{X} = \sum_{i=1}^n \mean{X_i} = np}. Therefore, if a Bernoulli experiment has mean \f{p}, the sume of \f{n} independent such experiment has mean \f{np}. The same applies to variance / standard deviation. The PDF is unimodal and bell shaped, tigther than a normal, for small \f{n} and of limited domain.
+
+If \f{np \geq 10} and \f{n(1-p) \geq 10}, as a rule of thumb, we can approximate the binomial CFF by a normal one. That is \f{\mathcal{Bin}[n,p] \approxto \mathcal{N}[np, \sqrt{np(1-p)}]}. Certain computations become easier.
+
+If we estimate the probability for a small interval using the binomial approximation, we should either add a little bit \f{0.5} at one end and \f{0.5} at the other (substraction) to the interval in the normal model, or simply evaluate the binomial form, since, on small intervals the normal approximation tends to perform poorly. We should look at the probability of the size \f{1} interval around our point in order to more accurately find the value of the single event in the discrete distribution we're interested in. In general, the interval we want must be padded by \f{0.5} of normal density at each end, for a better approximation.
+
+=== Negative Binomial ===
+
+Model the number of sucess/failure trials needed for \f{k} sucesses to happen, if every trial is identical and independent of each other. Geometric is a special case with \f{k=1}.
+
+The domain is \f{\mathbb{N}^+}.
+
+Parameters: \f{k} - the number of successes we want to happen and \f{p} - the probability that a trial is a success.
+
+The PDF is \f{\mathcal{Bin}[k,p](i) = 0} for \f{i < k} and \f{\mathcal{Bin}[k,p](i) = \choose{i-1}{k-1} p^k(1-p)^{i-k}} for \f{i \geq k}. We can't have the situation we want before we see at least \f{k} trials. After we see them, if the \f{k^{\text{th}}} success occurs at the \f{i^{\text{th}}} trial, then there are \f{k-1} successes which can happen in \f{\choose{i-1}{k-1}} ways in the previous \f{i-1} trials. Given a sequence of \f{i} trials ending in a success, it has probability \f{p^k(1-p)^{i-k}}. Hence or PDF.
+
+=== Multinomial ===
+
+Model the number of outcomes of a certain kind if we are only allowed to make \f{n} of them, and every trial is identical and independent of each other.
+
+Parameters: \f{n} - the number of trials, \f{k} - the number of distinct outcomes, \f{\overline{p} = [p_1,\dots,p_k}] - the probability distribution over the distinct outcomes.
+
+The domain is the subset of \f{\hcrange{1}{n}^k} where \f{\sum_{i=1}^k n_i = n}. We ask for the probability of a certain number \f{n_1} of outcomes of type \f{1}, \f{\dots}, and of \f{n_k} of type \f{k}, with the constraint that we must have at most \f{n} such outcomes.
+
+The PDF is \f{\mathcal{Multi}[n,k,\overline{p}](n_1,n_2,\dots,n_k) = n! / \prod_{i=1}^k (n_i)! \prod_{i=1}^k p_i^n_i} where \f{\sum_{i=1}^k n_i = n}. The probability of a single desired outcome is \f{\prod_{i=1}^k p_i^n_i} (events are independent). The multiplicative term is just the multinomial coefficient.
+The marginal distribution of \f{X_i} is \f{Bin[n,p_i]}.
+
+=== Poisson ===
+
+Model the number of rare events independently affecting the individuals of a large but fixed-size population over a unit of time (individual suffering a rare disease, getting marries, having an accident etc.).
+
+The domain is \f{\mathbb{N}}.
+
+Parameters: \f{\lambda} - the rate or average number of occurances in a mostly-fixed population per unit of time.
+
+The PDF is \f{\mathcal{Poisson}[\lambda](k) = \lambda^k e^{-\lambda} / k!}. The graph is unimodal, somewhat bell shaped, is skewed to the left and has a long tail to the right.
+
+\f{\mean{X} = \lambda} and \f{\sd{X} = \sqrt{\lambda}}.
+
+== Continuous ==
+
+=== Normal ===
+
+Model a large range of physical or social quantities (height, weight, IQ etc. of populations, SAT scores etc).
+
+The domain  is \f{\mathbb{R}}.
+
+Parameters: \f{\mu} - mean (shifts the bell curve to the left or right) and \f{\sigma} - standard deviation (makes the bell shaped curve smaller or larger).
+
+The PDF is \f{\mathcal{N}[\mu,\sigma](x) = 1 / \sqrt{2\pi\sigma^2} e^{-(x - \mu)^2 / 2\sigma^2}}.The form of the graph of the PDF is a symmetric, unimodal, bell shaped curve. Denser in the center, less denser at the tails.
+
+\f{\mean{X} = \mu} and \f{\sd{X} = \sigma}.
+
+The 68-95-99.7 rule: if \f{X \distas mathcal{N}[\mu,\sigma]} then \f{P(-\sigma \leq X - \mu \leq \sigma) = 0.68}, \f{P(-2\sigma \leq X - \mu \leq 2*\sigma) = 0.95} and \f{P(-3\sigma \leq X - \mu \leq 3\sigma) = 0.997}. The vast majority of the probability mass of a normal variable is at most \f{3} standard deviations from the mean.
+
+The percentile-to-Z-score mapping is linear. On this graph, we have a line indexed by \f{X} which is linear.
+
+Mean, mode and median are equal. 
+
+\f{\mathcal{N}[0,1]} is called the standard normal distribution. The units on the domain axis are \f{Z} scores / standard deviations from the mean.
+
+=== Student t ===
+
+The sampling distribution considered for mean-to-variance ratios. 
+
+The domain is \f{\mathbb{R}}.
+
+Parameters: \f{df} - degrees of freedom.
+
+[talk about PDF  here] The form of the PDF is symmetric, unimodal, bell shaped curve. More spread and of lower height than an Normal with the same mean - it is leptokurtic.
+
+Mean, mode and median are equal.
+
+As \f{df} increases this distribution tends to a normal one [what parameters]. Therefore, in places where this appears we can replace an easier to work with normal distribution.
+
+=== Chi Square \f{\Chi^2} ===
+
+The distribution of the sum of squared standard normal deviates - the distribution of the variance.
+
+The domain is \f{[0,+\infty]}.
+
+Parameters: \f{df} - degrees of freedom, the number of standard deviates being summed.
+
+The PDF is [insert pdf here]. The distribution is positively skewed. As \f{df} increases, this approaches a normal distribution (by the CLT). As \f{df} increases, the distribution becomes more symmetric, the center moves to the right and the variance increases.
+
+\f{\mean{X} = df}.
+
+=== Multivariate Normal ===
+
+The generalization of the normal distribution for \f{d}-dimensional variables.
+
+the domain is \f{\mathbb{R}^d}.
+
+Parameters: \f{\mu} - the mean of the distribution and \f{\Sigma} - the covariance matrix of the data, a \f{\hctimes{d}{d}} positive-definite and symmetric matrix.
+
+The PDF is \f{\mathcal{N}[\mu,\Sigma](x) = \frac{1}{(2\pi)^{d/2} \sqrt{\det{\Sigma}}} \exp{-1/2 (x - \mu)^T \Sigma^{-1} (x - \mu)}}.
+
+Mean and mode are equal.
+
+\f{\mathcal{N}[0,I_{\hctimes{d}{d}}]} is called the standard multivariate normal distribution.
+
+If \f{X \distas \mathcal{N}[0,I_{\hctimes{d}{d}}]} then \f{\mu + \Sigma^{1/2} X \distas \mathcal{N}[\mu, \Sigma]}.
+
+If \f{X \distas \mathcal{N}[\mu,\Sigma]} then \f{\Sigma^{-1/2}(X - \mu) \distas \mathcal{N}[0,I_{\hctimes{d}{d}}]}.
+
+If \f{X = (X_a,X_b)} is a partition of the \f{d}-dimensional vector into a \f{d_a} and \f{d_b}-dimensional components, then \f{X_a \distas \mathcal{N}[\mu_a, \Sigma_{aa}]}. We can also say something about the conditional distribution for \f{X_a \given X_b}, but it's messy.
+
+\f{a^Tx \distas \mathcal{N}[a^T\mu, a^T\Sigma a]}.
+
+\f{(X - \mu)^T\Sigma^{-1}(X - \mu) \distas \Chi^2_d} - really brilliant.
+
+=== Power Law ===
+
+Power Law: we say that two variables are in a power-law relationship when they are linked as \f{y = cx^a}, for \f{c} and \f{a}. Alternatively, we have \f{\log {y} = log c + a \log{x}} or \f{\log{y} = b + a \log{x}}. ``The rich get richer'' types of situations. Examples: y - node degrees in the webgraph and x - order, y - sales of products for an online retailer and x - order, y - number of pages for a website and x - order, y - number of apparitions of a word and x - order, y - population of a country and x - order. We see usually count what we must, and then order by the count, and the resulting thing has a power-law relationship.
+
+= Markov Chains =
+
+A Markov chain is a \def{discrete-time stochastic process}: a process that occurs in a series of time-steps in each of which a random choice is made. We have \f{N} states and an \f{\hctimes{N}{N}} \def{transition probability matrix} \f{P} with \f{P_{ij} = P(X_{t+1} = j \given X_t = i)} - each row has the conditional probability of going to state \f{j} at the next moment, if we are in state \f{i} at this moment. We have the Markov Property as well: \f{P(X_{t+1} \given X_t, X_{t-1},\dots,X_1) = P(X_{t+1} \given X_t)}. \f{P} is a stochastic matrix. The probability distribution of the next states depends only on the current state, and not on how the chaine arrived at the current state. If \f{\pi} be the initial distribution of the chain. Then, \f{\pi P} is the distribution at time \f{1}, and, in general, \f{\pi P^t} is the distribution at time \f{t}.
+
+\def{ErgodicMarkovChain} \f{T} is Ergodic if there exists \f{T_0 \in \mathbb{N}} such that for all pairs of states \f{i,j} in \f{T}, if it is started at time \f{0} in state \f{i} then for all \f{t > T_0}, the probability of being in state \f{j} at time \f{t} is greater than \f{0}.
+
+\def{IrreducibleMarkovChain} \f{T} is irreducible.
+
+\def{AperiodicMarkovChain} \f{T} is aperiodic.
+
+\def{IrreducibleAperiodicImpliesErgodic} Let \f{T} be a irreducible and aperiodic Markov chain. Then \f{T} is ergodic.
+
+\def{SteadyState} Let \f{T} be an ergodic Markov chain. Then There is an unique steady-state probability vector \f{\pi} that is the principal left eigenvector of \f{P_T}, such that if \f{\mu(i,t)} is the number of visits to state \f{i} in \f{t} steps we have \f{\lim^t_{+\infty} \mu(i,t) / t = \pi(i)} where \f{\pi(i) > 0} is the steady-state probability for state \f{i}.
+
+As a computational aside, since \f{P} is stochastic, by \thmref{KeyPropertyStochasticMatrices}, we have that the principal left eigenvector of \f{P_T} exists and its eigenvalue is \f{1}. We can write this as \f{\pi P = \pi}. Solving it as \f{\pi (P - I) = 0} is not such a great idea. Instead we can use the Power Iteration for computing the eigenvector for the largest eigenvalue. This has a Linear Algebra interpretation and states that we initialize \f{x^0} to a random non-null vector and then perform \f{x^{t+1} \leftarrow x^t A} until \f{\norm{x^{t+1} - x^t}_2 < \epsilon}. We have that \f{\lim^t_{+\infty} x^t} is the principal left eigenvector. This also actually corresponds to simulating the Markov Chain for a certain amount of time. By \thmref{SteadyState}, the result will be independent of the initial distribution of states.
+
+== Controlled Markov Chains ==
+
+An extension to the classical Markov Chain process is to have several chains over the same state space, and at each time step to choose to go to one state or another, according to a control variable. We can show that this is another Markov chain, with transition matrix equal to the probability weighted sum of the transition matrices we're talking about. Consider that we have Markov chains \f{M_1,M_2,\dots,M_k} and a control random variable which takes on \f{k} values with probabilities \f{p_1,p_2,\dots,p_k}, respectively. Now, \f{P(X_t = i \given X_{t-1} = j_{t-1} , \dots , X_1 = j_i) = p_1 P_1(X_t = i \given X_{t-1} = j_{t-1} , \dots , X_1 = j_1) + \cdots + p_k P_k(X_t = i \given X_{t-1} = j , \dots , X_1 = j_1) = \sum_{i=1}^k p_i P(X_t = i , \given X_{t-1} = j_{t-1})}. Therefore, \f{X_t} is independent of \f{X_1,\dots,X_{t-2}} given \f{X_{t-1}}, and it therefore has the Markov Property. It is furthermore, a Markov Chain, having a discrete space and time. We can build the matrix \f{P = \sum_{i=1}^k p_i M_P^i}, which is a valid stochastic transition matrix.
+
+Suppose now that \f{\{D_1,\dots,D_k\}} is a partition of \f{D}, and \f{M_1,\dots,M_k} are ergodic on \f{D_1,\dots,D_k} only, respectively. Then, the choice Markov Chain is ergodic on the whole of \f{D}. Furthermore, \f{\pi = \sum_{i=1}^k p_i \pi_i}. To see the last point, simply see how the limits break up thanks to the additive property of limits.

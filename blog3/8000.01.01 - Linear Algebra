@@ -1,0 +1,257 @@
+= Computational Aspects =
+
+Let \f{m}, \f{n} and \f{p} be non-null natural numbers.
+
+A \def{matrix}.
+
+The \def{set of matrices of dimension} \f{\hctimes{m}{n}} over \f{\mathbb{F}}, or \f{\mathbb{F}^{\hctimes{m}{n}}} is the set of all matrices which can be built with elements from the field \f{\mathbb{F}}.
+
+A \def{vector}. Can be understood as \def{column}-matrices - matrices from \f{\mathbb{F}^{\hctimes{n}{1}}}. If we want \def{row}-matrices, we use the notation \f{x^T}.
+
+The \def{set of vectors of dimension} \f{n} over \f{\mathbb{F}}, or \f{\mathbb{F}^n} is the set of all vectors which can be built with elements from the field \f{\mathbb{F}}.
+
+The \def{sero} vector, or \f{\textbf{0}}, or \f{0} is the vector with all components \f{0}. This is a \f{0} norm vector.
+
+We'll be using \f{\mathbb{F} = \mathbb{R}} from here on out.
+
+Let \f{A} be a matrix in \f{\mathbb{R}^{\hctimes{m}{n}}} and \f{x} and \f{y} be vectors from \f{\mathbb{R}^n}.
+
+The set of matrices and vectors of different sizes are conceptually different from the cross-products of \f{\mathbb{F}}, as the objects are different (even though, technically, they are all just tuples). Regardless, it is a good distinction to keep.
+
+\f{x_i} refers to the \f{i^{\text{th}}} element of \f{x}. \f{A_{ij}} refers to the \f{j^{\text{th}}} element of the \f{i^{\text{th}}} line of \f{A}. \f{A_j} refers to the \f{j^{\text{th}}} column of \f{A}, if we view \f{A = [ A_1 \given A_2 \given \cdots \given A_n ]}. \f{A_i^T} refers to the \f{i^{\text{th}}} row of \f{A}, if we view \f{A = [ A_1^T \given A_2^T \cdots \given A_m^T ]^T}.
+
+The \def{addition}, or \f{+} is a binary operator on \f{\mathbb{F}^{\hctimes{m}{n}}} which associates with each pair \f{A,B \in \mathbb{F}^{\hctimes{m}{n}}} the matrix \f{A + B} with \f{(A + B)_{ij} = A_{ij} + B_{ij}}. The \def{scalar multiplication}, or \f{\star} is the function between \f{\mathbb{F}} and \f{\mathbb{F}^{\hctimes{m}{n}}} which associates with each pair \f{\alpha \in \mathbb{F}} and \f{A \in \mathbb{F}^{\hctimes{m}{n}}} the matrix \f{\alpha A} with \f{(\alpha A)_{ij} = \alpha A_{ij}}. The \def{matrix multiplication}, or \f{\star} is the function between \f{\mathbb{F}^{\hctimes{m}{n}}} and \f{\mathbb{F}^{\hctimes{n}{p}}} to \f{\mathbb{F}^{\hctimes{m}{p}}} which associates with each pair \f{A \in \mathbb{F}^{\hctimes{m}{n}}} and \f{B \in \mathbb{F}^{\hctimes{n}{p}}} the matrix \f{AB} with \f{(AB)_{ij} = \sum_{i=1}^n A_{ik}B_{kj}}.
+
+The \def{inner product}, or \f{x^Ty} is \f{x^Ty \colon \hctimes{\mathbb{F}^n}{\mathbb{F}^n} \rightarrow \mathbb{F}} and \f{x^Ty = \sum_{i=1}^n x_i y_i}. This is a special case of matrix multiplication.
+
+Some properties of the inner product:
+* \f{x} and \f{y} vectors in \f{\mathbb{F}^n}.
+* \f{x^Ty = y^Tx}.
+
+The \def{outer product} or, \f{xy^T} is \f{xy^T \colon \hctimes{\mathbb{F}^m}{\mathbb{F}^n} \rightarrow \mathbb{F}^{\hctimes{m}{n}}} and \f{(xy^T){ij} = x_iy_j}. This is a special case of matrix multiplication.
+
+A matrix-vector product of the form \f{y = Ax} can be seen as either the inner product of every line in \f{A} with \f{x}, such that \f{y = [a_1^Tx \dots a_m^Tx]^T}, or as a linear combination of every column in \f{A} with coefficients from \f{x}, such that \f{y = x_1a_1 + \cdots + x_na_n}. A matrix vector product of the form \f{y^T = x^TA} can be seen as either the inner product of every column in \f{A} with \f{x}, such that \f{y^T = [x^Ta_1 \dots x^Ta_n]}, or as a linear combination of every line in \f{A} with coefficients from \f{x^T}, such that \f{y^T = x_1 a_1^T + x_2a_2^T + \cdots x_n a_n^T}. In the first case, we treat \f{A} as a column matrix of row matrix elements. The product \f{Ax} is therefore an outer-product between a column matrix and a row-matrix of a single element. In the second case, we treat \f{A} as a row matrix of column matrix elements. The product \f{Ax} is therefore an inner-product between a row matrix and a column matrix. In the third case, we treat \f{A} as a row matrix of column matrix elements. The product \f{x^TA} is therefore an outer-product between a column matrix of a single element and a row matrix. In the fourth case, we treat \f{A} as a column matrix of row matrix elements. The product \f{x^TA} is therefore an inner-product between a row matrix and a column matrix.
+
+\A matrix-matrix product of the form \f{C = AB} can be seen in four ways. First, if we view \f{A} as a column matrix of row matrix elements and \f{B} as a row matrix of coulmn matrix elements, \f{AB} is an outer product of a column matrix and a row matrix. We have for \f{i \in \hcrange{1}{m}} and \f{j \in \hcrange{1}{p}} that \f{C_{ij} = A_i^TB_j} - where the inner product takes the place of the product between scalars. Second, if we view \f{A} as a row matrix of column matrix elements and \f{B} as a column matrix of row matrix elements, \f{AB} is an inner product of a row matrix and a column matrix. We have \f{C = \sum_{i=1}^n A_iB_j^T} - where the outer product takes the place of the product between scalars. Third, if we view \f{B} as a row matrix of columns matrix elements, we have \f{C = [ AB_1 \given AB_2 \given \dots \given AB_p ]^T}. Fourth, if we vie \f{A} as a column matrix of row matrix elements, we have \f{C = [A_1^TB \given A_2^TB \given \dots \given A_m^TB]}. In the last two cases, the matrix-vector products interpretations three and four are useful to further elaborate the structure.
+
+Properties of matrix addition and multiplication:
+* Talk about associativity, distributivity.
+* Multiplication is not commutative.
+
+The \def{identity matrix}, or \f{I_n} is \f{I_n \in \mathbb{R}^{\hctimes{n}{n}}} with \f{I_{ii} = 1} and \f{I_{ij} = 0} for \f{i \neq j}. The identity matrix is the identity element for matrix multiplication in \f{\mathbb{F}^{\hctimes{n}{n}}}. The \def{diagonal matrix}, or \f{\diag(d_1,d_2,\dots,d_n)} is a matrix which has all non-diagonal elements equal to \f{0} and \f{(diag(d_1,d_2,\dots,d_n))_{ii} = d_i}.
+
+A \def{square matrix} is a matrix which has the same number of rows and columns, or a member of \f{\mathbb{F}^{\hctimes{n}{n}}}.
+
+The \def{transpose} of \f{A}, or \f{A^T} is the flipped version of \f{A} - the rows become columns and the columns become rows. More precisely, \f{A^T \in \mathbb{F}^{\hctimes{n}{m}}} and \f{(A^T)_{ij} = A_{ji}}.
+
+Transpose have nice properties:
+* \f{(A^T)^T = A}.
+* \f{(A + B)^T = A^T + B^T}.
+* \f{(AC)^T = C^TA^T}.
+
+\f{A} is \def{symmetric} if \f{A^T = A}. The \def{set of symmetric matrices} of size \f{n} over \f{\mathbb{F}}, \f{\mathbb{S}^n_\mathbb{F}} is the set of symmetric matrices of size \f{n} with elements from the field \f{\mathbb{F}}. \f{A} is \def{anti-symmetric} if \f{A^T = -A}.
+
+The \def{symmetric-antisimmetric decomposition} of \f{A}, of \f{(A_s,A_a)} is a unique pair of matrices \f{(A_s,A_a)} with \f{A = A_s + A_a}, \f{A_s} is symmetric, \f{A_p} is anti-symmetric, \f{A_s = 1/2(A + A^T)} and \f{A_a = 1/2(A - A^T)}.
+
+Let \f{A} be a \ref{square matrix}. The \def{trace} of \f{A}, or \f{\tr{A}} is the sum of the diagonal elements of \f{A} - \f{\tr{A} = \sum_{i=1}^n A_{ii}}.
+
+The trace has some interesting properties:
+* \f{\tr{A} = \tr{A^T}}.
+* \f{\tr(A + B) = \tr{A} + \tr{B}}.
+* \f{\tr(\alpha A) = \alpha \tr{A}}.
+* If \f{\pi \colon \hctimes{1}{k} \rightarrow \hctimes{1}{k}} is a permutation of \f{k} then \f{\tr{C_1C_2\cdots C_k} = \tr{C_{\pi(1)}C_{\pi(2)}\cdots C_{\pi(k)}}}.
+* \f{\tr{D_1D_2} = \tr{D_2D_1}}.
+
+The \def{norm} of \f{x}, or \f{\norm{x}} is a function between the space of vectors \f{\mathbb{F}^n} (or rather, a vector space, or, more generally, any ``space'') and the space of scalars \f{\mathbb{F}} (or \f{\mathbb{R}}), which satisfies properties:
+* \def{P1} For all \f{x \in \mathbb{F}^n} we have \f{\norm{x} \geq 0} - non-negativity.
+* \def{P2} \f{\norm{x} = 0} if and only if \f{x = 0} - definiteness.
+* \def{P3} For all \f{x \in \mathbb{F}^n} and \f{\alpha \in \mathbb{F}} we have \f{\norm{\alpha x} = \abs{\alpha} \norm{x}} - homogeneity.
+* \def{P3} For all \f{x,y \in \mathbb{F}^n} we have \f{\norm{x + y} \leq \norm{x} + \norm{y}} - \def{triangle inequality}.
+
+Examples of vector norms: the \f{\mathcal{L}_p} family of norms, parametrized by a real number \f{p \geq 1}, defined as \f{\norm{x}_p = (\sum_{i=1}^n \abs{x_i}^p)^{1/p}}. The \f{\mathcal{L}_2} norm is the classical Euclidean norm/distance. The \f{\mathcal{L}_1} norm is the sum of absolute values. The \f{\mathcal{L}_\infty} norm is \f{\norm{x}_\infty = \max_i \abs{x_i}}.
+
+Examples of matrix norms: the Frobenius norm, \f{\norm{A}_F = \sqrt{\sum_{i=1}^m\sum_{j=1}^n A_{ij}^2} = \sqrt{\tr{A^TA}}}.
+
+A \def{unit vector}, or \def{normalized vector} is a vector with norm \f{1}. The \def{normalization} of \f{x} is achieved by multiplying \f{x} by a scalar \f{\alpha} such that \f{\alpha x} is a unit vector. \f{\alpha = \norm{x}_2^{-1}} is the unique number which achieves this.
+
+Let \f{X = \{x_1,x_2,\dots,x_m\} \subseteq \mathbb{R}^n} be a set of vectors.
+
+The \def{linear independence} of \f{X} means that no vector in \f{X} can be represented as a linear combination of the other vectors, or the only solution to the equation in \f{\alpha_1,\dots,\alpha_n} given by \f{\sum_{i=1}^n \alpha_i x_i = 0} is \f{\alpha_i = 0} for all \f{i}. Otherwise the vectors are \def{linearly dependent}
+
+The \def{span} of \f{X}, or \f{\span{X}} is set of vectors which can be expressed as a linear combination of the vectors in \f{X}, or, more precisely, \f{\spn{X} = \{ v = \sum_{i=1}^m \alpha_i x_i \given \forall i \in \hcrange{1}{m} \colon \alpha_i \in \mathbb{R} \}}. 
+
+A set of \f{n} linearly independent vectors has the property that \f{\spn{X} = \mathbb{R}^n} or any vector \f{x \in \mathbb{R}} can be written as a (unique) combination of the vectors in \f{X}.
+
+The \def{range} of \f{A}, or \def{columnspace} of \f{A}, or \f{\matrange{A}} is the set of images of the vectors in \f{\mathbb{R}^n} through \f{A}, or the set of vectors in \f{\mathbb{R}^m} which have a pre-image through \f{A} from \f{\mathbb{R}^n}, or the span of the columns of \f{A} \f{\given} \f{\matrange{A} = \{ Ax \in \mathbb{R}^m \given x \in \mathbb{R}^n\}}. If we view \f{A = [a_1 \given a_2 \given \dots \given a_n]} and \f{Ax = x_1a_1 + \dots + x_na_n} with \f{x \in \mathbb{R}^n}, you can see that \f{Ax} is a linear combination of the columns of \f{A} with the elements of \f{x} as coefficients. The \def{nullspace} of \f{A}, or \f{\matnull{A}} is the set of vectors in \f{\mathbb{R}^n} which are mapped to \f{0} \f{\given} \f{\matnull{A} = \{ x \in \mathbb{R}^n \given Ax = 0 \}}.
+
+A famous decomposition states that \f{\mathbb{R}^n = \matrange{A^T} \oplus \matnull{A}}.
+
+The \def{projection} of \f{x} onto \f{X}, or \f{\text{Pr}_X(x)} is a vector \f{\text{Pr}_X(x) \in \spn{X}} which is as close as possible to \f{x}, as measured by the Euclidean norm \f{\text{Pr}_X(x) = \arg\min_{x \in \spn{X}} \norm{x - v}_2}. 
+
+The \def{column rank} of \f{A} is the size of the largest subset of columns of \f{A} that constitute a linearly independent set. The \def{row rank} of \f{A} is the size of the largest subset of rows of \f{A} that constitute a linearly independent set. The column rank is equal to the row rank [can be proved]. The \def{rank} of \f{A}, or \f{\rank{A}} is the column rank of \f{A} or the row rank of \f{A}.
+
+Some properties of the rank for a rectangular matrix:
+* \f{\rank{A} \leq \min(m,n)}.
+* \f{\rank{A} = \rank{A^T}}.
+* \f{\rank{AB} \leq \min(\rank{A},\rank{B})}.
+* \f{\rank(A + B) \leq \rank(A) + \rank(B)}.
+
+\f{A} is \def{full rank} if \f{\rank{A} = \min(m,n)}.
+
+The \def{inverse} of \f{A}, or \f{A^{-1}}, when \f{A} is \ref{square}, is the unique matrix \f{A^{-1} \in \mathbb{R}^{\hctimes{n}{n}}} such that \f{A^{-1}A = AA^{-1} = I}.
+
+Not all matrices have inverses. Non-square matrices, for example, do not have inverses by definition. There are some square matrices, however, for which \f{A^{-1}} does not exists.
+
+\f{A} is \def{non-singular}, or \f{A} is \def{invertible} if \f{A} is a square matrix which admits an inverse. \f{A} is \def{singular}, or \f{A} is \def{non-invertible} if \f{A} is a square matrix which does not admit an inverse.
+
+Assume \f{A} and \f{B} are invertible. The properties of the inverse:
+* \f{A^{-1}} is unique.
+* \f{A} has full rank.
+* \f{(A^{-1})^{-1} = A}.
+* \f{(AB)^{-1} = B^{-1}A^{-1}}.
+* \f{(A^{-1})^T = (A^T)^{-1}}.
+* \f{\matnull{A} = \{0\}}.
+
+The inversion of a matrix is an "inverse problem" - given the action described by \f{A}, build an action which reverses it. If \f{A} has non-zero nullspace, this is not possible, because, all vectors in the nullspace are mapped to \f{0}, and given just \f{0}, we don't know how to revert to an original vector. Furthermore, if we have a vector \f{y = Ax}, then we can also build the vector \f{x + z} where \f{z \in \matnull{A}} and \f{y = A(x + z)}. Therefore, we cannot even invert vectors not in the null-space. The inverse of a diagonal matrix is a diagonal matrix with the reciprocals of the diagonal elements on its diagonal. It does not exist, if any diagonal element is \f{0} (same nullspace argument). Similarly "short and fat" matrices cannot be inverted, because they don't cover the full output space. "Tall and skinny" matrices admit only a left-inverse.
+
+If \f{A \in \mathbb{R}^{\hctimes{m}{n}}} be a full rank matrix with \f{m \leq n} and \f{x \in \mathbb{R}^n} be a vector. Then \f{Pr_{\matrange{A}}(x) = \arg\min_{v \in \matrange{A}} \norm{x - v}_2 = A(A^TA)^{-1}A^Ty}. This is the classical least-squares problem  or the ``orthogonal'' projection of \f{x} on the columnspace of \f{A}. When \f{n = 1} we have the case of projecting onto a line and the equation simplifies to \f{Pr_{a}(x) = aa^T/a^Ta x = aa^T / \norm{a}_2 x}, or \f{x}, transformed by the outer-product of \f{a} with itself and scaled by the inner product of \f{a} with itself (which is the Euclidean norm of \f{a}).
+
+\f{x} and \f{y} are \def{orthogonal} if \f{x^Ty = 0}. This condition corresponds to \f{x} and \f{y} being perpendicular for \f{n = 2} and is more generally stated in the language of inner products. \f{x} is \def{normalized} if \f{\norm{x}_2 = 1}. \f{x} and \f{y} are \def{orthonormal} if \f{x^Ty = 0} and \f{x} is normalized and \f{y} is normalized.
+
+\f{A} is \def{orthogonal} if \f{A} is square and all of its columns are orthogonal to each other and are normalized. Such matrices represent generalized rotations (rotation and direction flip). They map orthogonal basis vectors in the input space into orthogonal output basis vectors in the output space. Their inverses are also such generalized rotations.
+
+Some properties of orthogonal matrices:
+* \f{A^TA = AA^T = I} or \f{A^{-1} = A^T} - the inverse of \f{A} is its transpose.
+* \f{\norm{Ax}_2 = \norm{x}_2} - transforming by \f{A} does not change the norm of \f{x}.
+
+When \f{A} is \ref{square}, the \def{determinant} of \f{A}, or \f{\det{A}} the determinant is a function \f{\det{\star} \colon \mathbb{R}^{\hctimes{n}{n}} \rightarrow \mathbb{R}} and it is a measure of the volume of the set of points \f{S \subset \mathbb{R}^n} formed by taking all possible linear combinations of the row vectors \f{a_1, \dots, a_n} of \f{A}, where the coefficients of the linear combination are all between \f{0} and \f{1}. This set is an parallelogram for \f{n=2}, a parallellepiped for \f{n=3} and a parallelotope for higher \f{n}. The function has the following properties:
+* \f{\det{I} = 1} - the volume of the unit hypercube is \f{1}.
+* \f{\det[ t a_1^T ; a_2^T ; \dots ; a_m^T ] = t\det{A}} - if we multiply a single row in \f{A} by a scalar \f{t \in \mathbb{R}}, the determinant is scaled by \f{t}.
+* \f{\det[ a_2^T ; a_1^T ; \dots ; a_m^T ] = -\det{A}} - if we exchange two rows, then the determinant of the new matrix is \f{-\det{A}}.
+
+Let \f{A} and \f{B} be square matrices. Some properties of the determinant.
+* The determinant exists and is unique.
+* \f{\det{A} = \det{A^T}}.
+* \f{\det{AB} = \det{A}\det{B}}.
+* \f{\det{A} = 0} if and only if \f{A} is non-invertible - If \f{A} is non-invertible, then it does not have full rank, and hence its rows are linearly dependent and \f{S} corresponds to a ``flat sheet'' withing the \f{n}-dimensional space and hence has zero volume.
+* If \f{A} is invertible then \f{\det{A^{-1}} = 1/\det{A}}.
+
+The \def{adjoint} of \f{A} at row \f{i} and column \f{j}, or \f{A_{ij}} is the matrix that results from deleting the \f{i^{\text{th}}} row and \f{j^{\text{th}}} column from \f{A}.
+
+The following results help with computing the determinant:
+ * \f{\det{A} = \sum_{i=1}^n (-1)^{i+j} a_{ij} \det{A_{ij}}} for any \f{j \in \hcrange{1}{n}}.
+ * If \f{n = 1} then \f{\det{A} = a_{11}}.
+ * If \f{n = 2} then \f{\det{A} = a_{11}a_{22} - a_{12}a_{21}}.
+ * IF \f{n = 3} then \f{\det{A} = a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33} - a_{13}a_{22}a_{31}}.
+
+Computing the determinant by the previous is very expensive. An algorithmic version would be \f{O(n!)}. We have \f{O(n^3)} algorithms, however.
+
+The \def{classical adjoint} of \f{A}, or \f{\adj{A}}, is \f{\adj{A} \in \mathbb{A}^{\hctimes{n}{n}}} and \f{\adj{A}_{ij} = (-1)^{i+j}\det{A_{ji}}}. Note the switch of the indices.
+
+Using the \ref{determinant} and \ref{classical adjoint}, we can compute the inverse of a matrix as \f{A^{-1} = 1/\det{A} \adj{A}}.
+
+A linear combination with coefficients \f{a_1,\dots,a_n} of numbers \f{x_1,\dots,x_n} can be written as \f{a^Tx}. A linear combination with coefficients \f{a_1,\dots,a_n} of vectors \f{x_a,\dots,x_n} can be written as \f{Xa}, where \f{X} has \f{x_i} as columns. A quadratic combination with coefficients \f{a_{11},\dots,a_{nn}} of numbers \f{x_1,\dots,x_n} can be written as \f{x^TAx}. We have that \f{x^TAx = (x^TAx)^T = x^TA^Tx}, therefore \f{x^TAx = x^TA^Tx}, because scalars are equal to their transpose. Furthermore \f{x^TAx = 1/2 x^TAx + 1/2x^TA^Tx = x^T(1/2A + 1/2A^T)x}. Only the symmetric part of \f{A} contributes to the quadratic form. Indeed, we often implicitly assume that the matrices appearing in quadratic form are symmetric.
+
+If \f{A} is \ref{square} and \ref{symmetric}. \f{A} is \def{positive definite} for all \f{x \in \mathbb{R}^n} with \f{x \neq 0} we have \f{x^TAx > 0}. The \def{set of positive definite matrices} of dimension \f{\hctimes{n}{n}} over \f{\mathbb{R}}, or \f{\mathbb{S}^n_{++}}s  set of all positive definite matrices of dimension \f{\hctimes{n}{n}}. \f{A} is \def{positive semi-definite}, or \f{A \succeq 0} \f{\given} \f{A \geq 0} if for all \f{x \in \mathbb{R}^n} with \f{x \neq 0} we have \f{x^TAx \geq 0}. The \def{set of positive semi-definite matrices} of dimension \f{\hctimes{n}{n}} over \f{\mathbb{R}}, or \f{\mathbb{S}^n_{+}} is the set of all positive semidefinite matrices of dimension \f{\hctimes{n}{n}}. \f{A} is \def{negative definite}, or \f{A \prec 0}, \f{A < 0} if for all \f{x \in \mathbb{R}^n} with \f{x \neq 0} we have \f{x^TAx < 0}. The \def{set of negative definite matrices} of dimension \f{\hctimes{n}{n}} over \f{\mathbb{R}}, or \f{\mathbb{S}^n_{--}} is the set of all negative definite matrices of dimension \f{\hctimes{n}{n}}. \f{A} is \def{negative semi-definite}, or \f{A \preceq 0}, or \f{A \leq 0} if for all \f{x \in \mathbb{R}^n} with \f{x \neq 0} we have \f{x^TAx \leq 0}. The \def{set of negative semi-definite matrices} of dimension \f{\hctimes{n}{n}} over \f{\mathbb{R}}, or \f{\mathbb{S}^n_{-}} is the set of all negative semidefinite matrices of dimension \f{\hctimes{n}{n}}. \f{A} is \def{indefinite} if \f{A} is neither positive definite, positive semidefinite, negative definite or negative semidefinite.
+
+Some properties of definiteness:
+* If \f{A} is positive definite then \f{-A} is negative definite.
+* If \f{A} is positive semidefinite then \f{-A} is negative semidefinite.
+* If \f{A} is positive definite or negative definite then \f{A} is invertible.
+
+The \def{Gram matrix} of \f{A} is \f{A^TA \in \mathbb{R}^{\hctimes{n}{n}}} and \f{(A^TA)_{ij} = A_i^TA_j}.
+
+Some properties of the \ref{Gram matrix}
+* \f{A^TA} is positive semidefinite.
+* If \f{m \geq n} and \f{A} is full-rank then \f{A^TA} is positive definite.
+
+Let \f{\lambda \in \mathbb{C}} be a scalar and \f{A} is square and \f{x \in \mathbb{C}^n} and \f{x \neq 0}.
+
+\f{\lambda} is an \def{eigenvalue} for \f{A} with \def{eigenvector} \f{x} if \f{Ax = \lambda x}. Transforming \f{x} by \f{A} results in a scaled version of \f{x}. Because \f{cx} for \f{c \in \mathbb{C}} is also an eigenvector for \f{\lambda}, when we talk about an eigenvector we usually talk about the ones of norm \f{1} - there are two of these - \f{x} and \f{-x}.
+
+One eigenvalue/eigenvector algorithm would be: We rewrite \f{Ax = \lambda x} as \f{Ax - \lambda x = 0} or \f{(A - \lambda I) x = 0} or \f{(\lambda I - A) x = 0} with \f{x \neq 0}. But, this will have a non-zero solution to \f{x} iff \f{\lambda I - A} has a non-empty null space, which is only the case when \f{\lambda I - A} is non-invertible, therefore \f{\det(\lambda I - A) = 0}. We can expand this determinant and we obtain a maximum degree \f{n} polynomial in \f{\lambda}. We then find the \f{n} possibly complex roots of it as the eigenvalues \f{\lambda_1,\lambda_2,\dots,\lambda_n}. To actually find an eigenvector for \f{\lambda_i}, we solve the linear equation \f{(\lambda_i I - A) x = 0} (constraining the solution to have unit norm).
+
+Let \f{\lambda_1,\dots,\lambda_n} be its eigenvalues for \f{A} and \f{x_1,\dots,x_n} associated eigenvectors to those eigenvalues, assuming there is a set of \f{n} of them.
+* \f{\tr{A} = \sum_{i=1}^n \lambda_i}.
+* \f{\det{A} = \prod_{i=1}^n \lambda_i}.
+* \f{\rank{A}} is equal to the number of non-zero eigenvalues of \f{A}.
+* If \f{A} is invertible then \f{1/\lambda_i} is an eigenvalue of \f{A^{-1}} with eigenvector \f{x_i}.
+* If \f{A = \diag(d_1,d_2,\dots,d_n)} then for all \f{i = \hcrange{1}{n}} we have \f{\lambda_i = d_i}.
+
+
+Assume \f{A} be a square matrix with \f{n} eigenvalues and \f{n} linearly independent eigenvalues. The \def{eigenvalue decomposition} of \f{A}, or \f{A = X\Sigma X^{-1}}. Let \f{\Sigma = \diag(\lambda_1,\lambda_2,\dots,\lambda_n)} be the diagonal matrix of eigenvalues, \f{X = [ x_1 \given x_2 \given \dots \given x_n ]} be a matrix whose columns are the eigenvectors of \f{A}. We can write the eigenvector equations simultaneously as \f{AX = X\Sigma}. We can then right multiply by \f{X^{-1}} and we obtain \f{A = X\Sigma X^{-1}}. If \f{A} admits an eigenvalue decomposition we say that \f{A} is \def{diagonizable}.
+
+Let \f{A} be symmetric. It's eigenvalues and eigenvectors have some nice properties:
+* All eigenvalues of \f{A} are real.
+* All eigenvectors of \f{A} are orthonormal - The eigenvalue decomposition becomes \f{A = X \Sigma X^T}.
+* If all eigenvalues of \f{A} are positive then \f{A} is positive definite.
+* If all eigenvalues of \f{A} are nonnegative then \f{A} is positive semidefinite.
+* If all eigenvalues of \f{A} are negative then \f{A} is negative definite.
+* If all eigenvalues of \f{A} are nonpositive then \f{A} is negative semidefnite.
+* If the eigenvalues of \f{A} have different signs, then \f{A} is, naturally, indefinite.
+
+For parts \f{3}, \f{4}, \f{5} and \f{6}, consider the decomposition of \f{A = X\Sigma X^T}. Let \f{x \in \mathbb{R}^n} be a vector. The quadratic form \f{x^TAx = x^TX \Sigma X^Tx = (X^Tx)^T \Sigma (X^Tx) = \sum_{i=1}^n \lambda_i (X_i^Tx)^2}. Since \f{(X_i^Tx)^2} is always positive, the sign of the expression depends entirely on \f{\lambda_i}, therefore we get our result.
+
+== Multidimensional Analysis ==
+
+Let \f{f \colon \mathbb{R}^{\hctimes{m}{n}} \rightarrow \mathbb{R}} be a matrix function.
+
+The \def{gradient} of \f{f} at \f{A}, or \f{\nabla_A f(A)}, is \f{\nabla_A f(A) \in \mathbb{R}^{\hctimes{m}{n}}} and \f{(\nabla_A f(A))_{ij} = \partial f(A) / \partial A_{ij}}.
+
+Let \f{f \colon \mathbb{R}^n \rightarrow \mathbb{R}} be a vector function.
+
+The \def{gradient} of \f{f} at \f{x}, or \f{\nabla_x f(x)} is \f{\nabla_x f(x) \in \mathbb{R}^n} and \f{(\nabla_x f(x))_i = \partial f(x) / \partial x_i}. This is the analogue of the first derivaative for classical functions. We will refer to \f{\nabla_g f(g(x))} as the gradient of \f{f} at \f{g(x)}, and we will refer to \f{\nabla_x f(g(x))} as the gradient of \f{f \circ g} ata \f{x}.
+
+The \def{hessian} of \f{f} at \f{x}, or \f{\nabla_x^2 f(x)} is \f{\nabla_x^2 f(x) \in \mathbb{R}^{\hctimes{n}{n}}} and \f{(\nabla_x^2 f(x))_{ij} = \partial^2 f(x) / (\partial x_i \partial x_j)}. This is the analogue of the second derivative for classical functions. The analogy is not perfect. The gradient of the gradient is not the Hessian, but rather, we view the \f{i^{\text{th}}} column/row of the Hessian as the gradient of \f{\partial f(x) / \partial x_i}. A bit sloppily, we have \f{\nabla_x^2 f(x) = \nabla_x (\nabla_x f(x))^T}.
+
+Assume \f{A} is a \ref{symmetric matrix}. Some basic results about gradients and hessians:
+* \f{\nabla_x bx = b}.
+* \f{\nabla_x^2 bx = 0}.
+* \f{\nabla_x x^Tx = 2x}.
+* \f{\nabla_x^2 x^Tx = 2I}.
+* \f{\nabla_x x^TAx = 2Ax}.
+* \f{\nabla_x^2 x^TAx = 2A}.
+
+== Least Squares Problems ==
+
+Let \f{A \in \mathbb{R}^{\hctimes{m}{n}}} be a full rank matrix and \f{b \in \mathbb{R}^m} such that \f{b \not\in \matrange{A}}.
+
+The \def{least squares} is the problem of finding \f{x^\star \in \mathbb{R}^n} such that \f{x^\star = \arg\min_{x \in \matrange{A}} \norm{Ax - b}_2^2}. In this case we cannot find a vector \f{x \in \mathbb{R}^n} such that \f{Ax = b} (or \f{b} is expressible exactly as a linear combination of the columns of \f{A} - a member of the columnspace/range of \f{A}) but we want to find an \f{x} which provides the closest error nonetheless.
+
+The \def{normal equation} provides a solution to the \ref{least squares} problem, which is \f{x^\star = (A^TA)^{-1}A^Tb}.
+
+We know that \f{\norm{x}_2^2 = x^Tx}. The function we have to minimize becomes \f{\norm{Ax - b}^2_2 = (Ax - b)^T(Ax - b) = ((Ax)^T - b^T)(Ax - b) = (Ax)^TAx - (Ax)^Tb - b^TAx + b^Tb = xA^TAx - (b^TAx)^T - b^TAx + b^Tb = xA^TAx - 2b^TAx + b^Tb} (in the last derivation we used the fact that we are dealing with scalars to drop the transpose). The gradient of this is \f{2A^TAx - 2A^Tb}, according to \thmref{BasicResults} and, because we're dealing with vectors, being a little lax with transposes. Finally, setting this to \f{0}, we obtain \f{x^\star = (A^TA)^{-1}A^Tb}.
+
+== Some Optimization Problems ==
+
+Let \f{A \in \mathbb{R}^{\hctimes{n}{n}}} be a matrix. Then:
+* \f{\nabla_A \det{A} = \det{A} A^{-T}}.
+* If \f{A} is positive definite then \f{\nabla_A \log{\det{A}} = A^{-1}}.
+
+Let \f{A \in \mathbb{A}^{\hctimes{n}{n}}} be a symmetric matrix. The \def{maximize a quadratic form subject to normal equality constraints} is the problem of \f{\max_{x \in \mathbb{R}^n} x^TAx} subject to \f{\norm{x}_2^2 = 1}.
+
+We build the Lagrangian, \f{\mathcal{L}(x,\lambda) = x^TAx - \lambda x^Tx}, again, using the fact that \f{\norm{x}_2^2 = x^Tx}. A required, but not sufficient, condition for optimality is that for an optimal \f{x^\star} we have \f{\nabla_x \mathcal{L}(x,\lambda) = 0}. This means that \f{2A^Tx - 2 \lambda x = 0} or \f{A^Tx = \lambda x} or \f{Ax = \lambda x} since \f{A} is symmetric. This equation is satisfied only by eigenvectors of \f{A}. Let \f{x^\star} be one of these eigenvectors. Then, we have \f{{x^\star}^T A x^\star = {x^\star}^T \lambda^\star x^\star = \lambda^\star {x^\star}^T x^\star = \lambda^\star \norm{x^\star}^2_2 = \lambda^\star}. Therefore, one of the two unit eigenvectors of the largest eigenvalue will be the solution we're looking for. We can then use classical eigenvalue solving algorithms to find what we're looking for. The Power method comes to mind, for example.
+
+The \def{singular value decomposition} of \f{A}, or SVD of \f{A}, is \f{A = U \Sigma V^T}. \f{U} and \f{V} are orthogonal matrices and \f{S \in \mathbb{R}^{\hctimes{m}{n}}} is diagonal with positive entries. The diagonal elements of \f{S} are called \def{singular values}. This decomposition describes any matrix in terms of easily understood pieces: ageneralized rotation, a scaling of the aces, and another generalized rotation. The SVD always exists, but may be non-unique in fthe following way: one can permute the columns of \f{U}, daigonal elements of \f{S} and columns of \f{V} (as long as they're all permuted the same way), one can negate corresponding columns of \f{U} and \f{V}, columns of \f{U} and \f{V} with equal corresponding singular values may be orthogonally transformed (as long as we're using the same columns on both \f{U} and \f{V}).
+
+Properties of the SVD.
+* \f{\matnull{A} = \spn\{V_i \given \forall i \in \hcrange{1}{m} \colon \sigma_i = 0 \}} - colums of \f{V} with corresponding null singular values span the nullspace of \f{A}.
+* \f{\matrange{A} = \spn\{U_i \given \forall i \in \hcrange{1}{n} \colon \sigma_i \neq 0\}} - columns of \f{U} with corresponding non-null singular values span the range of \f{A}.
+* \f{A} is invertible iff the number of nonzero singular values is equal to the number of columns of \f{A} (dimensionality of the input space).
+
+== Special Matrices ==
+
+\f{A} is a \def{stochastic matrix} if \f{\forall i \in \hcrange{1}{m} \colon \forall j \in \hcrange{1}{n} \colon a_{ij} \in [0,1]} and \f{\forall i \in \hcrange{1}{m} \colon \sum_{i=1}^n a_{ij} = 1}.
+
+The key property of a stochastic matrix is:
+* The largest eigenvalue is \f{1} and it admits a principal left eigenvector.
+
+\f{A} is a \def{sub-stochastic matrix} if \f{\forall i \in \hcrange{1}{m} \colon \forall j \in \hcrange{1}{n} \colon a_{ij} \in [0,1]} and \f{\forall i \in \hcrange{1}{m} \colon \sum_{i=1}^n a_{ij} \leq 1}.
+
+For these kinds of matrices, the Power Iteration will make some components \f{0}.
+
+=== Sources ===
+
+\bibitem{linear-algebra-review-reference} Kolter, Z and Do, C. : Linear Algebra Review and Reference
+
+\bibitem{geometric-review-linear-algebra} Simoncelli, E. : A Geometric Review of Linear Algebra

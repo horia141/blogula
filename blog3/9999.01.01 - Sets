@@ -1,0 +1,9 @@
+A \def{set} is a collection of objects. \f{x} is a \def{member} of \f{A} or \f{x \in A}.
+
+The \def{empty set} \f{\emptyset}. A \def{singleton set}.
+
+The \def{cardinality} of \f{A} \f{\abs{A}}. \f{\abs{\emptyset} = 0} and \f{\abs{\{x\}} = 1}. \def{finite cardinality}.
+
+\def{Set inclusion}, \f{A} \def{subset} of \f{B}. \f{\emptyset \subseteq A}. Reflexivity, transitivity, anti-symmetry.
+
+The \def{power-set} of \f{A} \f{\mathcal{P}(A)} or \f{2^A}. \f{\empsyset \in 2^A} and \f{A \in 2^A}.

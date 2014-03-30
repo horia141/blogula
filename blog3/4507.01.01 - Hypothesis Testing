@@ -1,0 +1,430 @@
+Testing: propose a model, with a number of specified parameters, see if the data support it.
+
+We start with a theory or, more precisely, a statement about a certain quantity of interest \f{T}, which can be a parameter in a parametric model, a whole function, a prediction for some input etc., that its takes on certain values. We have two or more such statements, one of which is the null theory. Hypothesis testing says whether the data provide evidence in favor of one or the other of the hypotheses, usually in a very strict and controlled manner.
+
+In binary testing we have the null and alternative hypotheses.
+
+A \def{p-value} is a measure of \def{statistical significance} which is the most commonly reportate in papers, but is somewhat controversial among statisticians. The probability of seeing an outcome as extreme or more extreme then the one we are seeing, if the null hypothesis was true. Must be computed depending on one-tailed or two-tailed tests. It is the value \f{P(O \given H_0)} we were talking about in a previous definition. This is the formal name.
+
+Idea: suppose nothing is going on - how unusual is it to see the estimate we got? The approach is as follows: we define a hypothetical distribution of our data summary (statistic) when ``nothing is going on''. This is the \def{null hypothesis}. We then calculate the summary/statistic with the data we have. This is the \def{test statistic}. We then compare what we have calculated to our hypothetical distribution and we see if the value is ``extreme''. The probability of seeing our test statistic or something larger than it under the distribution we assumed to have if nothing was going on (the null hypothesis was true) is called the \def{p-value}. Depending on the situation we could also add the probability of seeing a value lower than the negative of our test statistic (``extreme in magnitude''). Lower values of this mean that what we see is more significant from a statistical point of view. In practice, a threshold is set. P-values lower than that threshold mean that we have something which is statistically significant. Whether it is scientifically significant is another story. Different fields have different requirements for this threshold. A P-value less than \f{0.05} is significant. A P-value of less than \f{0.01} is strongly significant. A P-value of less than \f{0.001} is very significant. What happens though is that if there isn't any ``signal'' (the null hypothesis is true), but we run lots of experiments, the distribution of the P-value (it is itself, a RVar, across many experiments) will be uniformly distributed in \f{[0,1]}. So whatever the threshold \f{t} is, in \f{t} percent of those experiments, we'd see an P-value smaller than \f{t}. Furthermore, this will not depend on the size of the samples from each experiment. If, however, there is a ``signal'' (the null hypothesis is false), the distribution of the P-value will not be uniformely distributed, but will rather tend to be skewed towards lower values. Furthermore, this will depend on the size of the samples for each experiment, in the sense that the distribution gets tighter and tighter around small P-values as the sample gets larger. Therefore, when comparing P-values, sample size is always to be taken into account. If you look at how the distribution for the null hypotheses as the sample size increases, you can see that it becomes tighter and tighter. This means, that with a large sample, it will be easy to find statistical significance at a level where we didn't with a smaller sample, even when there is no actual relation. Therefore, one should always consider the P-value found wrt the sample size.
+
+[picture of different distributions for the null hypotheses for different sample sizes]
+
+[picture of uniform distribution of P-values]
+
+[picture of skewed distribution of P-values for small sample]
+
+[picture of extremely skewed distribution of P-values for large sample]
+
+A statistical procedure for testing whether chance is a plausible explanation of an experimental finding.
+
+Greatly misunderstood by practitioners and students alike.
+
+We talk about states of the world or hypotheses and outcomes. The outcomes are the things we observe, while the hypotheses are the things we are interested in, but have no access to. We will talk about the probability of an outcome given a certain state of the world. Usually, this is as much as we can infer - that an event is particulary unlikely in a given "base" state of the world / hypothesis, and that we might be on to something. We look at \f{P(O \given H)} not \f{P(H \given O)}. If \f{P(O \given H)} is sufficiently low, we have evidence that \f{H} might be false - something else is determining our outcome, because we are not THAT lucky. We do not compute \f{P(\lnot H)} however - we can only say some things about it.
+
+The hypothesis (state of the world) that an effect / outcome is due to chance is called the Null hyothesis. It is the pessimits view of the world - what we observed is nothing special and it could have happened by chance easily. It is denoted by \f{H_0}. The null hypothesis is put forward in the hopes of it being discredited and rejected.
+
+The hypothesis that an effect / outcome is not due to chance and that we have something on our hands is called the Alternative hypothesis, denoted by \f{H_A}. It is what we are usually trying to find proof, or at least find evidence for.
+
+Examples of null and alternative hypothesis:
+* For a study of whether the means of two populations are different we have \f{H_0 \colon \mu_A = \mu_B, H_A \colon \mu_A \neq \mu_A} or \f{H_0 \colon \mu_A - \mu_B = 0, H_A \colon \mu_A - \mu_B \neq 0}.
+* For a study of whether two variables are correlated we have \f{H_0 \colon \rho = 0, H_A \colon \rho \neq 0}.
+* For a study of whether an event occurs with differing probability than randomly we have \f{H_0 \colon p = 0.5, H_A \colon p \neq 0.5}.
+
+Specify the Null hypothesis:
+* Two tailed tests have the form \f{H_0 \colon x_1 = x_2}.
+* One tailed tests have the form \f{H_A \colon x_1 \leq x_2} or \f{H_A \colon x_1 \geq x_2}.
+* Select the \f{\alpha} level.
+* Compute the p-value.
+* Compare the p-value with the \f{\alpha} level.
+* If the p-value is smaller than the \f{\alpha} level then reject the null hypothesis. Look at the p-value for a indicator of the "confidence" you should have that the null is false and that the alternative is true.
+* If the p-value is larger than the \f{\alpha} level then fail to reject the null hypothesis. The data is inconclusive about the null being false and the alternative being true.
+
+Conditional probabilities setup - the conditioned data is stuff we "know to be true", while the conditoned stuff is things we are interested in seeing how it behaves.
+
+When sampling without replacement from a large enough population, the results are almost identical to sampling with replacement - so we can make indepencen assumptions.
+
+= Statistical Significance Testing =
+
+A form of hypothesis testing. We pick a value \f{\alpha \in [0,1]}, called the significance level. It is usually \f{\alpha = 0.05}. More conservative folk can select \f{\alpha = 0.01}. In Physics it is usually \f{\alpha = 1e-6}. We then compute \f{P(O \given H_0)} by a method appropriate to the test we're conducting. If \f{P(O \given H_0) < \alpha} we say that the null hypothesis is rejected with a significance level of \f{\alpha}. The result is then statistically significant, meaning that the probability of the outcome occuring by chance is very small.
+
+Significance means only that the outcome is unlikely to be as given by the null hypothesis (usually some statistic being zero). It does not say anything about the magnitude of the difference (if the magnitude we're seeing is typically large or not) or whether the result has practical significance. Furthermore practical significance can occur without statistical significance, if the sample size is large enough (and sampling distributions really tight, for example).
+
+Fisher's approach: we compute \f{P(O \given H_0)}. If the value is below \f{0.01} we strongly reject the null hypothesis. If the value is between \f{0.01} and \f{0.05} then the null is typicall rejected, but with lower confidence. Higher values are rejected. Suitable for scientific research.
+
+Neyman and Pearson's approach: we first select \f{\alpha}. We then compute \f{P(O \given H_0)}. If the value is below \f{\alpha}, no matter how close, we reject the null. Otherwise, no matter how high, we fail to reject. Suitable for yes/no decision problems.
+
+Notice the wording. Rejecting the null does not mean accepting the alternative necessarily. Similarly, failing to reject the null does not mean accepting the null. It all means that the data supports or does not support some conclusion, but not that that conclusion is true in an absolute way. Which is only natural, since we're dealing in data analysis, not logic. There is no credible evidence that the null is true, but there is no proof as well - it is impossible to prove a negative, in general.
+
+But, even if we fail to reject the null, careful experiment analysis can be useful. We might see that there is still an effect, altough not a statistically significant one, and might redo the experiment, with more subjects or finer controls etc. 
+
+When a test is not significant, one can only say that the test on the data was inconclusive for that hypothesis.
+
+[Other people claim the simpler situation. If we reject the null, we accept the alternative - have to dig more. When comparing means, it is sometimes with the desire to see which is larger / smaller. This can be seen again from the theoretical distributions and workings of tests. Some have said that simply rejecting the null does not allow a statement of what means are higher and lower. But a two-tailed test st \f{\alpha} is equivalent to two two tailed tests at \f{\alpha/2}].
+
+= Multiple Testing =
+
+Hypothesis testing or significance analysis is commonly overused. You have to correct for multiple testing to avoid false positives. If you have \f{\alpha} confidence threshold, then, if you do many experiments, in \f{1 - \alpha} of them, you will see something. We have to choose an error rate and a method of controlling it. For example, the False Positive Rate, or Family Wise Error Rate (the probability of at least one false positive), False Discovery Rate (the rate at which claims of significance are false). The Bonferroni correction for FWER is : suppose you do \f{m} tests and want to have FWER at level \f{\alpha} such that \f{P(V \geq 1) < \alpha}. We calculate P-values normally, and we set \f{\alpha_{fwer} = \alpha/m} and call all P-values less than \f{\alpha_{fwer}} significant. It is easy to calculate and conservative, but it might be too conservative. If you control the FDR  by the Benjamini-Holder correction, which is the most popular correction when performing lots of tests in genomic, imagining, astronomy etc. Suppose you do \f{m} tests and want to control FDR at level \f{\alpha} so \f{E[V/R]}. We calculate P-values normally and sort them. We call any \f{P_{(i)} \leq \alpha 1/m} significant. It is easy to calculate and less conservative, but may be much less. It allows more FPs, but may behave strangely under dependence. Another approach is to \def{adjust} P-values. They are not P-values anymore, however, but we skip adjusting \f{\alpha}. The bonferonni correction becomes then. If we have \f{m} P-values, we can choose \f{P_i^{fwer} = \max(mP_i,1)} for each P-value and compare directly to \f{\alpha}.
+
+Performing multiple hypothesis tests as part of a single analysis is risky because the risk of Type I errors happening increases. If we use a common \f{\alpha} for all comparisons, then, Bonferonni's Inequality gives an upper bound on the Type I error for the whole set of tests (the familywise error rate) as \f{k\alpha}. The actual expression is more compelx (maybe Binomial, if each comparison is independent, but they usually arn't).
+
+We can use the Bonferonni correction, if we demand a familywise error rate of \f{\alpha} then use a per-test confidence level of \f{\alpha/k}. Such that \f{\alpha} is an upper bound for the type I error we're going to see.
+
+The disadvantage for controlling for familywise error is that you have higher standards for a single comparison. Type II error increases. Also, for large \f{k} it isn't even usable (say \f{k = 10000}).
+
+Must be careful in general when doing an analysis. If the hypotheses are independent, there is no need to control for the family error rates. However, if they are not, we must be careful.
+
+We also must use a pooled estimate of the standard error in our tests, computed as is usual with \f{\sqrt{se_1/n_1 + \dots + se_k/n_k}}.
+
+== Orthogonal Comparison ==
+
+According to the setup in \ref{Tukey HSD}, \ref{Multiple Comparisons} and \ref{Testing A Linear Combinations Of Means Is A Known Value}, we'd like to have the comparisons be independent. An independent comparison is also called an orthogonal one.
+
+Two comparisons are said to be orthogonal if the coefficient vectors for the two linear combinations of the comparisons are orthogonal (ie \f{\inner{c_i}{c_j} = c_i^Tc_j = \sum_{i=1}^k c_i^kc_j^k = 0}). If that is the case the two do not influence each other, and we have a lighter Type I burden.
+
+[Is this just because we're linear? Orthogonality is different than independent if we have non-linear relationships I guess]
+
+= Assumptions For Inference About The Mean =
+
+If the data are independent and the population distribution is not very skewed, and the sample size is larger than \f{50}, then the mean sampling stribution is nearly normal.
+
+If the data are independent and the population distribution is nearly normal, and the sample size is smaller than \f{50}, then the mean sampling distribution is \f{t} with \f{N-1} degrees of freedom.
+
+= Type I and Type II Errors =
+
+A type I error occurs when a significance test results in the rejection of the null hypothesis, even if the hypothesis was true. Also called a false positive. \f{\alpha = P(reject \given H_0) = P(type I error)}. For a certain \f{\alpha}, when we draw a sample, \f{\alpha} of the statistics we compute are such that they will trigger us to reject the null hypothesis based on our test. Therefore, the probability of having a type I error, given that the null is actually true is \f{\alpha}. But, it is not the probability of actually making a type I error for a test category, since the null could well be false, in which case we can't make a type I error. Such errors only occur when the null is True.
+
+A type II error occurs when a significance test results in the failure to reject of the null hypothesis, even if it is false. Also called a false negative (might be better called a false non-positive). Not really an error, just the data don't provide strong evidence that the null is false. Lack of significance does not mean the null is true. It means the data does not provide strong evidence that the null is false. Due to the nature of not finding signifiance, such errors have the potential for less problems than a type I error, since nothing erronous is said, we only omit to say something which is true. Such errors only occur when \f{H_0} is actually false.
+
+= One-Tailed and Two-Tailed Tests =
+
+One-tailed tests are significance tests where we only compute the required probability for significance on one tail of the distribution (since most tests start from distributions which are unimodal). Good when a "direction" in the test is preffered. Usually of the form \f{H_0: x = 0, H_A: x > 0}. Usually viewed skeptically, since one is not to conclude that the effect is non-zero if it comes in the opposite direction you were expecting.
+
+Two-tailed tests are signifiance tests where we compute the required probability for significance on both tails of the distribution. Good when only a deviance from chance is needed. Usually of the form \f{H_0: x = 0, H_A: x \neq 0}.
+
+= Links Between Hypothesis Testing And Confidence Intervals =
+
+Both in hypothesis testing and in confidence interval estimates we talk about confidence. Not accidental.
+
+Both are applied to the same kinds of statistics and both derive somehow from the sampling distribution and the point estimate.
+
+In hypothesis testing, some parameters of the sampling distribution are assumed (the null hypothesis) and we want to see how unlikely the result is. In confidence interval estimation, we build an interval around the point estimata, such that it has some properties.
+
+Notice that if a point estimate is considered to be \f{\alpha} significant, then the confidence interval at level \f{1-\alpha} around it will not contain \f{0} (or whatever base value we use) (considering how we build it [pictures of distributions]). Instead the distance between the \f{\alpha} level cutoff and the point estimate will be equal to the distance between the lower bound on the confidence interval and \f{0}.
+
+Furthermore, no value in the confidence interval can be rejected (if we build a null hypothesis around them), and all outside can be rejected. Though this should be stated before we do the computations, from the experiment design stage.
+
+= Misconceptions About Significance Testing =
+
+The p-value is the probability that the null hypothesis is false. The null is either true or false. We compute the probability of the measured effect having a certain magnitude or larger, if it was true.
+
+Low p-values correspond to high effect size. Nothing in the setup of significance testing says anything about magnitude. We're only concerned about probability of the effect having a certain size under certain conditions. This is highly dependent on sample size, for example. Large samples mean tight sampling distributions, therefore low probability values.
+
+Lack of significance means the null is probably true. The data is not evidence that the null is false, but does not say anything about it being true.
+
+All these are consequences of the construction of the significance test. It answers some questions very well, but is not a magical device which answers any questions.
+
+= Test Statistic =
+
+A statistic computed from a sample, which is used in hypothesis testing / confidence testing. Differnt kinds of setups have different kinds of test statistics.
+
+== Z Scores As Test Statistics ==
+
+For estimates which are normal or nearly normal, the Z score is the test statistic of choice.
+
+= Testing Difference Of Means In Small Sample Case =
+
+We use the \f{df=min(N_1-1,N_2-1)} for the t distribution associated. This lowers the chance of a Type I error, as the distribution is wider.
+
+= Difference Between Pooled Approach And NonPooled =
+
+If we have reason to believe the population variances are the same - use pooled estimates (\f{(s_1 (N_1-1) + s_2 (N_2-1)) / (N_1+N_2-2)}), with \f{df = N_1 + N_2 - 2}.
+
+Otherwise use the other formula \f{\sqrt{s_1^2 / N_1 + s_2^2 / N_2}}, with \f{df = min(N_1,N_2)}.
+
+= Testing Means =
+
+A common confidence test is that of means. It could involve one mean tested to a particular value, two means tested between themselves or many means tested between each other.
+
+= Testing A Mean Is A Known Value With Known Population Standard Deviance =
+
+A mostly pedagogical case, as the population variance is rarely known.
+
+We have a population with a distribution \f{D} and known standard deviance \f{\sigma}.
+
+We select a significance level \f{\alpha} and whether we do a one-tailed or two-tailed test.
+
+The null hypothesis is \f{H_0: M = \mu} or \f{H_0: M \leq \mu} or \f{H_0: M \geq \mu} . We know that this is the pessimist state of the world. We get \f{\mu} from that as well.
+
+We compute the sample mean \f{m}.
+
+The distribution of \f{M} if the null distribution is true is \f{M \distas N[\mu, \sigma/\sqrt{N}]}. [This works with proportions with \f{N} high enought, since we can approximate the binomial by a normal, but we have to add extra corrections to the probability computations].
+
+We compute the p-value as \f{p = P(M \geq m \given H_0)} or \f{p = P(\abs{M} \geq m \given H_0)} depending on the type of test we have. The probability is computed from the distribution of \f{M}. Computing this might require \f{Z} scores. [In more classical treatments, the test statistic would be \f{Z = (M - \mu) / \sigma \distas N[0,1]} if the null is true].
+
+If \f{p < \alpha} we reject the null, and accept the alternative.
+
+If \f{p \geq \alpha} we fail to reject the null.
+
+Assumptions:
+* Each observation is sampled independently.
+
+= Testing A Mean Is A Known Value =
+
+We have a population with a normal distrtribution \f{N[\mu_D,\sigma]}. Both parameters are now unknown.
+
+We select a significane level \f{\alpha} and whether we do a one-tailed or two-tailed test.
+
+The null hypothesis sis \f{H_0: M = \mu} or \f{H_0: M \leq \mu} or \f{H_0: M \geq \mu}. We know that this is the pessimistic tate of the world. We get \f{\mu} from that as well.
+
+We compute the sample mean \f{m} and the sample standard deviation \f{s}.
+
+The distribution of the "standardized" sample mean, if the null is true, where we do standardization by \f{s} is Student t with \f{N-1} degrees of freedom. That is \f{t = (M - \mu) / s \distas t[N-1]}. This is our test statistic. Notice that it is no longer normal, as in the case where \f{\sigma} is known, because we have to estimate \f{\sigma} with \f{s} and this increases variance of the sampling distribution for small-samples. [Standardization is done because Student t is always around \f{0}. We have to mould our data to somehow be around \f{0} - for this test this is achievavable].
+
+We compute the p-value as \f{p = P(M \geq m \given H_0)} or \f{p = P(\abs{M} \geq m \given H_0)} depending on the type of test we have. The probability is computed from the distribution of \f{t}.
+
+If \f{p < \alpha} we reject the null, and accept the alternative.
+
+If \f{p \geq \alpha} we fail to reject the null.
+
+Assumptions:
+* Each observation is sampled independently.
+* The population is normally distributed.
+
+= Testing Two Means Are Equal From Independent Populations (T Test) =
+
+We have two populations which are normally distributed, both with unknwon parameters, but the same variance.
+
+We select a significane level \f{\alpha} and whether we do a one-tailed or two-tailed test.
+
+The testing reduces to testing a difference between means is \f{0}.
+
+The null hypothesis is \f{H_0: M_1 - M_2 = 0} or \f{H_0: M_! - M_2 \leq 0} or \f{H_0: M_1 - M_@ \geq 0}. We know that this is the pessimistic state of the world.
+
+We compute the sample difference between means \f{d_{12} = m_1 - m2}.
+
+Compute \f{s_{1-2}} as in the relevant section.
+
+The distribution of the standardized difference, it the null is true, is Student t with \f{N_1 + N_2 - 2} degrees of freedom. That is \f{t = (M_1 - M_2) / s_{1-2} \distas t[N_1 + N_2 - 2]}. This is our test statistic.
+
+We compute the p-value as \f{p = P(M_1 - M_2 \geq m \given H_0)} or \f{p = P(\abs{M_1 - M_2} \geq m \given H_0)} depending on the type of test we have. The probability is computed from the distribution of \f{t}.
+
+If \f{p < \alpha} we reject the null, and accept the alternative.
+
+If \f{p \geq \alpha} we fail to reject the null.
+
+Assumptions:
+* Each observation is sampled independently.
+* The populations are normally distributed.
+* The populations have the same variance - homogeneity of variance.
+
+= Testing A Linear Combinations Of Means Is A Known Value From Independent Populations =
+
+This is a generalization of the \ref{Testing A Mean Is A Known Value} and \ref{Testing Two Means Are Equal} but we have multiple populations, all normally distributed with the same variance and unknown parameters. We're interested in seeing if a linear combination of the means is different from a known value (usually \f{0}).
+
+We have \f{M = c^T\overline{M} = \sum_{i=1}^k c_iM_i}.
+
+We select a significane level \f{\alpha} and whether we do a one-tailed or two-tailed test.
+
+The null hypothesis is \f{H_0: M = \mu} or  \f{H_0: M \leq \mu} or \f{H_0: M \geq \mu}. We know that this is the pessimistic tate of the world. We get \f{\mu} from that as well.
+
+We compute the MSE across the populations (divided by the sum degrees of freedom) and then compute the test statistic \f{t = (M - \mu) / \sqrt{(\sum{c_i^2} MSE)/n_h(N_1,\dots,N_k)}} (the harmonic mean is my guess, the book only contained equal sample sizes). We then compute the p-value from the t distribution with \f{\sum_{i=1}^k N_i - k} degrees of freedom.
+
+Assumptions:
+* Each observation is sampled independently.
+* The populations are normally distributed.
+* The populations have the same variance - homogeneity of variance.
+* We would rather keep a comparison with \f{0} and use uniform coordinates, no?
+* To obtain just a mean with a known value use \f{k=1} and \f{c_1 = 1}. To obtain testing of two means use \f{k=2}, \f{c_1=1}, \f{c_2=-1} and \f{\mu = 0}.
+
+= Testing Multiple Means Are Equal From Independent Populations (Tukye's HSD) =
+
+We have \f{k} populations which are normally distributed, with unknown parameters, but the same variance.
+
+We select a significance level \f{\alpha} and whether we do a one-tailed or two-tailed test.
+
+We must test all pairs of means. There are \f{l = k(k-1)/2} such comparision. However, doing them by the classical method allows \f{l} possibilities of Type I errors to occur, which raises the overall probability from \f{\alpha} to at most \f{l\alpha}, by the union bound (but not quite, since the tests are independent).
+
+The null is \f{H_0: M_1 = M_2 = \cdots = M_k}. But, this is just shorthand for \f{l} nulls of the form \f{H_0^{i-j}: M_1 - M_2 = 0}.
+
+We must use Tukey's Honestly Significant Difference Test.
+
+Compute the MSE divided by the total degrees of freedom \f{\sum_{i=1}^k N_i - k}.
+
+For each pair \f{i-j} compute the test statistic \f{q = (M_i - M_j) / \sqrt{MSE/n_h(N_i,N_j)}} and use this to find the probability from the studentized range distribution. For each pair then do the test.
+
+Don't go overboard - we can say exactly the same thing we can with other tests.
+
+Assumptions:
+* Each observation is sampled independently.
+* The populations are normally distributed.
+* The populations have the same variance - homogeneity of variance, therefore the variance is the same for all pairwise differences between means.
+
+One can extend this to multiple tests of different linear combinators of the means, rather through the second form with multiple null hypotheses. \f{H_0^q: c_q^T \overline{M} = 0}. (possibly allow uniform coordinates).
+
+= Testing Two Means Are Equal From Correlated Populations (Correlated T Test) =
+
+We have two populations which are correlated, with an unknown Pearson r. These might arrise in medical trials when all subjects receive different doasge levels of a drug, for example. Our sample is a set of pairs (usually, the samples are of the same size).
+
+The approach here is simple. Compute for each observation the set of differences between the first variable and the second. Then apply the Test for a single mean being different from \f{0} (or whatever value) to the differences dataset. Each subject is "their own control" and thus we keep differences between subjects from entering into the analysis.
+
+A bad approach would have been to compute the mean of the first and the second and then do the difference of the means. This is the approach in the independent test.
+
+Difference of means (independent) vs mean of differences (non-independent / correlated).
+
+The standard deviation we will use is \f{s_{X-Y} = s_X^2 + X_Y^2 - 2rs_Xs_Y}. This will usually be smaller than the SD which appears in independence tests \f{s = \sqrt{2MSE / m_h(N_1,N_2)}}, thus providing a tighter sampling distribution.
+
+= Testing A Linear Combinations Of Means Is A Known Value From Independent Populations =
+
+If the group of variables is correlated, you must compute a new variable \f{Y = c^TX} and then apply the single mean test to this, as a generalization of the previous setup.
+
+= Testing Multiple Means Are Equal From Correlated Populations =
+
+No Tukey HSD here.
+
+Just compute all-pairwise or all comparisions in general, using the correlated t test, and also use the Bonferonni correction.
+
+= Power =
+
+e power of a test is the probability of finding a satistically significant result if the null hypothesis is false. The probability of correctly rejecting a false null hypothesis. \f{P(sig \given \lnot H_0)}. Tests with higher power are better at determining when a result is significant. If \f{\beta} is the false negative rate (or probability of failing to reject a false null hypothesis) then \f{P(sig \given \not H_0) = 1 - \beta}.
+
+Calculating this is generally complex. For significance computations, we assume a certain model for the null hypothesis and then compute the p-value. For power computations, we also assume a model for the alternative hypothesis. We first determine the domain value which would cause significance to be declared in significance computations for the null hypothesis. Then, we see what is the probability, under the alternative hypothesis, to obtain values of greater magnitude than this (according to the sidedness of the test). Then, this is the power we seek.
+
+Factors that affect power:
+* Sample size: larger sample sizes mean larger powers. As for significance computations, the sampling distributions involved become tighter, therefore the probability of making Type II errors drops (increasing power). Under the control of the experimenter.
+* Population standard deviation: larger deviations means lower power (all sampling distributions are wider, because they depend on the population deviance, in general). Relatively under the control of the experimenter (use more homogenous populations, reduce measurement error etc.). For the same sample size, larger variance means lower power.
+* Difference between hypothesized and true mean: the larger the effect size, the larger the power. Not really under the control of the experimenter. For the same difference, larger variance means lower power.
+* \f{\alpha} level: the lower this is, the higher the \f{\beta} and the lower the power. The more stringent the requirements for significance, the more likely it is we will fail to reject a false null hypothesis.
+* One-vs-two tailed tests: one-tailed tests have higher power at the same significance level (a one-tailed at \f{\alpha} has the same power as a two tailed at \f{2\alpha}), as long as the direction is correct.
+
+= ANOVA =
+
+A type of statistical analysis. We have multiple populations, considered independent. We want to test the hypothesis that the means are different. We look at the hypotheses \f{H_0 \colon \mu_1 = \mu_2 = \dots = \mu_k} vs \f{H_A \colon \mu_1 \neq \mu_2 \neq \dots \neq \mu_k}. The question: is the variability in the sample means so large as to be unlikely to have occured by chance? We simultaneously consider many groups.
+
+The key to this analysis is to consider the variability of the means relative to that of the populations. The variability of the means is measured by the mean square between groups (MSG), with \f{k-1} degrees of freedom. The variability of the populations, assuming the null holds and the means are equal is the mean square error (MSE), with \f{n-k} degrees of freedom. These should be equal if the null is true.
+
+We compute the test statistic called \f{F} as \f{F = MSG/MSE}.
+
+The F statistic follows the F distribution with \f{k-1} and \f{n-k} degrees of freedom.
+
+We then proceed as in any other hypothesis test, using only the upper tail (one sided), as we are interested in cases where \f{MSG >> MSE}.
+
+The model we assume for each population is the very simple model \f{Y_i = M_i + \epsilon_i}.
+
+Assumptions:
+* Errors/residuals are independent. Use correlation analysis or at least time-ordered collection plots to check this.
+* Errors/residuals are normal. Use q-q plots on each population. Especially important for small data sets.
+* Variances of residuals are equal. Examine side-by-side box-plots or numerical values of the estimated variances. Especially important when sample sizes differ.
+
+It is possible to reject the null hypothesis using ANOVA and then to not identify differences in the pairwise comparisons. However, this does not invalidate the ANOVA conclusion. It only means we have not been able to successfully identify which groups differ in their means.
+
+What variance does each covariate introduce? Analysis of Variance?
+
+Hypothesis testing. We have a process and we wish to ask a simple yes/no question about it. Hypothesis testing (HT) is a statistical framework for making inferences about this question. The case where the answer is no, is called the \def{null hypothesis} - \f{H_0}. The case where the answer is yes, is called the \def{alternative hypothesis} - \f{H_A}. HT allows us to say that the answer is no (the null hypothesis holds or we fail to reject the null hypothesis) or that the answer is not-no (the null hypothesis does not hold or we reject the null hypothesis). It does not allow us to say that the answer is yes (the alternative hypothesis holds or we fail to reject the alternative hypothesis) and it makes a distinction between not-no and yes. Even with these limitations it is a useful and precise tool, as the example applications will illustrate. In general, the null hypothesis is a skeptical view of the world. It corresponds to the \translate{mentinrea} of the status-quo of whatever process we are trying to prove behaves in a certain way. We need to build a \def{test statistic}, \f{t}, which has a known distribution if the null hypothesis holds - \f{p_t(x \given H_0)}. We compute this test statistic using our sample, and consider the probability/density of the value, if the null hypothesis holds, called the \def{p-value}. If the p-value is small enough, then we might say that the null hypothesis does not hold, as the test statistic value is very unlikely, if it were true. More formally, we select a \def{confidence}, \f{\alpha}, usually \f{0.95} or \f{0.99} or even higher. If \f{p_t(t \given H_0) \leq 1 - \alpha}, then we claim that, according to our test statistic, we reject the null hypothesis with with a confidence of \f{1 - \alpha} and a p-value of \f{p_t(t \given H_0)}. \f{\alpha} must be selected before computing \f{t} (such that the selection of \f{\alpha} is made independent of what the test statistic shows).
+
+A specific form of multiple mean testing where the null hypothesis has the standard form \f{H_0: \mu_1 = \mu_2 = \cdots = \mu_k} - the omnibus null hypothesis. We use the test to see that at least one population mean is different than other means.
+
+Tukey HSD is preferable to ANOVA, because it offers more specific information. There are complex types of analyses that can only be done with ANOVA, and not the HSD. It is also very popular.
+
+One-way ANOVA - applied to an experiment with one independent variable. The independent variable is usually discrete.
+
+Two-way ANOVA - applied to an experiment with two independent variables. The independent variables are usually discrete.
+
+When differnt subjects are used for the levels of an independent variable, the variable is called a between-subjects variable. [Probably assume they are independent]. When different subjects are used for the levels of an independent variable, the variable is called a within-subjects variable / repeated measurements variable. [Probably correlation between results]
+
+A factorial experiment design is one in which all combinations of independent variable levels are considered. Complex experiments have many variables and some might be between and others within.
+
+= ANOVA For One-Variable Between Subjects Design =
+
+The populations involved are independent.
+
+Assumptions:
+* The populations have the same variance.
+* The populations are normally distributed.
+* Each value is sampled independely of each other value (each subject provides one value, for example).
+
+Assume there are an equal number of observations in each group. \f{n} and \f{N = kn}.
+
+First compute the MSE for the whole dataset - this is the variance of all the populations, regardless of the null hypotheses truth or not.
+
+Then we compute the MSB. This is the variance of dataset, if all the means are equal (the null hypothesis). We have \f{\sigma_M^2 = \sigma / n}. Then \f{\sigma = n\sigma_M^2}. We need to estiamte \f{\sigma}. But, we don't have \f{\sigma_M^2} - the variance of the mean. But we do have \f{k} estimates of the mean, for each variable. Therefore, we just have to compute the estimate of the variance from this sample, and use that. It is a little different from Tukey's HSD approach.
+
+If the null is true, then both the MSE and the MSB are estimates of the variance of the populations (which are equal between them), and they should be equal. If \f{\sigma} is much diffent than the MSE, we have a interesting condition, and the null is rejected. If the null is false, then the sample means are different and the variance of them will be large (should be \f{0} in null is true). Therefore we get to see a learger MSB than MSE.
+
+We then compute the F ration \f{F = MSB / MSE}. This is distributed according to the \f{F} distribution, which depends on the degrees of freedom of \f{MSB} (\f{k-1}) and the MSE (\f{N - k}).  This is our test statistic, and everything is standard hypothesis testing after this.
+
+The \f{F} test is techically a one tailed test (since it is on \f{[0,+\infty]} and only high values are interestin) but behaves like a two tailed test in the sense that it is senstitive to any pattern of differences among means.
+
+An ANOVA test with two-means is equivalent to a Tukey HSD test with two means (both in the independet case). And we have \f{F(1,df) = t^2(df)}. [more here]
+
+[Partition variance into \f{SSQ_{condition}} and \f{SSQ_{error}}.]
+
+= One-Way Tables =
+
+A method of testing the GoF between two distributions (a theoretical one and a practical one).
+
+Works with discrete distributions. Continuous ones must be adapted through binning.
+
+We have, for \f{k} domain values the theoretical (expected) probability \f{p_i} and the observerd probabilities \f{\hat{p}_i}.
+
+A measure of the deviation of the observed distribution from the theoretical one for bin \f{i} is \f{(p_i - \hat{p}_i)^2 / p_i}.
+
+If we sum this (a global measure of the error) the resulting statistic is distributed as \f{\Chi^2_{k-1}}.
+
+From this we can perform usual hypothesis testing.
+
+Each term has the usual form \f{observerd\_value - expected\_value / se\_of\_sampling\_distribution\_under\null}. It is just that for this setup the se is actually \f{\sqrt{count}}. Hence the nice forms we obtain.
+
+Each count must be at least \f{10}.
+
+Each case that contributes to the table must contribute to a single cell.
+
+= Multiway-Test (Contingency Table Test) =
+
+Suppose we have multiple estimated probability distributions on the same domain (a contingency table, when the domain is nominal).
+
+We want to test if the distributions are the same. We compute the mean distribution \f{m} (as a vector).
+
+We then take one distribution and compute the statistic \f{\Chi^2_{(k-1)(N-1)} = \sum (m_i - \hat{p}_i)^2 / m_i}. (the sum of squared deviances from the mean distribution basically or \f{\Chi^2_{(k-1)(N-1)} = \norm{m - \hat{p}}^2}. This is distributed according to the \f{\Chi^2} distribution with \f{(k-1)(N-1)} degrees of freedom, and we proceed in usual testing manner.
+
+Assumptions:
+* Estimating each distribution element must be independent from others. In a study, each person would contribute to only one distribution and in that distribution to one bin.
+* In order to approximate a \f{\Chi^2} correctly, the degrees of freedom must be greater than \f{20}.
+* Some people do "the Yates correction for continuity" when a frequency is below \f{5 / N}.
+
+= What Happens With Tests When The Normality Assumption Is Violated =
+
+Most tests are robust.
+
+However, the probabilities obtained will be larger, than the case when the actual distributions are used.
+
+Hence, less power - type 2 errors increase.
+
+Tests assuming normality can have particularly low power when there are extreme values or outliers. A contributing factor is the sensitivity of the mean to extreme values. Although transformations can ameliorate this problem in some situations, they are not a universal solution.
+
+= Discussion On Why You Are Not Allowed To Switch From Two Sided To One Sided Hypothesis Tests =
+
+The setup must be this: first define your hypothesis, then collect data and compute the test statistic against it. It should not be: collect data and compute the test statistic, then choose a hypothesis which is suited. 
+
+Because a two tailed hypothesis test has \f{\alpha} probability which is split in two tails, the value of the test statistic must be more extreme than for a one tailed hypothesis test which puts all of \f{\alpha} in a single tail.
+
+Now, if the setup of your experiment is such that only magnitude counts (how extreme the deviation is from whatever "pessimist value" the null claims), then, if we choose a one-sided test after we've seen the data, we are cheating and actually using something from the sample to draw our conclusion (lose some degree of freedom? - usually distributions are more dispersed). Then, it is as if we were working in the two tailed case with \f{2\alpha} - which leads to an increase in the FP rate.
+
+= Choice Of Significance Level =
+
+Usually \f{\alpha = 0.05}.
+
+Might be lower if making a Type I error is costly - demand strong evidence.
+Might be higher if making a Type II error is costly - don't need much of a convincing.
+
+= In Some Cases One Can Test For Independence =
+
+If we have some sort of time-series data and we want to show that some events are independent, we might find out what distribution is expected in case of independence (say the Geometric one etc. - many simple cases assume such independencies), and then setup a one-way table with the actual data and do a hypothesis test using the GoF tools.
+
+= Statistical Significance Versus Practical Significance =
+
+When the sample size becomes larger, point estimates become more precise and any real differences in the mean and null value become easier to detect and recognize. Even a very small difference would likely be detected if we took a large enough sample. Sometimes researchers will take such large samples that even the slightest difference is detected. While we still say that difference is statistically significant, it might not be practically significant.
+
+= When Looking At A Confidence Interval =
+
+It's witdh is the most important element, since it gives us a quantified view at the uncertantiy with the estimate. Other statements are either false or too technical.

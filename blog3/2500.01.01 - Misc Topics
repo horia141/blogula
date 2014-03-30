@@ -1,0 +1,134 @@
+= Combinations of Numbers =
+
+Let \f{x_1,x_2,\dots,x_n} and \f{a_1, a_2, \dots, a_n} be numbers..
+
+A \def{linear combination} of \f{a_1,a_2,\dots,a_n} and \f{x_1,x_2,\dots,x_n} is \f{a_1x_1 + a_2x_2 + \cdots + a_nx_n = \sum_{i=1}^n a_ix_i}. The numbers \f{a_i} are reffered to as \def{coefficients}. The numbers \f{x_i} can be generalized to other kinds of objects which support multiplication by a number and addition.
+
+A \def{convex combination} of \f{x_1,x_2,\dots,x_n} and \f{a_1, a_2, \dots, a_n} is a \ref{linear combination} of the number when \f{a_i \geq 0} and \f{\sum_{i=1}^n a_i = 1}. The numbers \f{a_i} are reffered to as \def{coefficients}. The numbers \f{x_i} can be generalized to other kinds of objects which support multiplication by a number and addition.
+
+Convex combinations have many nice properties:
+* \f{\min\{x_1,x_2,\dots,x_n\} \leq \sum_{i=1}^n a_i x_i \leq \max\{x_1,x_2,\dots,x_n\}}.
+* If \f{t = \sum_{i=1}^{n-1} a_i} then \f{a_1/t, a_2/t, \dots a_{n-1}/t} with \f{x_1,x_2,\dots,x_{n-1}} is also a convex combination.
+* Let \f{f} be a convex function then \f{f(\sum_{i=1}^n a_ix_i) \leq \sum_{i=1}^n a_if(x_i)} - \def{Jensen's Inequality}.
+
+For part \f{1}, notice that \f{a_i x_i \geq a_i \min\{x_1,x_2,\dots,x_n\}} since \f{a_i \geq 0}. Replace in the convex combination and the results follow.
+For part \f{2}, each new term is obviously positive, being the ratio of two positive terms. Furthermore, a summing over them will reveal that they have the sum of \f{1}.
+For part \f{3}, let \f{t = \sum_{i=1}^{n-1} a_i}. We then have \f{f(\sum_{i=1}^n a_ix_i) = f(\sum_{i=1}^{n-1} a_ix_i + a_nx_n) = f(\sum_{i=1}^{n-1} a_ix_i + (1- t)x_n) = f(t \sum_{i=1}^{n-1} a_i /t x_i + (1-t)x_n) \geq t f(\sum_{i=1}^{n-1} a_i/t x_i) + (1 - t) f(x_n)} - because \f{f} is convex. If we repeat this procedure for the smaller \f{f} of sum, we'd eventually reach \f{2} terms, which is a base case. Assuming that the \f{n-1} case is true, we then have \f{t f(\sum_{i=1}^{n-1} a_i/t x_i) + (1 -t) f(x_n) \geq t \sum_{i=1}^{n-1} a_i/t f(x_i) + (1 - t) f(x_n) = \sum_{i=1}^n a_i f(x_i)}, which is what we wanted.
+
+A \def{quadratic combination} of \f{a_{11},\dots,a_{1n},\dots,a_{nn}} and \f{x_1,\dots,x_n} where \f{a_{ij} = a_{ji}} is \f{a_{11}x_1^2 + \dots + a_{1n}x_1x_n + \dots + a_{nn}x_n^2 = \sum_{i=1}^n\sum_{j=1}^n a_{ij}x_ix_j}. The numbers \f{a_{ij}} are reffered to as \def{coefficients}. The numbers \f{x_i} can be generalized to other kinds of objects which support multiplication by a number, addition and multiplication with another like itself.
+
+= Means =
+
+Let \f{a} and \f{b} be numbers.
+
+The \def{arithmetic mean} of \f{a} and \f{b}, or \f{\text{m}_\text{a}(a,b)} is the sum of \f{a} and \f{b} divided by \f{2}. The \def{geometric} mean of \f{a} and \f{b}, or \f{\text{m}_\text{g}(a,b)} is the square root of the product of \f{a} and \f{b}. The \def{harmonic mean} of \f{a} and \f{b}, or \f{\text{m}_\text{h}(a,b)} is \f{2} times the reciprocal of the sum of the reciprocal of \f{a} and \f{b}.
+\end{definition}
+
+A summary of the means:
+%formula{
+\text{m}_\text{a}(a,b) = \frac{a + b}{2} \text{ and } \text{m}_\text{g}(a,b) = \sqrt{ab} \text{ and } \text{m}_\text{h}(a,b) = \frac{2}{\frac{1}{a} + \frac{1}{b}} = \frac{2ab}{a + b}
+}
+
+Assume \f{a < b}.There is a very important relationship between the means, namely:
+%formula{
+\min(a,b) < \text{m}_\text{h}(a,b) < \text{m}_\text{g}(a,b) < \text{m}_\text{a}(a,b) < \max(a,b)
+}
+
+Notice that \f{\min(a,b) = a} and \f{\max(a,b) = b}. We then need to prove \f{a < \text{m}_\text{h}(a,b) < \text{m}_\text{g}(a,b) < \text{m}_\text{a}(a,b) < b}.
+First, we need to prove that \f{a < 2ab / (a + b)}. Since \f{a > 0} and \f{b > 0} we have that \f{a + b > 0} and we can write \f{a(a + b) < 2ab} or \f{a^2 + ab < 2ab} or \f{a^2 - ab < 0} or \f{a(a - b) < 0}. Since \f{a < b} we have \f{a - b < 0} and since \f{a > 0} we have \f{a(a - b) < 0}, which is what we wanted. Second, we need to prove that \f{2ab / (a + b) < \sqrt{ab}} or \f{4a^2b^2 / (a + b)^2 < ab} or \f{4a^2b^2 < ab(a^2 + b^2 + 2ab)} or \f{a^3b + ab^3 + 2a^2b^2 > 4a^2b^2} or \f{a^3b + ab^3 - 2a^2b^2 > 0} or \f{ab(a^2 + b^2 - 2ab) > 0} or \f{ab(a - b)^2 > 0}. Since \f{a > 0} and \f{b > 0} and \f{(a - b)^2 > 0} we have that \f{ab(a^2 + b^2 - sab) > 0}, which holds, and our statement is true. Thirdly, we need to prove that \f{\sqrt{ab} < (a + b) / 2} or \f{2\sqrt{ab} < (a + b)} or \f{4ab < a^2 + b^2 + 2ab} or \f{a^2 - 2ab + b^2 > 0} or \f{(a - b)^2 > 0}, which is what we wanted. Finally, we need to prove that \f{(a + b) / 2 < b} or \f{a + b < 2b} or \f{a < b}, which holds, and our statement is true.
+
+= Inequalities =
+
+Let \f{x_1, x_2, y_1 \text{ and } y_2} be numbers. The \def{Cauchy-Bunyakovsky-Schwarz Inequality}:
+* \f{\abs{x_1y_1 + x_2y_2} \leq \sqrt{x_1^2 + x_2^2}\sqrt{y_1^2 + y_2^2}}.
+
+By, squaring, we obtain \f{(x_1y_1 + x_2y_2)^2 \leq (x_1^2 + x_2^2)(y_1^2 + y_2^2)} or \f{x_1^2y_1^2 + x_2^2y_2^2 + 2x_1x_2y_1y_2 \leq x_1^2y_1^2 + x_1^2y_2^2 + x_2^2y_1^2 + x_2^2y_2^2} or \f{2x_1x_2y_1y_2 \leq x_1^2y_2^2 + x_2^2y_1^2} or \f{x_1^2y_2^2 + x_2^2y_1^2 - 2x_1x_2y_1y2 \geq 0} or \f{(x_1y_2 + x_2y_1)^2 \geq 0}, which is true.
+
+\f{h} be a number and \f{n} a natural number and \f{h > -1}. The \def{Bernoulli Inequality}:
+* \f{(1 + h)^n \geq 1 + nh}.
+
+For \f{n = 0} the statement trivially holds. Otherwise, for \f{h \geq 0} we have \f{(1 + h)^n \geq 1 + nh} which, by \thmref{BinomialTheorem}, mean that \f{\sum_{i=0}^n\binom{n}{i}h^i \geq 1 + nh}. Each term in the sum is positive, since \f{h^i} is positive and \f{\binom{n}{i}} is a natural number. Also notice that \f{1 + nh} is the sum of the first two terms. Since the \f{(1 + h)^n} term consists of at least two terms and they are positive, the inequality holds. For \f{h \in (-1,0)} we will prove this statement by induction. Notice that for \f{1} the statement holds, as \f{(1 + h)^1 \geq 1 + 1h}. Assume now that the statement holds for \f{n}. We then have \f{(1 + h)^{n+1} = (1 + h)^n(1 + h) \geq (1 + nh)(1 + h)}. But \f{(1 + nh)(1 + h) = 1 + h + nh + nh^2 = 1 + (n + 1)h + nh^2}. Therefore, we have \f{(1 + h)^{n+1} \geq 1 + (n + 1)h + nh^2}. But \f{n > 1} and \f{h^2 > 0} therefore \f{nh^2 > 0} and \f{1 + (n + 1)h + nh^2 > 1 + (n + 1)h}. We now have \f{(1 + h)^{n+1} \geq 1 + (n+1)h + nh^2 > 1 + (n + 1)h} which proves our statement.
+
+= Common Divisors And Multiples =
+
+Let \f{m} and \f{n} be \ref{natural numbers}.
+
+The \def{greatest common divisor} of \f{m} and \f{b}, or \f{\gcd(m,n)} is largest divisor of both \f{m} and \f{n}. The \def{least common multiple} of \f{m} and \f{n}, or \f{\lcm(a,b)} is the smallest number for which both \f{a} and \f{b} are divisors.
+
+= Combinatorics =
+
+Let \f{m}, \f{n} and \f{k} be \ref{natural numbers}.
+
+The \def{factorial} of \f{n}, or \f{n!} is \f{n! = \Pi_{i=1}^ni}.
+
+A \def{combination} of \f{n} taken \f{k} at a time, or \def{Binomial coefficient} of \f{n} with regards to \f{k}, or \f{\binom{n}{k}} is \f{\binom{n}{k} = n! / k!(n-k)!}.
+
+Binomial coefficients can be expressed in a recursive manner as \f{\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}} ans \f{\binom{n}{0} = 1} and \f{\binom{n}{n} = 1}.
+
+We have \f{\binom{n-1}{k-1} + \binom{n-1}{k} = (n-1)! / (k-1)!(n-1-k+1)! + (n-1)! / k!(n-1-k)! = (n - 1)! / (k-1)!(n-k)! + (n-1)! / k!(n-k-1)! = (n-1)!k / k!(n-k)! + (n-1)!(n-k) / k!(n-k)! = (n-1)!(k+n-k) / k!(n-k)! = n! / k!(n-k)! = \binom{n}{k}}.
+
+General properties of \ref{Binomial coefficients}.
+* \f{\binom{n}{k} \in \mathbb{N}}.
+* \f{(a + b)^n = \sum_{i=0}^n {\binom{n}{i}a^ib^{n-i}}}.
+* \f{\sum_{i=0}^n\binom{n}{i} = 2^n}.
+* \f{\sum_{i=0}^n{(-1)^i\binom{n}{i}} = 0}.
+* \f{\sum_{k=0}^{n/2} \binom{n}{2k} = 2^{n-1}}.
+* \f{\sum_{k=0}^{n/2} \binom{n}{2k+1} = 2^{n-1}}.
+* \f{i\binom{k}{i} = k\binom{k-1}{i-1}}.
+
+= Sums Of Natural Numbers =
+
+Let \f{n} be a \ref{natural number}. Classical results:
+* \f{\sum_{i=0}^n i = \frac{n(n+1)}{2}}.
+* \f{\sum_{i=0}^n i^2 = \frac{n(n+1)(2n+1)}{6}}.
+* \f{\sum_{i=0}^n i^3 = \frac{n^2(n+1)^2}{4}}.
+
+= The Number \f{e} =
+
+The number \f{e} is the limit of the series \f{(1 + 1/x)^x}. It pops up a lot.
+
+The number \f{1/e} is the limit of the series \f{(1 - 1/x)^x}.
+
+Consider \f{(1 + a)^b} when \f{a} is small. We can rewrite it as \f{(1 + a)^b = (1 + a)^{(1/a)(ab)} = (1 + 1/x)^{x (ab)} = e^{ab}}, since, if \f{a} is small, \f{x = 1/a} is large, and we're close to the limit.
+
+Consider \f{(1 - a)^b} when \f{a} is small. We can rewrite it as \f{(1 - a)^b = (1 - a)^{(1/a)(ab)} = (1 - 1/x)^{x (ab)} = (1/e)^{ab} = e^{-ab}}, since, if \f{a} is small, \f{x = 1/a} is large, and we're close to the limit.
+
+= Number of Zeros =
+
+Define the function \f{z(n)} as the number of zeros in \f{n!}. Then we have that \f{n_1 \leq n_2} means \f{z(n_1) \leq z(n_2)}. This is because the number of zeros in a number is determined by how many \f{2}s and \f{5}s appear in the prime factor representation of the number. If \f{n = 2^p5^q n'} then \f{n} has \f{\min(p,q)} zeros at the end. This is because it takes a \f{2} and a \f{5} in order to add one \f{0}, and no other situation can produce them. Naturally, \f{n_2!} will have at least the same number of \f{2}s and \f{5}s as \f{n_1!}, therefore the original result.
+
+= Harmonic Numbers =
+
+The \f{k^{\text{th}}} Harmonic Number - \f{H_k} is defined as \f{H_k = 1 + 1/2 + ... + 1/k = \sum_{i=1}^k 1/k}. Approximated by \f{\ln{k} < H_k < \ln{k} + 1} - picture the integrals.
+
+= Progressions =
+
+Arithmetic: \f{a_0} and \f{a_i = a_{i-1} + a = a_0 + ia}.
+
+Sum of arithmetic mean: \f{\sum_{i=0}^n a_i = (n+1)a_0 + a n (n+1) / 2 = (n+1)/2 (2a_0 + an)} - \f{n+1} times the average of the first and the last terms.
+
+Geometric: \f{b_0} and \f{b_i = b_{i-1}b = b_0b^i}.
+
+Sum of geometric mean: \f{\sum_{i=0}^n b_i = b_0 (b^{n+1} - 1) / (b - 1)} if \f{b \neq 1} or \f{\sum_{i=0}^n b_i = (n+1)b_0} if \f{b = 1}.
+
+= Randomness =
+
+Understanding what is meant by "random" insofar as randomness is needed in your application is critical to correctly figuring out what kind of pseudorandom number generator you need. All pseudorandom number generators are deterministic, so it is possible to predict all future outputs of a PRNG. In the literature, there are at least 4 different notions of randomness: statistical, cryptographic, algorithmic, and physical. The first two are important for practical applications. The third, also known as Chaitin-Kolmogorov randomness, is mostly of theoretical interest. The last, of course, is not pseudorandomness but true randomness.
+
+Statistical Randomness: A pseudorandom number generator is said to be statistically random if its output passes any statistical test. Such generators may be safely used in simulations, Monte Carlo experiments, etc, since they will not skew the results of the experiment.
+
+Cryptographic Randomness: A pseudorandom number generator is said to be cryptographically secure if, by observing a polynomial-sized number of outputs, no polynomial-time predicate of the next output can be predicted with noticeably greater than random chance. If the generator outputs one bit at a time, this means that after observing the generator's output, no efficient algorithm exists to predict the value of the next output bit with success probability greater than \f{1/2 + \epsilon}. Here "polynomial-sized" and "efficient" is relative to the size of the initial seed. This is an informal statement of Yao's next bit test. The definition involves polynomial-time computable predicates because otherwise a generator that outputs a 32-bit word at a time may output values that are unpredictable as a whole, but, for example, the low-order bit might be easily determined. Such generators may be safely used in any adversarial context, including cryptographic key / nonce generation.
+
+Chaitin-Kolmogorov Randomness: Chaitin and Kolmogorov independently came up with this characterization, also called algorithmic randomness, of random strings. It captures intuition that most people have about randomness: the bit string "0000000000000000" is often considered less random than "0100101001011101", despite the fact that both may have been the output of the same pseudorandom number generator or even the output of a source of physical randomness. Indeed, a physically random source such as a fair coin flipped 16 times would output both strings with equal probability. The algorithmic randomness of a string is the length of the shortest program which would output the string. It doesn't matter what programming language the definition is relative to, since for sufficiently long strings it doesn't matter: the difference is a "small" constant, since one could prefix the program in language B with an interpreter for language B written in language A.
+
+Physical Randomness: Many sources of "physical randomness" is random only relative to the available computation power. For example, if we were to flip a fair coin to obtain a random bit, an adversary who can train a high frame rate camera or similar sensor on the coin as it flew through the air and has enough computational power to analyze, in real time, the physics of the coin and its interactions with the hand that is about to catch it is likely to be able to predict the coin toss with greater than \f{1/2 + \epsilon} probability of success. Other sources make use of quantum mechanical uncertainty. An often used example involves measuring the junction noise of a reverse-biased zener diode (due to quantum mechanical tunneling).
+
+= Error Detecting Codes =
+
+Error detection: property of an symbol-string encoding, such that no two strings differ by exactly one digit, such that when an error occurs, and a digit is corrupted, we know it happened.
+
+If we use length n strings, our set can contain at most \f{\abs{\Sigma}^{n-1}} strings. Proof: induction on n. Separate into sets which end in \f{\sigma_1, \sigma_2, \dots \sigma_{n}}, and apply property.
+
+Parity check codes - binary error detection codes. Add a bit to the regular encoding, such that we always have an eager number of \f{1}s in a code. Strings that differed by one bit, and hence had different count parity, now differ by two. Achieves best redundancy - 0.5.
+
+\f{k}-ary check codes - add another symbol to \f{n}-symbol strings, such that the sum of the digits is a multiple of \f{\abs{\Sigma}}. Any one symbol error which occurs can add at most \f{\abs{Sigma} - 1} to this sum, therefore, it will be detected (by taking us to an invalid string). Parity check codes are a special case of this. In general, we can add \f{q} extra digits, such that the sum of digits is a multiple of \f{q(\abs{Sigma}-1) + 1}, to detect \f{q} errors. Such codes have codings which differ in \f{q+1} symbols, because, for \f{q=1} if two symbols differ by just one digit, then one of them cannot be a multiple of \f{\abs{Sigma}}, hence we contradict ourselves.
