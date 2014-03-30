@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: foundation/
+Disallow: blogula.css
+Disallow: code_highlight.css
