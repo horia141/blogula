@@ -1,9 +1,0 @@
-Title: Horia's Blog
-URL: www.example.com
-Author: Horia Coman
-Email: horia314@gmail.com
-AvatarPath: avatar.jpg
-Description: I am a software engineer currently living in London, but originally from Romania, and this is my little island on the Internet. This blog will mostly be about computer sciency topics, which might not be everybody's cup of tea, but it's the stuff I'm confident writing about. From time to time I'll post some wildly misinformed rant about the economy or politics, but I'll try to keep those to a minimum (or accurate, but that's harder), as well as the mandatory travel photos. I'm also an amateur drummer. I'm currently working for Google on their ads system. Naturally, any opinion expressed here is my own, not my employer's.
-Series:
- - Similarity Search in \f{O(\log{n})} time
-NrOfPostsInFeed: 20
