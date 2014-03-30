@@ -1,0 +1,15 @@
+/*TEAM*/
+
+Author: $author
+Contact: $email
+Twitter: @$twitter
+Location: $location
+
+/*THANKS*/
+
+/*SITE*/
+
+Last update: $build_date_str
+Standards: HTML5, CSS3
+Components: Modernizr, jQuery, Foundation CSS, MathJax
+Software: Blogula

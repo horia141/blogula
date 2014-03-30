@@ -81,13 +81,15 @@ class Text(object):
         return self._atoms
 
 class Info(object):
-    def __init__(self, title, url, author, email, avatar_path, description, 
-                 series, nr_of_posts_in_feed, posts_dir, output_dir,
-                 output_homepage_path, output_posts_dir):
+    def __init__(self, title, url, author, email, twitter, location, avatar_path, description, 
+                 series, nr_of_posts_in_feed, posts_dir, output_dir, output_homepage_path, 
+                 output_posts_dir):
         assert isinstance(title, Text)
         assert isinstance(url, str)
         assert isinstance(author, str)
         assert isinstance(email, str)
+        assert isinstance(twitter, str)
+        assert isinstance(location, str)
         assert isinstance(avatar_path, str)
         assert isinstance(description, Text)
         assert isinstance(series, frozenset)
@@ -103,6 +105,8 @@ class Info(object):
         self._url = url
         self._author = author
         self._email = email
+        self._twitter = twitter
+        self._location = location
         self._avatar_path = avatar_path
         self._description = description
         self._series = series
@@ -127,6 +131,14 @@ class Info(object):
     @property
     def email(self):
         return self._email
+
+    @property
+    def twitter(self):
+        return self._twitter
+
+    @property
+    def location(self):
+        return self._location
 
     @property
     def avatar_path(self):

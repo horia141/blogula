@@ -24,7 +24,7 @@ import utils
 class Config(object):
     def __init__(self, template_homepage_path, template_postpage_path, template_feedpage_path, 
                  template_foundation_dir, template_blogula_css_path, template_img_dir,
-                 template_robots_txt_path):
+                 template_robots_txt_path, template_humans_txt_path):
         assert isinstance(template_homepage_path, str)
         assert isinstance(template_postpage_path, str)
         assert isinstance(template_feedpage_path, str)
@@ -32,6 +32,7 @@ class Config(object):
         assert isinstance(template_blogula_css_path, str)
         assert isinstance(template_img_dir, str)
         assert isinstance(template_robots_txt_path, str)
+        assert isinstance(template_humans_txt_path, str)
 
         self._template_homepage_path = template_homepage_path
         self._template_postpage_path = template_postpage_path
@@ -40,6 +41,7 @@ class Config(object):
         self._template_blogula_css_path = template_blogula_css_path
         self._template_img_dir = template_img_dir
         self._template_robots_txt_path = template_robots_txt_path
+        self._template_humans_txt_path = template_humans_txt_path
         self._presentation_title_heading_level = 1
         self._presentation_article_title_heading_level = 2
         self._presentation_article_subtitle_heading_level_min = 3
@@ -72,6 +74,10 @@ class Config(object):
     @property
     def template_robots_txt_path(self):
         return self._template_robots_txt_path
+
+    @property
+    def template_humans_txt_path(self):
+        return self._template_humans_txt_path
 
     @property
     def presentation_title_heading_level(self):
@@ -109,11 +115,12 @@ def _ParseConfig(config_path):
     template_blogula_css_path = utils.Extract(templates_raw, 'BlogulaCSSPath', str)
     template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
     template_robots_txt_path = utils.Extract(templates_raw, 'RobotsTxtPath', str)
+    template_humans_txt_path = utils.Extract(templates_raw, 'HumansTxtPath', str)
 
     return Config(template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
                   template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
                   template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir,
-                  template_robots_txt_path=template_robots_txt_path)
+                  template_robots_txt_path=template_robots_txt_path, template_humans_txt_path=template_humans_txt_path)
 
 class SiteBuilder(object):
     def __init__(self, info_path, config, info, post_db):
@@ -274,6 +281,19 @@ class SiteBuilder(object):
 
         return output.File('text/plain', robots_txt_text)
 
+    def _GenerateHumansTxt(self):
+        humans_txt_template_text = utils.QuickRead(self._config.template_humans_txt_path)
+        humans_txt_template = template.Template(humans_txt_template_text)
+        humans_txt_template.author = self._info.author
+        humans_txt_template.email = self._info.email
+        humans_txt_template.twitter = self._info.twitter
+        humans_txt_template.location = self._info.location
+        humans_txt_template.build_date_str = datetime.datetime.now().strftime('%A, %d %B %Y %S:%M:%H %Z')
+
+        humans_txt_text = str(humans_txt_template)
+
+        return output.File('text/plain', humans_txt_text)
+
     def Generate(self):
         out_dir = output.Dir()
 
@@ -336,6 +356,10 @@ class SiteBuilder(object):
         # Generate robots.txt file.
         robots_txt_unit = self._GenerateRobotsTxt()
         out_dir.Add('robots.txt', robots_txt_unit)
+
+        # Generate humans.txt file.
+        humans_txt_unit = self._GenerateHumansTxt()
+        out_dir.Add('humans.txt', humans_txt_unit)
 
         return out_dir
 

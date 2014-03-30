@@ -102,6 +102,8 @@ def ParseInfo(info_path):
     url = utils.Extract(info_raw, 'URL', str)
     author = ' '.join(utils.Extract(info_raw, 'Author', str).split())
     email = utils.Extract(info_raw, 'Email', str).strip()
+    twitter = utils.Extract(info_raw, 'Twitter', str).strip()
+    location = utils.Extract(info_raw, 'Location', str).strip()
     avatar_path = utils.Extract(info_raw, 'AvatarPath', str)
     description_raw = utils.Extract(info_raw, 'Description', str)
     description = _ParseSmallText(description_raw)
@@ -133,10 +135,10 @@ def ParseInfo(info_path):
     output_homepage_path = utils.Extract(output_raw, 'HomePagePath', str)
     output_posts_dir = utils.Extract(output_raw, 'PostsDir', str)
 
-    return model.Info(title=title, url=url, author=author, email=email, avatar_path=avatar_path,
-                      description=description, series=series, nr_of_posts_in_feed=nr_of_posts_in_feed,
-                      posts_dir=posts_dir, output_dir=output_dir, output_homepage_path=output_homepage_path,
-                      output_posts_dir=output_posts_dir)
+    return model.Info(title=title, url=url, author=author, email=email, twitter=twitter, location=location,
+                      avatar_path=avatar_path, description=description, series=series,
+                      nr_of_posts_in_feed=nr_of_posts_in_feed, posts_dir=posts_dir, output_dir=output_dir,
+                      output_homepage_path=output_homepage_path, output_posts_dir=output_posts_dir)
 
 def ParsePostDB(info):
     post_map = collections.OrderedDict()

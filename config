@@ -6,3 +6,4 @@ Templates:
   BlogulaCSSPath: templates/blogula.css
   ImgDir: templates/img
   RobotsTxtPath: templates/robots.txt
+  HumansTxtPath: templates/humans.txt
