@@ -24,13 +24,14 @@ import utils
 class Config(object):
     def __init__(self, template_homepage_path, template_postpage_path, template_feedpage_path, 
                  template_foundation_dir, template_blogula_css_path, template_img_dir,
-                 template_robots_txt_path, template_humans_txt_path):
+                 template_sitemap_xml_path, template_robots_txt_path, template_humans_txt_path):
         assert isinstance(template_homepage_path, str)
         assert isinstance(template_postpage_path, str)
         assert isinstance(template_feedpage_path, str)
         assert isinstance(template_foundation_dir, str)
         assert isinstance(template_blogula_css_path, str)
         assert isinstance(template_img_dir, str)
+        assert isinstance(template_sitemap_xml_path, str)
         assert isinstance(template_robots_txt_path, str)
         assert isinstance(template_humans_txt_path, str)
 
@@ -40,6 +41,7 @@ class Config(object):
         self._template_foundation_dir = template_foundation_dir
         self._template_blogula_css_path = template_blogula_css_path
         self._template_img_dir = template_img_dir
+        self._template_sitemap_xml_path = template_sitemap_xml_path
         self._template_robots_txt_path = template_robots_txt_path
         self._template_humans_txt_path = template_humans_txt_path
         self._presentation_title_heading_level = 1
@@ -70,6 +72,10 @@ class Config(object):
     @property
     def template_img_dir(self):
         return self._template_img_dir
+
+    @property
+    def template_sitemap_xml_path(self):
+        return self._template_sitemap_xml_path
 
     @property
     def template_robots_txt_path(self):
@@ -114,13 +120,15 @@ def _ParseConfig(config_path):
     template_foundation_dir = utils.Extract(templates_raw, 'FoundationDir', str)
     template_blogula_css_path = utils.Extract(templates_raw, 'BlogulaCSSPath', str)
     template_img_dir = utils.Extract(templates_raw, 'ImgDir', str)
+    template_sitemap_xml_path = utils.Extract(templates_raw, 'SitemapXmlPath', str)
     template_robots_txt_path = utils.Extract(templates_raw, 'RobotsTxtPath', str)
     template_humans_txt_path = utils.Extract(templates_raw, 'HumansTxtPath', str)
 
     return Config(template_homepage_path=template_homepage_path, template_postpage_path=template_postpage_path,
                   template_feedpage_path=template_feedpage_path, template_foundation_dir=template_foundation_dir,
                   template_blogula_css_path=template_blogula_css_path, template_img_dir=template_img_dir,
-                  template_robots_txt_path=template_robots_txt_path, template_humans_txt_path=template_humans_txt_path)
+                  template_sitemap_xml_path=template_sitemap_xml_path, template_robots_txt_path=template_robots_txt_path,
+                  template_humans_txt_path=template_humans_txt_path)
 
 class SiteBuilder(object):
     def __init__(self, info_path, config, info, post_db):
@@ -274,9 +282,32 @@ class SiteBuilder(object):
         feedpage_text = str(feedpage_template)
         return output.File('application/xml', feedpage_text)
 
-    def _GenerateRobotsTxt(self):
+    def _GenerateSitemapXml(self):
+        sitemap_xml_template_text = utils.QuickRead(self._config.template_sitemap_xml_path)
+        sitemap_xml_template = template.Template(sitemap_xml_template_text)
+
+        sitemap_xml_template.host = self._info.url
+        sitemap_xml_template.homepage = {}
+        sitemap_xml_template.homepage['path'] = '/index.html'
+        sitemap_xml_template.homepage['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
+
+        sitemap_xml_template.posts = []
+
+        for post in self._post_db.post_map.values():
+            sitemap_xml_template.posts.append({})
+            sitemap_xml_template.posts[-1]['url'] = self._UrlForPost(post)
+            sitemap_xml_template.posts[-1]['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
+
+        sitemap_xml_text = str(sitemap_xml_template)
+
+        return output.File('text/plain', sitemap_xml_text)
+
+    def _GenerateRobotsTxt(self, sitemap_xml_path):
         robots_txt_template_text = utils.QuickRead(self._config.template_robots_txt_path)
         robots_txt_template = template.Template(robots_txt_template_text)
+        robots_txt_template.sitemap_xml_host = self._info.url
+        robots_txt_template.sitemap_xml_path = sitemap_xml_path
+
         robots_txt_text = str(robots_txt_template)
 
         return output.File('text/plain', robots_txt_text)
@@ -353,8 +384,12 @@ class SiteBuilder(object):
 
         out_dir.Add('img', image_dir)
 
+        # Generate sitemap.xml file.
+        sitemap_xml_unit = self._GenerateSitemapXml()
+        out_dir.Add('sitemap.xml', sitemap_xml_unit)
+
         # Generate robots.txt file.
-        robots_txt_unit = self._GenerateRobotsTxt()
+        robots_txt_unit = self._GenerateRobotsTxt('/sitemap.xml')
         out_dir.Add('robots.txt', robots_txt_unit)
 
         # Generate humans.txt file.
