@@ -1,3 +1,4 @@
+import enum
 import mimetypes
 import os
 import re
@@ -7,22 +8,33 @@ import errors
 
 mime_types_set = frozenset(mimetypes.types_map.itervalues())
 
+class CrawlMode(enum.Enum):
+    CRAWLABLE = 1
+    NON_CRAWLABLE = 2
+
 class Unit(object):
-    def __init__(self, mime_type):
+    def __init__(self, mime_type, crawl_mode):
         assert mime_type is None or mime_type in mime_types_set
+        assert isinstance(crawl_mode, CrawlMode)
 
         self._mime_type = mime_type
+        self._crawl_mode = crawl_mode
 
     @property
     def mime_type(self):
         return self._mime_type
 
+    @property
+    def crawl_mode(self):
+        return self._crawl_mode
+
 class File(Unit):
-    def __init__(self, mime_type, content):
+    def __init__(self, mime_type, crawl_mode, content):
         assert mime_type in mime_types_set
+        assert isinstance(crawl_mode, CrawlMode)
         assert isinstance(content, str)
 
-        super(File, self).__init__(mime_type)
+        super(File, self).__init__(mime_type, crawl_mode)
 
         self._content = content
 
@@ -31,21 +43,30 @@ class File(Unit):
         return self._content
 
 class Copy(Unit):
-    def __init__(self, original_path):
+    def __init__(self, crawl_mode, original_path):
+        assert isinstance(crawl_mode, CrawlMode)
         assert isinstance(original_path, str)
 
-        super(Copy, self).__init__(None)
+        super(Copy, self).__init__(None, crawl_mode)
 
         # TODO(horia314): add mime-type detection.
         self._original_path = original_path
+
+        self._is_dir = os.path.isdir(original_path)
 
     @property
     def original_path(self):
         return self._original_path
 
+    @property
+    def is_dir(self):
+        return self._is_dir
+
 class Dir(Unit):
-    def __init__(self):
-        super(Dir, self).__init__(None)
+    def __init__(self, crawl_mode):
+        assert isinstance(crawl_mode, CrawlMode)
+
+        super(Dir, self).__init__(None, crawl_mode)
 
         self._units = {}
 
@@ -75,7 +96,7 @@ def WriteLocalOutput(base_dir_path, out_dir):
             unit_file.write(unit.content)
             unit_file.close()
         elif isinstance(unit, Copy):
-            if os.path.isdir(unit.original_path):
+            if unit.is_dir:
                 shutil.copytree(unit.original_path, path)
             else:
                 shutil.copy(unit.original_path, path)

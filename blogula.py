@@ -193,7 +193,7 @@ class SiteBuilder(object):
             self._config.presentation_article_title_heading_level
 
         homepage_text = str(homepage_template)
-        return output.File('text/html', homepage_text)
+        return output.File('text/html', output.CrawlMode.CRAWLABLE, homepage_text)
 
     def _GeneratePostpage(self, post):
         (line_units, extra_image_units) = SiteBuilder._LinearizeSectionToLineUnits(self._info_path, self._config, post.root_section, 0)
@@ -255,7 +255,7 @@ class SiteBuilder(object):
             self._config.presentation_article_title_heading_level
 
         postpage_text = str(postpage_template)
-        return (output.File('text/html', postpage_text), extra_image_units)
+        return (output.File('text/html', output.CrawlMode.CRAWLABLE, postpage_text), extra_image_units)
 
     def _GenerateFeed(self):
         feedpage_template_text = utils.QuickRead(self._config.template_feedpage_path)
@@ -280,37 +280,7 @@ class SiteBuilder(object):
 
         feedpage_template.posts.reverse()
         feedpage_text = str(feedpage_template)
-        return output.File('application/xml', feedpage_text)
-
-    def _GenerateSitemapXml(self):
-        sitemap_xml_template_text = utils.QuickRead(self._config.template_sitemap_xml_path)
-        sitemap_xml_template = template.Template(sitemap_xml_template_text)
-
-        sitemap_xml_template.host = self._info.url
-        sitemap_xml_template.homepage = {}
-        sitemap_xml_template.homepage['path'] = '/index.html'
-        sitemap_xml_template.homepage['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
-
-        sitemap_xml_template.posts = []
-
-        for post in self._post_db.post_map.values():
-            sitemap_xml_template.posts.append({})
-            sitemap_xml_template.posts[-1]['url'] = self._UrlForPost(post)
-            sitemap_xml_template.posts[-1]['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
-
-        sitemap_xml_text = str(sitemap_xml_template)
-
-        return output.File('text/plain', sitemap_xml_text)
-
-    def _GenerateRobotsTxt(self, sitemap_xml_path):
-        robots_txt_template_text = utils.QuickRead(self._config.template_robots_txt_path)
-        robots_txt_template = template.Template(robots_txt_template_text)
-        robots_txt_template.sitemap_xml_host = self._info.url
-        robots_txt_template.sitemap_xml_path = sitemap_xml_path
-
-        robots_txt_text = str(robots_txt_template)
-
-        return output.File('text/plain', robots_txt_text)
+        return output.File('application/xml', output.CrawlMode.CRAWLABLE, feedpage_text)
 
     def _GenerateHumansTxt(self):
         humans_txt_template_text = utils.QuickRead(self._config.template_humans_txt_path)
@@ -323,17 +293,80 @@ class SiteBuilder(object):
 
         humans_txt_text = str(humans_txt_template)
 
-        return output.File('text/plain', humans_txt_text)
+        return output.File('text/plain', output.CrawlMode.CRAWLABLE, humans_txt_text)
+
+    def _GenerateSitemapXml(self, robots_txt_path, out_dir):
+        def LinearizeUnits(path, unit):
+            if unit.crawl_mode is output.CrawlMode.NON_CRAWLABLE:
+                return []
+
+            if isinstance(unit, output.File):
+                return [{'host': self._info.url,
+                         'path': path,
+                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')}]
+            elif isinstance(unit, output.Copy):
+                if unit.is_dir:
+                    raise Error('Copy directory "%s" cannot be crawlable' % path)
+
+                return [{'host': self._info.url,
+                         'path': path,
+                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')}]
+            elif isinstance(unit, output.Dir):
+                linearized_units = [LinearizeUnits(os.path.join(path, subpath), subunit)
+                                    for (subpath, subunit) in unit.units.iteritems()]
+                return [item for sublist in linearized_units for item in sublist]
+
+        sitemap_xml_template_text = utils.QuickRead(self._config.template_sitemap_xml_path)
+        sitemap_xml_template = template.Template(sitemap_xml_template_text)
+        sitemap_xml_template.urls = LinearizeUnits('/', out_dir)
+        sitemap_xml_template.robots_txt = {}
+        sitemap_xml_template.robots_txt['host'] = self._info.url
+        sitemap_xml_template.robots_txt['path'] = robots_txt_path
+        sitemap_xml_template.robots_txt['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
+
+        sitemap_xml_text = str(sitemap_xml_template)
+
+        return output.File('text/plain', output.CrawlMode.CRAWLABLE, sitemap_xml_text)
+
+    def _GenerateRobotsTxt(self, sitemap_xml_path, out_dir):
+        def LinearizeUnits(path, unit):
+            if unit.crawl_mode is output.CrawlMode.CRAWLABLE:
+                if isinstance(unit, (output.File, output.Copy)):
+                    return []
+                elif isinstance(unit, output.Dir):
+                    linearized_units = [LinearizeUnits(os.path.join(path, subpath), subunit)
+                                        for (subpath, subunit) in unit.units.iteritems()]
+                    return [item for sublist in linearized_units for item in sublist]
+            else:
+                if isinstance(unit, output.File):
+                    return [{'path': path}]
+                elif isinstance(unit, output.Copy):
+                    if unit.is_dir:
+                        return [{'path': '%s/' % path}]
+                    else:
+                        return [{'path': path}]
+                elif isinstance(unit, output.Dir):
+                    return [{'path': '%s/' % path}]
+
+        robots_txt_template_text = utils.QuickRead(self._config.template_robots_txt_path)
+        robots_txt_template = template.Template(robots_txt_template_text)
+        robots_txt_template.sitemap_xml_host = self._info.url
+        robots_txt_template.sitemap_xml_path = sitemap_xml_path
+        robots_txt_template.urls = LinearizeUnits('', out_dir)
+
+        robots_txt_text = str(robots_txt_template)
+
+        return output.File('text/plain', output.CrawlMode.CRAWLABLE, robots_txt_text)
 
     def Generate(self):
-        out_dir = output.Dir()
+        out_dir = output.Dir(output.CrawlMode.CRAWLABLE)
 
         # generate home page
         homepage_unit = self._GenerateHomepage()
         out_dir.Add(self._info.output_homepage_path, homepage_unit)
 
         # generate one page for each article
-        posts_dir = output.Dir()
+        posts_dir = output.Dir(output.CrawlMode.CRAWLABLE)
         extra_image_units = []
 
         for post in self._post_db.post_map.itervalues():
@@ -353,27 +386,27 @@ class SiteBuilder(object):
 
         # copy extra scripts
 
-        foundation_unit = output.Copy(self._config.template_foundation_dir)
+        foundation_unit = output.Copy(output.CrawlMode.NON_CRAWLABLE, self._config.template_foundation_dir)
         out_dir.Add('foundation', foundation_unit)
 
         # Copy CSS
 
-        blogula_css_unit = output.Copy(self._config.template_blogula_css_path)
+        blogula_css_unit = output.Copy(output.CrawlMode.NON_CRAWLABLE, self._config.template_blogula_css_path)
         out_dir.Add('blogula.css', blogula_css_unit)
 
         # Generate CSS for CodeBlock cell code highliting.
 
         code_highlight_css = pygments.formatters.HtmlFormatter().get_style_defs('.code-block-highlight')
-        code_highlight_css_unit = output.File('text/css', code_highlight_css)
+        code_highlight_css_unit = output.File('text/css', output.CrawlMode.NON_CRAWLABLE, code_highlight_css)
         out_dir.Add('code_highlight.css', code_highlight_css_unit)
 
         # Copy images image
 
-        image_dir = output.Dir()
+        image_dir = output.Dir(output.CrawlMode.CRAWLABLE)
 
         ## Copy avatar image
 
-        avatar_unit = output.Copy(
+        avatar_unit = output.Copy(output.CrawlMode.CRAWLABLE,
             os.path.join(os.path.dirname(self._info_path), self._info.avatar_path))
         image_dir.Add('avatar.jpg', avatar_unit)
 
@@ -384,17 +417,17 @@ class SiteBuilder(object):
 
         out_dir.Add('img', image_dir)
 
-        # Generate sitemap.xml file.
-        sitemap_xml_unit = self._GenerateSitemapXml()
-        out_dir.Add('sitemap.xml', sitemap_xml_unit)
-
-        # Generate robots.txt file.
-        robots_txt_unit = self._GenerateRobotsTxt('/sitemap.xml')
-        out_dir.Add('robots.txt', robots_txt_unit)
-
         # Generate humans.txt file.
         humans_txt_unit = self._GenerateHumansTxt()
         out_dir.Add('humans.txt', humans_txt_unit)
+
+        # Generate sitemap.xml file.
+        sitemap_xml_unit = self._GenerateSitemapXml('/robots.txt', out_dir)
+        out_dir.Add('sitemap.xml', sitemap_xml_unit)
+
+        # Generate robots.txt file.
+        robots_txt_unit = self._GenerateRobotsTxt('/sitemap.xml', out_dir)
+        out_dir.Add('robots.txt', robots_txt_unit)
 
         return out_dir
 
@@ -566,7 +599,7 @@ class SiteBuilder(object):
                     else:
                         extra_image_path = os.path.join(os.path.dirname(info_path), paragraph.cell.path)
 
-                    extra_image_units.append((image_basename, output.Copy(extra_image_path)))
+                    extra_image_units.append((image_basename, output.Copy(output.CrawlMode.CRAWLABLE, extra_image_path)))
                 else:
                     raise errors.Error('Unsupported path format')
             else:

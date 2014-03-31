@@ -2,20 +2,21 @@
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  #for url in $urls
   <url>
-    <loc>$host$homepage.path</loc>
-    <lastmod>$homepage.build_date_str</lastmod>
+    <loc>$url.host$url.path</loc>
+    <lastmod>$url.build_date_str</lastmod>
     <changefreq>always</changefreq>
     <priority>1</priority>
   </url>
 
-  #for post in $posts
-  <url>
-    <loc>$host$post.url</loc>
-    <lastmod>$post.build_date_str</lastmod>
-    <changefreq>always</changefreq>
-    <priority>0.5</priority>
-  </url>
   #end for
+
+  <url>
+    <loc>$robots_txt.host$robots_txt.path</loc>
+    <lastmod>$robots_txt.build_date_str</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1</priority>
+  </url>
 
 </urlset>
