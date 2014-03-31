@@ -156,7 +156,7 @@ class SiteBuilder(object):
 
             return good_word
 
-        return '_'.join(EliminateNonAlpha(w) for w in path.lower().split(' '))
+        return '_'.join(EliminateNonAlpha(w) for w in path.lower().split())
 
     def _UrlForPost(self, post):
         return os.path.join(
