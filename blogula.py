@@ -303,14 +303,14 @@ class SiteBuilder(object):
             if isinstance(unit, output.File):
                 return [{'host': self._info.url,
                          'path': path,
-                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')}]
+                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%d')}]
             elif isinstance(unit, output.Copy):
                 if unit.is_dir:
                     raise Error('Copy directory "%s" cannot be crawlable' % path)
 
                 return [{'host': self._info.url,
                          'path': path,
-                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')}]
+                         'build_date_str': datetime.datetime.now().strftime('%Y-%M-%d')}]
             elif isinstance(unit, output.Dir):
                 linearized_units = [LinearizeUnits(os.path.join(path, subpath), subunit)
                                     for (subpath, subunit) in unit.units.iteritems()]
@@ -322,7 +322,7 @@ class SiteBuilder(object):
         sitemap_xml_template.robots_txt = {}
         sitemap_xml_template.robots_txt['host'] = self._info.url
         sitemap_xml_template.robots_txt['path'] = robots_txt_path
-        sitemap_xml_template.robots_txt['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%dT00:00:00%Z')
+        sitemap_xml_template.robots_txt['build_date_str'] = datetime.datetime.now().strftime('%Y-%M-%d')
 
         sitemap_xml_text = str(sitemap_xml_template)
 

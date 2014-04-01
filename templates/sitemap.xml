@@ -4,7 +4,7 @@
 
   #for url in $urls
   <url>
-    <loc>$url.host$url.path</loc>
+    <loc>http://$url.host$url.path</loc>
     <lastmod>$url.build_date_str</lastmod>
     <changefreq>always</changefreq>
     <priority>1</priority>
@@ -13,7 +13,7 @@
   #end for
 
   <url>
-    <loc>$robots_txt.host$robots_txt.path</loc>
+    <loc>http://$robots_txt.host$robots_txt.path</loc>
     <lastmod>$robots_txt.build_date_str</lastmod>
     <changefreq>always</changefreq>
     <priority>1</priority>

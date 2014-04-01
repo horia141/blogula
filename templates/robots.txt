@@ -4,4 +4,4 @@ User-agent: *
 Disallow: $url.path
 #end for
 
-Sitemap: $sitemap_xml_host$sitemap_xml_path
+Sitemap: http://$sitemap_xml_host$sitemap_xml_path
