@@ -27,7 +27,7 @@
 
   <body>
     <div class="row">
-      <div class="small-8 large-8 columns">
+      <div class="small-12 medium-12 large-8 columns">
         <h$presentation.article_title_heading_level>$post.title_html</h$presentation.article_title_heading_level>
 
 	#for $lineunit in $post.lineunits
@@ -74,9 +74,9 @@
         #end if
 
         <div class="row">
-          <span class="small-12 large-12 columns">Global Navigation</span>
+          <span class="small-12 medium-12 large-12 columns">Global Navigation</span>
 
-          <div class="small-6 small-6 columns text-left">
+          <div class="small-6 medium-6 large-6 columns text-left">
             #if $post.prev_post
             <a href="$post.prev_post.url">$post.prev_post.title_html</a>
             #else
@@ -84,7 +84,7 @@
             #end if
           </div>
 
-          <div class="small-6 small-6 columns text-right">
+          <div class="small-6 medium-6 large-6 columns text-right">
             #if $post.next_post
             <a href="$post.next_post.url">$post.next_post.title_html</a>
             #else
@@ -95,9 +95,9 @@
 
         #for s in $post.series
         <div class="row">
-          <span class="small-12 large-12 columns">In the "$s.title_html" series</span>
+          <span class="small-12 medium-12 large-12 columns">In the "$s.title_html" series</span>
 
-          <div class="small-6 small-6 columns text-left">
+          <div class="small-6 medium-6 large-6 columns text-left">
             #if $s.prev_post
             <a href="$s.prev_post.url">$s.prev_post.title_html</a>
             #else
@@ -105,7 +105,7 @@
             #end if
           </div>
 
-          <div class="small-6 small-6 columns text-right">
+          <div class="small-6 medium-6 large-6 columns text-right">
             #if $s.next_post
             <a href="$s.next_post.url">$s.next_post.title_html</a>
             #else
@@ -116,7 +116,7 @@
         #end for
       </div>
 
-      <div class="small-4 large-4 columns">
+      <div class="small-12 medium-12 large-4 columns">
         <h$presentation.title_heading_level><a href="/">$info.title_html</a></h$presentation.title_heading_level>
         <p><img src="$info.avatar_url" alt="Avatar image"></img></p>
         <p class="text-justify">$info.description_html</p>
